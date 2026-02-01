@@ -5779,8 +5779,8 @@ NODE_ENV=development
 PORT=3000
 FRONTEND_URL=http://localhost:5173
 
-# MongoDB Atlas
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/spanishconnect?retryWrites=true&w=majority
+# MongoDB Atlas (EXAMPLE - Replace with your actual credentials)
+MONGODB_URI=mongodb+srv://YOUR_USERNAME:YOUR_PASSWORD@YOUR_CLUSTER.mongodb.net/spanishconnect?retryWrites=true&w=majority
 
 # JWT Secrets (CHANGE THESE IN PRODUCTION!)
 JWT_ACCESS_SECRET=your-super-secret-access-token-key-min-32-chars

@@ -1,16 +1,42 @@
 import { Router } from 'express'
+import multer from 'multer'
 import * as postsController from '../controllers/posts.controller.js'
 import { authenticate, optionalAuth } from '../middleware/auth.middleware.js'
 import { requireTeacher } from '../middleware/role.middleware.js'
 
 const router = Router()
 
+// Configure multer for file uploads
+const storage = multer.memoryStorage()
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50MB max
+    files: 6 // 5 images + 1 video
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+    const allowedVideoTypes = ['video/mp4', 'video/mpeg', 'video/quicktime', 'video/x-msvideo']
+    
+    if (file.fieldname === 'images' && allowedImageTypes.includes(file.mimetype)) {
+      cb(null, true)
+    } else if (file.fieldname === 'video' && allowedVideoTypes.includes(file.mimetype)) {
+      cb(null, true)
+    } else {
+      cb(new Error(`Invalid file type for ${file.fieldname}`))
+    }
+  }
+})
+
 // Public routes (with optional auth for personalized data)
 router.get('/', optionalAuth, postsController.getPosts)
 router.get('/:id', optionalAuth, postsController.getPost)
 
 // Protected routes
-router.post('/', authenticate, requireTeacher, postsController.createPost)
+router.post('/', authenticate, requireTeacher, upload.fields([
+  { name: 'images', maxCount: 5 },
+  { name: 'video', maxCount: 1 }
+]), postsController.createPost)
 router.put('/:id', authenticate, requireTeacher, postsController.updatePost)
 router.delete('/:id', authenticate, requireTeacher, postsController.deletePost)
 router.post('/:id/pin', authenticate, requireTeacher, postsController.pinPost)

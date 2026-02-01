@@ -20,13 +20,13 @@
 | Phase | Status | Progress | Target Date |
 |-------|--------|----------|-------------|
 | Phase 1: Foundation | ✅ Complete | 16/16 | Week 1-2 |
-| Phase 2: Core Content | 🔴 Not Started | 0/11 | Week 3 |
-| Phase 3: Comment System | 🔴 Not Started | 0/20 | Week 4-5 |
+| Phase 2: Core Content | ✅ Complete | 11/11 | Week 3 |
+| Phase 3: Comment System | 🟡 In Progress | 10/20 | Week 4-5 |
 | Phase 4: Additional Features | 🔴 Not Started | 0/15 | Week 6 |
 | Phase 5: Notifications & Polish | 🔴 Not Started | 0/13 | Week 7 |
 | Phase 6: Testing & Launch | 🔴 Not Started | 0/10 | Week 8 |
 
-**Overall Progress:** 16/85 tasks completed (19%)
+**Overall Progress:** 37/85 tasks completed (44%)
 
 ---
 
@@ -69,53 +69,53 @@
 
 ## 🎨 PHASE 2: CORE CONTENT (Week 3)
 
-**Status:** 🔴 Not Started  
-**Progress:** 0/11 tasks  
+**Status:** ✅ Complete  
+**Progress:** 11/11 tasks  
 **Milestone:** Teacher can create posts, students can view feed and react
 
 ### Week 3: Posts & Feed
 
-- [ ] **3.1** Create Post model schema with media fields
-- [ ] **3.2** Build create post API endpoint (teacher only)
-- [ ] **3.3** Implement image upload to Cloudinary (max 5MB each, 5 per post)
-- [ ] **3.4** Implement video upload to Cloudinary (max 50MB, 1 per post)
-- [ ] **3.5** Build get posts API with pagination (10 per page)
-- [ ] **3.6** Create Post feed UI with infinite scroll
-- [ ] **3.7** Implement post infinite scroll functionality
-- [ ] **3.8** Build reaction system API (5 reaction types)
-- [ ] **3.9** Create reaction picker UI component
-- [ ] **3.10** Implement bookmark/save post functionality
-- [ ] **3.11** Build rich post composer UI (teacher only)
+- [x] **3.1** Create Post model schema with media fields
+- [x] **3.2** Build create post API endpoint (teacher only)
+- [x] **3.3** Implement image upload to Cloudinary (max 5MB each, 5 per post)
+- [x] **3.4** Implement video upload to Cloudinary (max 50MB, 1 per post)
+- [x] **3.5** Build get posts API with pagination (10 per page)
+- [x] **3.6** Create Post feed UI with infinite scroll
+- [x] **3.7** Implement post infinite scroll functionality
+- [x] **3.8** Build reaction system API (5 reaction types)
+- [x] **3.9** Create reaction picker UI component
+- [x] **3.10** Implement bookmark/save post functionality
+- [x] **3.11** Build rich post composer UI (teacher only)
 
 **Phase 2 Verification:**
-- [ ] Teacher can create post with text content
-- [ ] Teacher can upload images (up to 5)
-- [ ] Teacher can upload video (1 per post)
-- [ ] Students can view paginated feed
-- [ ] Students can react to posts (👍 ❤️ 🎉 💡 ❓)
-- [ ] Infinite scroll loads more posts
-- [ ] Bookmark feature saves posts
+- [x] Teacher can create post with text content
+- [x] Teacher can upload images (up to 5)
+- [x] Teacher can upload video (1 per post)
+- [x] Students can view paginated feed
+- [x] Students can react to posts (👍 ❤️ 🎉 💡 ❓)
+- [x] Infinite scroll loads more posts
+- [x] Bookmark feature saves posts
 
 ---
 
 ## 💬 PHASE 3: COMMENT SYSTEM (Weeks 4-5)
 
-**Status:** 🔴 Not Started  
-**Progress:** 0/20 tasks  
+**Status:** 🟡 In Progress  
+**Progress:** 10/20 tasks  
 **Milestone:** Full comment system with infinite nesting and threading
 
 ### Week 4: Basic Comments
 
-- [ ] **4.1** Create Comment model with threading fields (parentComment, rootComment, path, depth)
-- [ ] **4.2** Build create comment API with nesting logic
-- [ ] **4.3** Build get root comments API with pagination
-- [ ] **4.4** Build get replies API for any comment
-- [ ] **4.5** Create comment section UI component
-- [ ] **4.6** Implement basic threading UI (visual nesting up to depth 2)
-- [ ] **4.7** Build like comment API endpoint
-- [ ] **4.8** Create like button UI in comment card
-- [ ] **4.9** Implement edit comment API (15-minute window)
-- [ ] **4.10** Implement soft delete comment API
+- [x] **4.1** Create Comment model with threading fields (parentComment, rootComment, path, depth)
+- [x] **4.2** Build create comment API with nesting logic
+- [x] **4.3** Build get root comments API with pagination
+- [x] **4.4** Build get replies API for any comment
+- [x] **4.5** Create comment section UI component
+- [x] **4.6** Implement basic threading UI (visual nesting up to depth 2)
+- [x] **4.7** Build like comment API endpoint
+- [x] **4.8** Create like button UI in comment card
+- [x] **4.9** Implement edit comment API (15-minute window)
+- [x] **4.10** Implement soft delete comment API
 
 ### Week 5: Advanced Comments
 

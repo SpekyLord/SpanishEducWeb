@@ -4,6 +4,7 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { LoginPage } from './pages/Login'
 import { RegisterPage } from './pages/Register'
 import { HomePage } from './pages/Home'
+import { FeedPage } from './pages/Feed/FeedPage'
 import './App.css'
 
 function App() {
@@ -18,6 +19,22 @@ function App() {
           {/* Protected routes */}
           <Route
             path="/"
+            element={
+              <ProtectedRoute>
+                <FeedPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/feed"
+            element={
+              <ProtectedRoute>
+                <FeedPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/home"
             element={
               <ProtectedRoute>
                 <HomePage />
