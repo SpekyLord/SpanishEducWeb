@@ -16,6 +16,9 @@ build/
 .env.test.local
 .env.production.local
 
+# Test credentials (sensitive)
+TEST_ACCOUNTS.md
+
 # Logs
 logs/
 *.log

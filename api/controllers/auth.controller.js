@@ -180,11 +180,89 @@ export async function getCurrentUser(req, res) {
 }
 
 export async function forgotPassword(req, res) {
-  // TODO: Implement password reset email
-  res.status(501).json({ error: 'Not implemented yet' })
+  try {
+    const { email } = req.body
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' })
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() })
+    
+    // Always return success message for security (don't reveal if email exists)
+    if (!user) {
+      return res.json({ message: 'If email exists, reset link has been sent' })
+    }
+
+    // Generate reset token
+    const resetToken = await bcrypt.hash(user._id.toString() + Date.now(), 10)
+    const resetTokenHash = await bcrypt.hash(resetToken, 10)
+    
+    user.passwordResetToken = resetTokenHash
+    user.passwordResetExpires = Date.now() + 3600000 // 1 hour
+    await user.save()
+
+    // TODO: Send email with reset link
+    // For now, return token in response (in production, send via email)
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${encodeURIComponent(resetToken)}&email=${encodeURIComponent(email)}`
+    
+    console.log('Password reset URL:', resetUrl)
+
+    res.json({ 
+      message: 'If email exists, reset link has been sent',
+      // Remove this in production, only for development
+      resetUrl: process.env.NODE_ENV === 'development' ? resetUrl : undefined
+    })
+  } catch (error) {
+    console.error('Forgot password error:', error)
+    res.status(500).json({ error: 'Password reset request failed' })
+  }
 }
 
 export async function resetPassword(req, res) {
-  // TODO: Implement password reset
-  res.status(501).json({ error: 'Not implemented yet' })
+  try {
+    const { token, email, newPassword } = req.body
+
+    if (!token || !email || !newPassword) {
+      return res.status(400).json({ error: 'Token, email, and new password are required' })
+    }
+
+    // Validate password
+    const passwordValidation = validatePassword(newPassword)
+    if (!passwordValidation.isValid) {
+      return res.status(400).json({ error: passwordValidation.errors[0] })
+    }
+
+    // Find user
+    const user = await User.findOne({ 
+      email: email.toLowerCase(),
+      passwordResetExpires: { $gt: Date.now() }
+    })
+
+    if (!user || !user.passwordResetToken) {
+      return res.status(400).json({ error: 'Invalid or expired reset token' })
+    }
+
+    // Verify token
+    const isValidToken = await bcrypt.compare(token, user.passwordResetToken)
+    if (!isValidToken) {
+      return res.status(400).json({ error: 'Invalid reset token' })
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 12)
+    
+    // Update password and clear reset token
+    user.password = hashedPassword
+    user.passwordResetToken = undefined
+    user.passwordResetExpires = undefined
+    user.loginAttempts = 0
+    user.lockUntil = undefined
+    await user.save()
+
+    res.json({ message: 'Password reset successfully' })
+  } catch (error) {
+    console.error('Reset password error:', error)
+    res.status(500).json({ error: 'Password reset failed' })
+  }
 }
