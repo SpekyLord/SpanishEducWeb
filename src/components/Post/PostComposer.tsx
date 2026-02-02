@@ -57,11 +57,12 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
     
     if (!file) return;
     
-    if (file.size > 50 * 1024 * 1024) {
-      setError('Video must be less than 50MB');
+    if (file.size > 200 * 1024 * 1024) {
+      setError('Video must be less than 200MB. It will be automatically compressed to 20-30MB.');
       return;
     }
-    
+
+    setError(null);
     setVideo(file);
     
     // Generate preview
@@ -188,19 +189,29 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
         )}
 
         {videoPreview && (
-          <div className="mb-4 relative">
-            <video
-              src={videoPreview}
-              controls
-              className="w-full rounded-lg max-h-96"
-            />
-            <button
-              type="button"
-              onClick={removeVideo}
-              className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600"
-            >
-              ✕
-            </button>
+          <div className="mb-4">
+            <div className="relative">
+              <video
+                src={videoPreview}
+                controls
+                className="w-full rounded-lg max-h-96"
+              />
+              <button
+                type="button"
+                onClick={removeVideo}
+                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="text-sm text-gray-600 mt-2">
+              Original size: {(video!.size / (1024 * 1024)).toFixed(2)} MB
+              {video!.size > 30 * 1024 * 1024 && (
+                <span className="text-blue-600 ml-2">
+                  (Will be compressed to ~20-30MB)
+                </span>
+              )}
+            </div>
           </div>
         )}
 

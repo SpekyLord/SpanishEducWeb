@@ -21,7 +21,7 @@ const UPLOAD_LIMITS = {
     transformation: { width: 1200, quality: 'auto', fetch_format: 'auto' },
   },
   postVideo: {
-    maxSize: 50 * 1024 * 1024, // 50MB
+    maxSize: 200 * 1024 * 1024, // 200MB (increased for educational videos)
     maxCount: 1,
     folder: 'spanishconnect/posts/videos',
     resource_type: 'video',

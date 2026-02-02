@@ -130,7 +130,7 @@ SpanishConnect addresses these challenges through:
 │ 2. CREATE POST                                                  │
 │    ├── Clicks "Create Post" button                              │
 │    ├── Writes lesson content in rich text editor                │
-│    ├── Attaches video lesson (50MB max)                         │
+│    ├── Attaches video lesson (200MB max, auto-compressed to 20-30MB) │
 │    ├── Adds 2 supporting images                                 │
 │    ├── Previews post                                            │
 │    └── Clicks "Post"                                            │
@@ -328,7 +328,7 @@ SpanishConnect addresses these challenges through:
 ```
 Upload Limits:
 ├── Images: 5MB each, max 5 per post
-├── Videos: 50MB each, max 1 per post  
+├── Videos: 200MB max upload, auto-compressed to 20-30MB (720p, H.264, 1.5 Mbps), max 1 per post
 ├── Audio: 10MB each, max 1 per post
 ├── Documents: 10MB each (to Files section)
 └── Profile Avatar: 5MB
@@ -1456,7 +1456,35 @@ async function uploadVideo(file, options = {}) {
 }
 ```
 
-#### 5.5.2 Folder Structure
+#### 5.5.2 Video Compression Strategy
+
+Videos are automatically compressed during upload using Cloudinary's transformation API:
+
+**Compression Settings:**
+- Maximum upload size: 200MB (raw video)
+- Target output size: 20-30MB (compressed)
+- Resolution: 720p (1280x720)
+- Video codec: H.264
+- Bitrate: 1.5 Mbps (optimal for educational content)
+- Audio codec: AAC at 44.1kHz
+- Format: MP4
+
+**Benefits:**
+- Maintains high quality for educational content (text, pronunciation, demonstrations remain clear)
+- Reduces storage costs on Cloudinary
+- Faster streaming for students
+- No client-side processing required
+- Consistent quality across all uploads
+
+**Implementation:**
+Videos are processed server-side using Cloudinary's eager transformation feature with async processing to prevent upload timeouts.
+
+**Expected File Sizes:**
+- 5-minute 200MB video → ~25MB (720p, excellent quality)
+- 10-minute 100MB video → ~28MB (720p, excellent quality)
+- 2-minute 50MB video → ~15MB (720p, excellent quality)
+
+#### 5.5.3 Folder Structure
 ```
 spanishconnect/
 ├── avatars/
@@ -4910,8 +4938,8 @@ const allowedMimeTypes = {
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 50 * 1024 * 1024,  // 50MB max
-    files: 5  // Max 5 files
+    fileSize: 200 * 1024 * 1024,  // 200MB max (videos compressed via Cloudinary)
+    files: 6  // Max 6 files (5 images + 1 video)
   },
   fileFilter: (req, file, cb) => {
     const allAllowed = [

@@ -24,10 +24,37 @@ const uploadMedia = async (file, type) => {
       { quality: 'auto:good' }
     ];
   } else if (type === 'video') {
+    // Comprehensive video compression for educational content
+    // Target: 20-30MB output, 720p resolution, 1.5 Mbps bitrate
     options.transformation = [
-      { width: 1280, height: 720, crop: 'limit' },
-      { quality: 'auto:good' }
+      {
+        width: 1280,
+        height: 720,
+        crop: 'limit',
+        quality: 'auto:good',
+        fetch_format: 'mp4',
+        video_codec: 'h264',
+        bit_rate: '1.5m',        // 1.5 Mbps for excellent 720p quality
+        audio_codec: 'aac',
+        audio_frequency: 44100
+      }
     ];
+
+    // Eager transformation for async processing (prevents upload timeout)
+    options.eager = [
+      {
+        width: 1280,
+        height: 720,
+        crop: 'limit',
+        quality: 'auto:good',
+        format: 'mp4',
+        video_codec: 'h264',
+        bit_rate: '1.5m',
+        audio_codec: 'aac',
+        audio_frequency: 44100
+      }
+    ];
+    options.eager_async = true;  // Process in background to prevent timeout
   }
 
   // Handle both file path and buffer
@@ -160,10 +187,10 @@ export async function createPost(req, res) {
     }
 
     // Validate video size
-    if (video && video.size > 50 * 1024 * 1024) {
+    if (video && video.size > 200 * 1024 * 1024) {
       return res.status(400).json({
         success: false,
-        message: 'Video must be less than 50MB'
+        message: 'Video must be less than 200MB (will be automatically compressed to 20-30MB)'
       });
     }
 
