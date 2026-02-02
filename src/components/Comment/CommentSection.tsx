@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Comment, getComments } from '../../services/api';
+import { Virtuoso } from 'react-virtuoso';
+import { Comment, getComment, getComments } from '../../services/api';
 import { CommentForm } from './CommentForm';
 import { CommentItem } from './CommentItem';
+import { CommentThreadProvider, useCommentThread } from '../../contexts/CommentThreadContext';
 
 interface CommentSectionProps {
   postId: string;
 }
 
-export const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
+const CommentSectionContent: React.FC<CommentSectionProps> = ({ postId }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [pinnedComment, setPinnedComment] = useState<Comment | null>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { toggleCollapse, isCollapsed, setHighlightedCommentId } = useCommentThread();
 
   const loadComments = async (reset = false) => {
     if (loading) return;
@@ -47,6 +50,64 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
     loadComments(true);
   }, [postId]);
 
+  // Deep linking handler
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash.startsWith('#comment-')) {
+      const commentId = hash.replace('#comment-', '');
+      handleDeepLink(commentId);
+    }
+  }, []);
+
+  const handleDeepLink = async (commentId: string) => {
+    try {
+      const response = await getComment(commentId);
+      if (!response.success) return;
+
+      const comment = response.data.comment;
+      const parentChain = response.data.parentChain || [];
+
+      // Expand all parent threads
+      if (comment.path) {
+        const ancestorIds = comment.path.split('/').filter((id) => id);
+        ancestorIds.forEach((id) => {
+          if (isCollapsed(id)) {
+            toggleCollapse(id);
+          }
+        });
+      }
+
+      // Build minimal thread chain if comment isn't in current list
+      if (parentChain.length > 0) {
+        const chain = [...parentChain, comment];
+        const root = { ...chain[0], replies: [] as Comment[], hasMoreReplies: false };
+        let current = root;
+        for (let i = 1; i < chain.length; i++) {
+          const node = { ...chain[i], replies: [] as Comment[], hasMoreReplies: false };
+          current.replies = [node];
+          current = node;
+        }
+
+        setComments((prev) => {
+          const exists = prev.some((c) => c._id === root._id);
+          return exists ? prev : [root, ...prev];
+        });
+      }
+
+      // Scroll and highlight
+      setTimeout(() => {
+        const element = document.getElementById(`comment-${commentId}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setHighlightedCommentId(commentId);
+          setTimeout(() => setHighlightedCommentId(null), 3000);
+        }
+      }, 150);
+    } catch (error) {
+      console.error('Deep link error:', error);
+    }
+  };
+
   const handleRefresh = () => {
     setPage(1);
     loadComments(true);
@@ -58,6 +119,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
     setPage(nextPage);
     loadComments();
   };
+
+  const shouldVirtualize = comments.length > 50;
 
   return (
     <div className="mt-4 border-t border-gray-200 pt-4">
@@ -77,19 +140,44 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
         </div>
       )}
 
-      {comments.map((comment) => (
-        <CommentItem key={comment._id} comment={comment} postId={postId} onRefresh={handleRefresh} />
-      ))}
+      {shouldVirtualize ? (
+        <Virtuoso
+          data={comments}
+          style={{ height: '600px' }}
+          itemContent={(_index, comment) => (
+            <CommentItem key={comment._id} comment={comment} postId={postId} onRefresh={handleRefresh} />
+          )}
+          endReached={() => {
+            if (hasMore && !loading) {
+              handleLoadMore();
+            }
+          }}
+        />
+      ) : (
+        <>
+          {comments.map((comment) => (
+            <CommentItem key={comment._id} comment={comment} postId={postId} onRefresh={handleRefresh} />
+          ))}
 
-      {hasMore && (
-        <button
-          onClick={handleLoadMore}
-          disabled={loading}
-          className="mt-4 text-sm text-blue-600 hover:text-blue-800"
-        >
-          {loading ? 'Loading...' : 'Load more comments'}
-        </button>
+          {hasMore && (
+            <button
+              onClick={handleLoadMore}
+              disabled={loading}
+              className="mt-4 text-sm text-blue-600 hover:text-blue-800"
+            >
+              {loading ? 'Loading...' : 'Load more comments'}
+            </button>
+          )}
+        </>
       )}
     </div>
+  );
+};
+
+export const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
+  return (
+    <CommentThreadProvider>
+      <CommentSectionContent postId={postId} />
+    </CommentThreadProvider>
   );
 };

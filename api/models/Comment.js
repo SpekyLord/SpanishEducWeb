@@ -34,6 +34,7 @@ const commentSchema = new mongoose.Schema(
     totalRepliesCount: { type: Number, default: 0 },
     // Status
     isPinned: { type: Boolean, default: false },
+    isHighlighted: { type: Boolean, default: false },
     isEdited: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
     deletedAt: Date,
@@ -45,7 +46,10 @@ const commentSchema = new mongoose.Schema(
 // Indexes for efficient comment queries
 commentSchema.index({ post: 1, parentComment: 1, createdAt: -1 })
 commentSchema.index({ post: 1, rootComment: 1, path: 1 })
+commentSchema.index({ post: 1, depth: 1, likesCount: -1 })
 commentSchema.index({ post: 1, isPinned: 1, createdAt: -1 })
+commentSchema.index({ 'author._id': 1, createdAt: -1 })
+commentSchema.index({ post: 1, createdAt: -1 })
 
 const Comment = mongoose.model('Comment', commentSchema)
 

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { Comment, likeComment, unlikeComment, updateComment, deleteComment } from '../../services/api';
+import { Comment, likeComment, unlikeComment, pinComment, unpinComment, updateComment, deleteComment, getReplies } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { CommentForm } from './CommentForm';
+import { ThreadLine } from './ThreadLine';
+import { useCommentThread } from '../../contexts/CommentThreadContext';
+import { MentionText } from './MentionText';
 
 interface CommentItemProps {
   comment: Comment;
@@ -12,13 +15,26 @@ interface CommentItemProps {
 
 export const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, depth = 0, onRefresh }) => {
   const { user } = useAuth();
+  const { toggleCollapse, isCollapsed, highlightedCommentId } = useCommentThread();
   const [isReplying, setIsReplying] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(comment.content);
   const [isLiking, setIsLiking] = useState(false);
 
+  // Lazy loading state
+  const [lazyReplies, setLazyReplies] = useState<Comment[]>([]);
+  const [replyPage, setReplyPage] = useState(1);
+  const [loadingReplies, setLoadingReplies] = useState(false);
+  const [hasMoreReplies, setHasMoreReplies] = useState(comment.hasMoreReplies || false);
+
   const isOwner = user?._id === comment.author._id;
-  const canReply = depth < 2;
+  const collapsed = isCollapsed(comment._id);
+  const hasReplies = comment.repliesCount > 0 || (comment.replies && comment.replies.length > 0);
+
+  // Merge initial replies with lazy-loaded replies
+  const allReplies = [...(comment.replies || []), ...lazyReplies];
+
+  const canReply = !comment.isDeleted;
   const canEdit = (() => {
     if (!isOwner) return false;
     if (user?.role === 'teacher') return true;
@@ -65,6 +81,37 @@ export const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, depth
     }
   };
 
+  const handlePin = async () => {
+    try {
+      if (comment.isPinned) {
+        await unpinComment(comment._id);
+      } else {
+        await pinComment(comment._id);
+      }
+      onRefresh?.();
+    } catch (error) {
+      console.error('Error toggling pin:', error);
+    }
+  };
+
+  const loadMoreReplies = async () => {
+    if (loadingReplies) return;
+    setLoadingReplies(true);
+
+    try {
+      const response = await getReplies(comment._id, replyPage + 1, 10);
+      if (response.success) {
+        setLazyReplies((prev) => [...prev, ...response.data.replies]);
+        setReplyPage((p) => p + 1);
+        setHasMoreReplies(response.pagination.hasMore);
+      }
+    } catch (error) {
+      console.error('Error loading replies:', error);
+    } finally {
+      setLoadingReplies(false);
+    }
+  };
+
   const formatDate = (date: string) => {
     const now = new Date();
     const commentDate = new Date(date);
@@ -77,7 +124,13 @@ export const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, depth
   };
 
   return (
-    <div className={`mt-4 ${depth > 0 ? 'ml-8 border-l border-gray-200 pl-4' : ''}`}>
+    <div
+      id={`comment-${comment._id}`}
+      className={`mt-4 relative ${depth > 0 ? 'ml-8' : ''} ${
+        highlightedCommentId === comment._id ? 'bg-blue-50 border-2 border-blue-400 rounded-lg p-2 transition-all' : ''
+      }`}
+    >
+      <ThreadLine depth={depth} isLast={false} />
       <div className="flex gap-3">
         <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-semibold">
           {comment.author.displayName.charAt(0).toUpperCase()}
@@ -88,7 +141,9 @@ export const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, depth
             <span className="text-xs text-gray-500">@{comment.author.username}</span>
             <span className="text-xs text-gray-400">· {formatDate(comment.createdAt)}</span>
             {comment.isPinned && (
-              <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">📌 Pinned</span>
+              <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded font-semibold shadow-sm">
+                📌 Pinned by Teacher
+              </span>
             )}
           </div>
 
@@ -118,7 +173,9 @@ export const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, depth
               </div>
             </div>
           ) : (
-            <p className="text-gray-800 text-sm mt-1 whitespace-pre-wrap">{comment.content}</p>
+            <p className="text-gray-800 text-sm mt-1 whitespace-pre-wrap">
+              <MentionText content={comment.content} mentions={comment.mentions} />
+            </p>
           )}
 
           {!comment.isDeleted && (
@@ -154,6 +211,34 @@ export const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, depth
                   Delete
                 </button>
               )}
+              {user?.role === 'teacher' && !comment.isDeleted && (
+                <button
+                  onClick={handlePin}
+                  className="text-xs text-gray-500 hover:text-yellow-600"
+                  title={comment.isPinned ? 'Unpin comment' : 'Pin comment'}
+                >
+                  {comment.isPinned ? '📌 Unpin' : '📌 Pin'}
+                </button>
+              )}
+              {hasReplies && (
+                <button
+                  onClick={() => toggleCollapse(comment._id)}
+                  className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1"
+                >
+                  {collapsed ? '▶' : '▼'}{' '}
+                  {collapsed ? `Show ${comment.totalRepliesCount || comment.repliesCount} replies` : 'Hide replies'}
+                </button>
+              )}
+              <button
+                onClick={() => {
+                  const url = `${window.location.origin}${window.location.pathname}#comment-${comment._id}`;
+                  navigator.clipboard.writeText(url);
+                }}
+                className="text-xs text-gray-500 hover:text-gray-700"
+                title="Copy link to comment"
+              >
+                🔗 Share
+              </button>
             </div>
           )}
 
@@ -161,18 +246,21 @@ export const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, depth
             <CommentForm
               postId={postId}
               parentCommentId={comment._id}
+              parentAuthor={comment.author.username}
               onCreated={() => {
                 setIsReplying(false);
                 onRefresh?.();
               }}
-              placeholder="Write a reply..."
+              onCancel={() => setIsReplying(false)}
+              placeholder={`Reply to @${comment.author.username}...`}
+              autoFocus
               compact
             />
           )}
 
-          {comment.replies && comment.replies.length > 0 && (
+          {!collapsed && allReplies.length > 0 && (
             <div className="mt-2">
-              {comment.replies.map((reply) => (
+              {allReplies.map((reply) => (
                 <CommentItem
                   key={reply._id}
                   comment={reply}
@@ -181,8 +269,14 @@ export const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, depth
                   onRefresh={onRefresh}
                 />
               ))}
-              {comment.hasMoreReplies && (
-                <div className="text-xs text-gray-500 mt-2">View more replies</div>
+              {(hasMoreReplies || comment.hasMoreReplies) && (
+                <button
+                  onClick={loadMoreReplies}
+                  disabled={loadingReplies}
+                  className="text-xs text-blue-600 hover:text-blue-800 font-medium mt-2 disabled:text-gray-400"
+                >
+                  {loadingReplies ? 'Loading...' : `Load ${comment.repliesCount - allReplies.length} more replies`}
+                </button>
               )}
             </div>
           )}

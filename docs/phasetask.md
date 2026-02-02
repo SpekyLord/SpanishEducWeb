@@ -21,12 +21,12 @@
 |-------|--------|----------|-------------|
 | Phase 1: Foundation | ✅ Complete | 16/16 | Week 1-2 |
 | Phase 2: Core Content | ✅ Complete | 11/11 | Week 3 |
-| Phase 3: Comment System | 🟡 In Progress | 10/20 | Week 4-5 |
+| Phase 3: Comment System | ✅ Complete | 20/20 | Week 4-5 |
 | Phase 4: Additional Features | 🔴 Not Started | 0/15 | Week 6 |
 | Phase 5: Notifications & Polish | 🔴 Not Started | 0/13 | Week 7 |
 | Phase 6: Testing & Launch | 🔴 Not Started | 0/10 | Week 8 |
 
-**Overall Progress:** 37/85 tasks completed (44%)
+**Overall Progress:** 47/85 tasks completed (55%)
 
 ---
 
@@ -100,8 +100,8 @@
 
 ## 💬 PHASE 3: COMMENT SYSTEM (Weeks 4-5)
 
-**Status:** 🟡 In Progress  
-**Progress:** 10/20 tasks  
+**Status:** ✅ Complete
+**Progress:** 20/20 tasks
 **Milestone:** Full comment system with infinite nesting and threading
 
 ### Week 4: Basic Comments
@@ -119,29 +119,29 @@
 
 ### Week 5: Advanced Comments
 
-- [ ] **5.1** Implement infinite nesting logic (unlimited depth)
-- [ ] **5.2** Create thread lines UI for visual hierarchy
-- [ ] **5.3** Build collapse/expand functionality for threads
-- [ ] **5.4** Implement lazy loading for nested replies ("View more replies")
-- [ ] **5.5** Build deep linking to specific comments (#comment-id)
-- [ ] **5.6** Add @mention detection and parsing
-- [ ] **5.7** Build pin comment API (teacher only, 1 per post)
-- [ ] **5.8** Create pinned comment UI badge (📌)
-- [ ] **5.9** Build reply composer inline UI
-- [ ] **5.10** Implement virtual scrolling for large comment threads
+- [x] **5.1** Implement infinite nesting logic (unlimited depth)
+- [x] **5.2** Create thread lines UI for visual hierarchy
+- [x] **5.3** Build collapse/expand functionality for threads
+- [x] **5.4** Implement lazy loading for nested replies ("View more replies")
+- [x] **5.5** Build deep linking to specific comments (#comment-id)
+- [x] **5.6** Add @mention detection and parsing
+- [x] **5.7** Build pin comment API (teacher only, 1 per post)
+- [x] **5.8** Create pinned comment UI badge (📌)
+- [x] **5.9** Build reply composer inline UI
+- [x] **5.10** Implement virtual scrolling for large comment threads
 
 **Phase 3 Verification:**
-- [ ] Users can create root-level comments
-- [ ] Users can reply to any comment (unlimited depth)
-- [ ] Nested comments display with proper indentation
-- [ ] "View more replies" loads additional nested comments
-- [ ] Users can like comments
-- [ ] Users can edit comments within 15 minutes
-- [ ] Deleted comments show placeholder but preserve thread
-- [ ] Teacher can pin one comment per post
-- [ ] Deep links scroll to specific comment
-- [ ] @mentions are highlighted in comments
-- [ ] Thread collapse/expand works at any level
+- [x] Users can create root-level comments
+- [x] Users can reply to any comment (unlimited depth)
+- [x] Nested comments display with proper indentation
+- [x] "View more replies" loads additional nested comments
+- [x] Users can like comments
+- [x] Users can edit comments within 15 minutes
+- [x] Deleted comments show placeholder but preserve thread
+- [x] Teacher can pin one comment per post
+- [x] Deep links scroll to specific comment
+- [x] @mentions are highlighted in comments
+- [x] Thread collapse/expand works at any level
 
 ---
 

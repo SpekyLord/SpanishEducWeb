@@ -5,9 +5,8 @@ import { requireTeacher } from '../middleware/role.middleware.js'
 
 const router = Router()
 
-// Get comments for a post
-router.get('/post/:postId', optionalAuth, commentsController.getComments)
-router.get('/post/:postId/replies/:commentId', optionalAuth, commentsController.getReplies)
+// Replies for a comment
+router.get('/:commentId/replies', optionalAuth, commentsController.getReplies)
 
 // Get single comment
 router.get('/:id', optionalAuth, commentsController.getComment)

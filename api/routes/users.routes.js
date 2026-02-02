@@ -5,6 +5,9 @@ import { requireTeacher } from '../middleware/role.middleware.js'
 
 const router = Router()
 
+// Search users (for @mention autocomplete)
+router.get('/search', optionalAuth, usersController.searchUsers)
+
 // Get user profile (public for teacher, authenticated for students)
 router.get('/:username', optionalAuth, usersController.getUserProfile)
 

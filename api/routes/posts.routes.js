@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import multer from 'multer'
 import * as postsController from '../controllers/posts.controller.js'
+import * as commentsController from '../controllers/comments.controller.js'
 import { authenticate, optionalAuth } from '../middleware/auth.middleware.js'
 import { requireTeacher } from '../middleware/role.middleware.js'
 
@@ -31,12 +32,14 @@ const upload = multer({
 // Public routes (with optional auth for personalized data)
 router.get('/', optionalAuth, postsController.getPosts)
 router.get('/:id', optionalAuth, postsController.getPost)
+router.get('/:postId/comments', optionalAuth, commentsController.getComments)
 
 // Protected routes
 router.post('/', authenticate, requireTeacher, upload.fields([
   { name: 'images', maxCount: 5 },
   { name: 'video', maxCount: 1 }
 ]), postsController.createPost)
+router.post('/:postId/comments', authenticate, commentsController.createComment)
 router.put('/:id', authenticate, requireTeacher, postsController.updatePost)
 router.delete('/:id', authenticate, requireTeacher, postsController.deletePost)
 router.post('/:id/pin', authenticate, requireTeacher, postsController.pinPost)

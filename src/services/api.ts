@@ -133,6 +133,14 @@ export interface CommentsResponse {
   };
 }
 
+export interface CommentResponse {
+  success: boolean;
+  data: {
+    comment: Comment;
+    parentChain?: Comment[];
+  };
+}
+
 export interface PostsResponse {
   success: boolean;
   data: {
@@ -238,7 +246,7 @@ export const getComments = async (
   limit = 10,
   sort: 'newest' | 'oldest' | 'popular' | 'discussed' = 'newest'
 ): Promise<CommentsResponse> => {
-  const response = await api.get(`/comments/post/${postId}`, {
+  const response = await api.get(`/posts/${postId}/comments`, {
     params: { page, limit, sort }
   });
   return response.data;
@@ -246,13 +254,20 @@ export const getComments = async (
 
 // Get replies for a comment
 export const getReplies = async (
-  postId: string,
   commentId: string,
   page = 1,
   limit = 10
 ): Promise<{ success: boolean; data: { replies: Comment[] }; pagination: CommentsResponse['pagination'] }> => {
-  const response = await api.get(`/comments/post/${postId}/replies/${commentId}`, {
+  const response = await api.get(`/comments/${commentId}/replies`, {
     params: { page, limit }
+  });
+  return response.data;
+};
+
+// Get single comment (with parent chain)
+export const getComment = async (commentId: string): Promise<CommentResponse> => {
+  const response = await api.get(`/comments/${commentId}`, {
+    params: { context: true }
   });
   return response.data;
 };
@@ -261,9 +276,12 @@ export const getReplies = async (
 export const createComment = async (data: {
   postId: string;
   content: string;
-  parentComment?: string;
+  parentCommentId?: string;
 }): Promise<{ success: boolean; data: { comment: Comment } }> => {
-  const response = await api.post('/comments', data);
+  const response = await api.post(`/posts/${data.postId}/comments`, {
+    content: data.content,
+    parentCommentId: data.parentCommentId
+  });
   return response.data;
 };
 
@@ -291,6 +309,30 @@ export const likeComment = async (commentId: string): Promise<{ success: boolean
 // Unlike comment
 export const unlikeComment = async (commentId: string): Promise<{ success: boolean; data: { likesCount: number } }> => {
   const response = await api.delete(`/comments/${commentId}/like`);
+  return response.data;
+};
+
+// Pin comment (teacher only)
+export const pinComment = async (commentId: string): Promise<{ success: boolean; data: { comment: Comment } }> => {
+  const response = await api.post(`/comments/${commentId}/pin`);
+  return response.data;
+};
+
+// Unpin comment (teacher only)
+export const unpinComment = async (commentId: string): Promise<{ success: boolean; data: { comment: Comment } }> => {
+  const response = await api.delete(`/comments/${commentId}/pin`);
+  return response.data;
+};
+
+// Pin comment (teacher only)
+export const pinComment = async (commentId: string): Promise<{ success: boolean; data: { comment: Comment } }> => {
+  const response = await api.post(`/comments/${commentId}/pin`);
+  return response.data;
+};
+
+// Unpin comment
+export const unpinComment = async (commentId: string): Promise<{ success: boolean; data: { comment: Comment } }> => {
+  const response = await api.delete(`/comments/${commentId}/pin`);
   return response.data;
 };
 

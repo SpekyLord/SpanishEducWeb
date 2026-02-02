@@ -25,7 +25,7 @@ const attachUserLike = (comment, userId) => {
 
 export async function getComments(req, res) {
   try {
-    const { postId } = req.params
+    const postId = req.params.postId || req.body.postId
     const page = parseInt(req.query.page) || 1
     const limit = Math.min(parseInt(req.query.limit) || 10, 50)
     const sort = req.query.sort || 'newest'
@@ -35,6 +35,10 @@ export async function getComments(req, res) {
       oldest: { createdAt: 1 },
       popular: { likesCount: -1, createdAt: -1 },
       discussed: { repliesCount: -1, createdAt: -1 }
+    }
+
+    if (!postId) {
+      return res.status(400).json({ success: false, message: 'postId is required' })
     }
 
     const query = {
@@ -106,10 +110,19 @@ export async function getComments(req, res) {
 
 export async function getReplies(req, res) {
   try {
-    const { postId, commentId } = req.params
+    const { postId: paramPostId, commentId } = req.params
     const page = parseInt(req.query.page) || 1
     const limit = Math.min(parseInt(req.query.limit) || 10, 50)
     const skip = (page - 1) * limit
+
+    let postId = paramPostId
+    if (!postId) {
+      const parent = await Comment.findById(commentId).select('post')
+      if (!parent) {
+        return res.status(404).json({ success: false, message: 'Parent comment not found' })
+      }
+      postId = parent.post.toString()
+    }
 
     const query = {
       post: postId,
@@ -149,7 +162,29 @@ export async function getComment(req, res) {
       return res.status(404).json({ success: false, message: 'Comment not found' })
     }
 
-    res.json({ success: true, data: { comment: attachUserLike(comment, req.user?._id) } })
+    const includeContext = req.query.context !== 'false'
+    let parentChain = []
+
+    if (includeContext && comment.path) {
+      const ids = comment.path.split('/').filter(Boolean)
+      const parentIds = ids.filter((id) => id !== comment._id.toString())
+      if (parentIds.length > 0) {
+        const parents = await Comment.find({ _id: { $in: parentIds } }).lean()
+        const byId = parents.reduce((acc, item) => {
+          acc[item._id.toString()] = item
+          return acc
+        }, {})
+        parentChain = parentIds.map((id) => byId[id]).filter(Boolean)
+      }
+    }
+
+    res.json({
+      success: true,
+      data: {
+        comment: attachUserLike(comment, req.user?._id),
+        parentChain
+      }
+    })
   } catch (error) {
     console.error('Get comment error:', error)
     res.status(500).json({ success: false, message: 'Server error fetching comment' })
@@ -158,13 +193,19 @@ export async function getComment(req, res) {
 
 export async function createComment(req, res) {
   try {
-    const { postId, content, parentComment } = req.body
+    const postId = req.body.postId || req.params.postId
+    const { content } = req.body
+    const parentComment = req.body.parentComment || req.body.parentCommentId
 
     if (!content || content.trim().length === 0) {
       return res.status(400).json({ success: false, message: 'Comment content is required' })
     }
     if (content.length > 2000) {
       return res.status(400).json({ success: false, message: 'Comment cannot exceed 2000 characters' })
+    }
+
+    if (!postId) {
+      return res.status(400).json({ success: false, message: 'postId is required' })
     }
 
     const post = await Post.findOne({ _id: postId, isDeleted: false })
@@ -187,9 +228,6 @@ export async function createComment(req, res) {
       }
 
       depth = parent.depth + 1
-      if (depth > 2) {
-        return res.status(400).json({ success: false, message: 'Max depth (2) reached for Week 4' })
-      }
       rootComment = parent.rootComment || parent._id
       path = parent.path || parent._id.toString()
     }
