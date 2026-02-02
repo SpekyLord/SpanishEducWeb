@@ -97,36 +97,36 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-4">
+    <div className="bg-[#242526] rounded-lg border border-[#3a3b3c] p-6 mb-8">
       {/* Author Header */}
-      <div className="flex items-center mb-4">
-        <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">
+      <div className="flex items-center mb-6">
+        <div className="w-11 h-11 rounded-full bg-[#3a3b3c] flex items-center justify-center text-white font-semibold">
           {currentPost.author.displayName.charAt(0).toUpperCase()}
         </div>
-        <div className="ml-3">
+        <div className="ml-5">
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-gray-900">{currentPost.author.displayName}</h3>
-            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+            <h3 className="font-semibold text-gray-100">{currentPost.author.displayName}</h3>
+            <span className="text-xs bg-[#3a3b3c] text-gray-300 px-2 py-1 rounded">
               {currentPost.author.role}
             </span>
             {currentPost.isPinned && (
-              <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+              <span className="text-xs bg-[#3a3b3c] text-yellow-300 px-2 py-1 rounded">
                 📌 Pinned
               </span>
             )}
           </div>
-          <p className="text-sm text-gray-500">@{currentPost.author.username} · {formatDate(currentPost.createdAt)}</p>
+          <p className="text-xs text-gray-500 mt-2">@{currentPost.author.username} · {formatDate(currentPost.createdAt)}</p>
         </div>
       </div>
 
       {/* Content */}
-      <div className="mb-4">
-        <p className="text-gray-800 whitespace-pre-wrap">{currentPost.content}</p>
+      <div className="mb-6">
+        <p className="text-gray-100 text-base whitespace-pre-wrap leading-relaxed">{currentPost.content}</p>
       </div>
 
       {/* Media */}
       {currentPost.media && currentPost.media.length > 0 && (
-        <div className="mb-4">
+        <div className="mb-6">
           {currentPost.media[0].type === 'video' ? (
             <video
               controls
@@ -152,7 +152,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
 
       {/* Reactions Summary */}
       {currentPost.reactionsCount.total > 0 && (
-        <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-200">
+        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-[#3a3b3c]">
           <div className="flex -space-x-1">
             {REACTIONS.map(({ type, emoji }) => 
               currentPost.reactionsCount[type] > 0 && (
@@ -162,22 +162,22 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
               )
             )}
           </div>
-          <span className="text-sm text-gray-600">{currentPost.reactionsCount.total}</span>
+          <span className="text-sm text-gray-300">{currentPost.reactionsCount.total}</span>
           <span className="flex-1" />
-          <span className="text-sm text-gray-600">{currentPost.commentsCount} comments</span>
+          <span className="text-sm text-gray-300">{currentPost.commentsCount} comments</span>
         </div>
       )}
 
       {/* Action Buttons */}
-      <div className="flex items-center gap-4 pt-2">
+      <div className="flex items-center gap-4 pt-3 border-t border-[#3a3b3c]/50">
         {/* Reaction Button */}
         <div className="relative">
           <button
             onClick={() => setShowReactionPicker(!showReactionPicker)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
               currentPost.userReaction
-                ? 'bg-blue-50 text-blue-600'
-                : 'hover:bg-gray-100 text-gray-700'
+                ? 'bg-[#3a3b3c] text-blue-300'
+                : 'hover:bg-[#3a3b3c] text-gray-200'
             }`}
             disabled={isReacting}
           >
@@ -200,12 +200,12 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
 
           {/* Reaction Picker */}
           {showReactionPicker && (
-            <div className="absolute bottom-full left-0 mb-2 bg-white shadow-lg rounded-lg p-2 flex gap-1 z-10">
+            <div className="absolute bottom-full left-0 mb-2 bg-[#242526] border border-[#3a3b3c] shadow-lg rounded-lg p-2 flex gap-1 z-10">
               {REACTIONS.map(({ type, emoji, label }) => (
                 <button
                   key={type}
                   onClick={() => handleReaction(type)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-[#3a3b3c] rounded-lg transition-colors"
                   title={label}
                 >
                   <span className="text-2xl">{emoji}</span>
@@ -219,7 +219,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
         <button
           onClick={() => setShowComments(!showComments)}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-            showComments ? 'bg-gray-100 text-gray-700' : 'hover:bg-gray-100 text-gray-700'
+            showComments ? 'bg-[#3a3b3c] text-gray-200' : 'hover:bg-[#3a3b3c] text-gray-200'
           }`}
         >
           <span className="text-xl">💬</span>
@@ -232,8 +232,8 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
             onClick={handleBookmark}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
               currentPost.isBookmarked
-                ? 'bg-yellow-50 text-yellow-600'
-                : 'hover:bg-gray-100 text-gray-700'
+                ? 'bg-[#3a3b3c] text-yellow-300'
+                : 'hover:bg-[#3a3b3c] text-gray-200'
             }`}
             disabled={isBookmarking}
           >

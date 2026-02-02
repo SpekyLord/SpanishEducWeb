@@ -324,16 +324,4 @@ export const unpinComment = async (commentId: string): Promise<{ success: boolea
   return response.data;
 };
 
-// Pin comment (teacher only)
-export const pinComment = async (commentId: string): Promise<{ success: boolean; data: { comment: Comment } }> => {
-  const response = await api.post(`/comments/${commentId}/pin`);
-  return response.data;
-};
-
-// Unpin comment
-export const unpinComment = async (commentId: string): Promise<{ success: boolean; data: { comment: Comment } }> => {
-  const response = await api.delete(`/comments/${commentId}/pin`);
-  return response.data;
-};
-
 export default api;

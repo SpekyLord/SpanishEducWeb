@@ -131,16 +131,16 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+    <div className="bg-[#242526] rounded-lg border border-[#3a3b3c] p-8">
       <form onSubmit={handleSubmit}>
         {/* Header */}
-        <div className="flex items-center mb-4">
-          <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">
+        <div className="flex items-center mb-6">
+          <div className="w-11 h-11 rounded-full bg-[#3a3b3c] flex items-center justify-center text-white font-semibold">
             {user.displayName.charAt(0).toUpperCase()}
           </div>
           <div className="ml-3">
-            <h3 className="font-semibold text-gray-900">{user.displayName}</h3>
-            <p className="text-sm text-gray-500">Create a new post</p>
+            <h3 className="font-semibold text-gray-100">{user.displayName}</h3>
+            <p className="text-sm text-gray-400">Create a new post</p>
           </div>
         </div>
 
@@ -149,17 +149,17 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Share a lesson, assignment, or announcement..."
-          className="w-full min-h-[120px] p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+          className="w-full min-h-[110px] p-4 border border-[#3a3b3c] rounded-lg bg-[#3a3b3c] text-gray-100 placeholder-gray-400 focus:outline-none resize-none"
           disabled={isSubmitting}
         />
 
-        <div className="text-sm text-gray-500 mt-2 mb-4">
+        <div className="text-sm text-gray-400 mt-4 mb-6">
           {content.length} / 10000 characters
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
+          <div className="bg-red-900/20 border border-red-700/50 text-red-400 px-4 py-3 rounded-lg mb-4 text-sm">
             {error}
           </div>
         )}
@@ -204,10 +204,10 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
                 ✕
               </button>
             </div>
-            <div className="text-sm text-gray-600 mt-2">
+            <div className="text-sm text-gray-400 mt-2">
               Original size: {(video!.size / (1024 * 1024)).toFixed(2)} MB
               {video!.size > 30 * 1024 * 1024 && (
-                <span className="text-blue-600 ml-2">
+                <span className="text-blue-400 ml-2">
                   (Will be compressed to ~20-30MB)
                 </span>
               )}
@@ -216,13 +216,13 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
         )}
 
         {/* Actions */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+        <div className="flex items-center justify-between pt-4 border-t border-[#3a3b3c]">
           <div className="flex items-center gap-2">
             {/* Image Upload */}
             <button
               type="button"
               onClick={() => imageInputRef.current?.click()}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#3a3b3c] text-gray-200 hover:bg-[#4e4f50] transition-colors"
               disabled={isSubmitting || images.length >= 5 || video !== null}
             >
               <span className="text-xl">📷</span>
@@ -241,7 +241,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
             <button
               type="button"
               onClick={() => videoInputRef.current?.click()}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#3a3b3c] text-gray-200 hover:bg-[#4e4f50] transition-colors"
               disabled={isSubmitting || video !== null || images.length > 0}
             >
               <span className="text-xl">🎥</span>
@@ -256,7 +256,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
             />
 
             {/* Pin Toggle */}
-            <label className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+            <label className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-[#3a3b3c] cursor-pointer">
               <input
                 type="checkbox"
                 checked={isPinned}
@@ -264,7 +264,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
                 className="w-4 h-4"
                 disabled={isSubmitting}
               />
-              <span className="text-sm font-medium text-gray-700">📌 Pin Post</span>
+              <span className="text-sm font-medium text-gray-200">📌 Pin Post</span>
             </label>
           </div>
 
@@ -272,7 +272,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
           <button
             type="submit"
             disabled={isSubmitting || !content.trim()}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-[#3a3b3c] disabled:cursor-not-allowed transition-colors font-medium"
           >
             {isSubmitting ? 'Posting...' : 'Post'}
           </button>
