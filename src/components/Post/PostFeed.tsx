@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Post, getPosts } from '../../services/api';
 import { PostCard } from './PostCard';
+import { PostSkeleton } from '../common/Skeleton';
 
 export const PostFeed: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -176,6 +177,15 @@ export const PostFeed: React.FC = () => {
         <div className="bg-red-900/20 border border-red-700/40 text-red-300 px-5 py-4 rounded-lg text-sm">
           {error}
         </div>
+      )}
+
+      {/* Initial Loading Skeletons */}
+      {loading && posts.length === 0 && !usingMock && (
+        <>
+          <PostSkeleton />
+          <PostSkeleton />
+          <PostSkeleton />
+        </>
       )}
 
       {/* Posts */}

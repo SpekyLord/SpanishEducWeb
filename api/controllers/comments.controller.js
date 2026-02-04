@@ -1,6 +1,12 @@
 import Comment from '../models/Comment.js'
 import Post from '../models/Post.js'
 import User from '../models/User.js'
+import {
+  createCommentReplyNotification,
+  createCommentLikeNotification,
+  createMentionNotification,
+  createPinnedCommentNotification
+} from '../services/notification.service.js'
 
 const EDIT_WINDOW_MINUTES = 15
 
@@ -256,6 +262,29 @@ export async function createComment(req, res) {
       if (rootComment && rootComment.toString() !== parent._id.toString()) {
         await Comment.findByIdAndUpdate(rootComment, { $inc: { totalRepliesCount: 1 } })
       }
+
+      // Create notification for comment reply
+      try {
+        await createCommentReplyNotification(comment, parent, post)
+      } catch (notifError) {
+        console.error('Failed to create reply notification:', notifError)
+      }
+    }
+
+    // Create notifications for mentions
+    if (mentions && mentions.length > 0) {
+      try {
+        const mentionedUsers = await User.find({
+          username: { $in: mentions },
+          _id: { $ne: req.user._id } // Don't notify self
+        }).select('_id')
+
+        for (const mentionedUser of mentionedUsers) {
+          await createMentionNotification(mentionedUser._id, comment, post)
+        }
+      } catch (notifError) {
+        console.error('Failed to create mention notifications:', notifError)
+      }
     }
 
     res.status(201).json({ success: true, data: { comment } })
@@ -345,6 +374,13 @@ export async function likeComment(req, res) {
       comment.likesCount += 1
       await comment.save()
       await User.findByIdAndUpdate(userId, { $inc: { 'stats.likesGiven': 1 } })
+
+      // Create notification for comment like
+      try {
+        await createCommentLikeNotification(comment, req.user)
+      } catch (notifError) {
+        console.error('Failed to create like notification:', notifError)
+      }
     }
 
     res.json({ success: true, data: { likesCount: comment.likesCount } })
@@ -386,6 +422,13 @@ export async function pinComment(req, res) {
     await Comment.updateMany({ post: comment.post }, { $set: { isPinned: false } })
     comment.isPinned = true
     await comment.save()
+
+    // Create notification for pinned comment
+    try {
+      await createPinnedCommentNotification(comment, comment.post, req.user)
+    } catch (notifError) {
+      console.error('Failed to create pinned notification:', notifError)
+    }
 
     res.json({ success: true, data: { comment } })
   } catch (error) {

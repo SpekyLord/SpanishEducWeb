@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { ThumbsUp, MessageCircle, Bookmark, BookmarkCheck, Pin } from 'lucide-react';
 import { Post, addReaction, removeReaction, bookmarkPost, removeBookmark } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { CommentSection } from '../Comment/CommentSection';
@@ -16,7 +17,7 @@ const REACTIONS = [
   { type: 'question', emoji: '❓', label: 'Question' }
 ] as const;
 
-export const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
+export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
   const { user } = useAuth();
   const [currentPost, setCurrentPost] = useState(post);
   const [showReactionPicker, setShowReactionPicker] = useState(false);
@@ -97,7 +98,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
   };
 
   return (
-    <div className="bg-[#242526] rounded-lg border border-[#3a3b3c] p-6 mb-8">
+    <div className="bg-fb-card rounded-lg border border-fb-border p-6 mb-4 shadow-fb">
       {/* Author Header */}
       <div className="flex items-center mb-6">
         <div className="w-11 h-11 rounded-full bg-[#3a3b3c] flex items-center justify-center text-white font-semibold">
@@ -110,8 +111,9 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
               {currentPost.author.role}
             </span>
             {currentPost.isPinned && (
-              <span className="text-xs bg-[#3a3b3c] text-yellow-300 px-2 py-1 rounded">
-                📌 Pinned
+              <span className="flex items-center gap-1 text-xs bg-fb-hover text-yellow-400 px-2 py-1 rounded">
+                <Pin size={12} />
+                <span>Pinned</span>
               </span>
             )}
           </div>
@@ -130,6 +132,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
           {currentPost.media[0].type === 'video' ? (
             <video
               controls
+              preload="metadata"
               className="w-full rounded-lg max-h-96"
               poster={currentPost.media[0].thumbnailUrl}
             >
@@ -142,6 +145,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
                   key={index}
                   src={item.url}
                   alt={`Post media ${index + 1}`}
+                  loading="lazy"
                   className="w-full rounded-lg object-cover max-h-96"
                 />
               ))}
@@ -169,21 +173,24 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
       )}
 
       {/* Action Buttons */}
-      <div className="flex items-center gap-4 pt-3 border-t border-[#3a3b3c]/50">
+      <div role="group" aria-label="Post actions" className="flex items-center gap-2 pt-3 border-t border-fb-border/50">
         {/* Reaction Button */}
         <div className="relative">
           <button
             onClick={() => setShowReactionPicker(!showReactionPicker)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+            aria-label={currentPost.userReaction ? `Change reaction (currently ${REACTIONS.find(r => r.type === currentPost.userReaction)?.label})` : 'Add reaction'}
+            aria-haspopup="true"
+            aria-expanded={showReactionPicker}
+            className={`flex items-center justify-center gap-2 flex-1 px-4 py-2 rounded-lg transition-all ${
               currentPost.userReaction
-                ? 'bg-[#3a3b3c] text-blue-300'
-                : 'hover:bg-[#3a3b3c] text-gray-200'
+                ? 'bg-fb-hover text-blue-400'
+                : 'hover:bg-fb-hover text-gray-300'
             }`}
             disabled={isReacting}
           >
             {currentPost.userReaction ? (
               <>
-                <span className="text-xl">
+                <span className="text-lg">
                   {REACTIONS.find(r => r.type === currentPost.userReaction)?.emoji}
                 </span>
                 <span className="text-sm font-medium">
@@ -192,23 +199,25 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
               </>
             ) : (
               <>
-                <span className="text-xl">👍</span>
-                <span className="text-sm font-medium">React</span>
+                <ThumbsUp size={18} />
+                <span className="text-sm font-medium">Like</span>
               </>
             )}
           </button>
 
           {/* Reaction Picker */}
           {showReactionPicker && (
-            <div className="absolute bottom-full left-0 mb-2 bg-[#242526] border border-[#3a3b3c] shadow-lg rounded-lg p-2 flex gap-1 z-10">
+            <div role="menu" aria-label="Choose reaction" className="absolute bottom-full left-0 mb-2 bg-fb-card border border-fb-border shadow-fb-xl rounded-lg p-2 flex gap-1 z-10">
               {REACTIONS.map(({ type, emoji, label }) => (
                 <button
                   key={type}
+                  role="menuitem"
                   onClick={() => handleReaction(type)}
-                  className="p-2 hover:bg-[#3a3b3c] rounded-lg transition-colors"
+                  aria-label={`React with ${label}`}
+                  className="p-2 hover:bg-fb-hover rounded-lg transition-colors transform hover:scale-110"
                   title={label}
                 >
-                  <span className="text-2xl">{emoji}</span>
+                  <span className="text-2xl" aria-hidden="true">{emoji}</span>
                 </button>
               ))}
             </div>
@@ -218,11 +227,13 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
         {/* Comment Button */}
         <button
           onClick={() => setShowComments(!showComments)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-            showComments ? 'bg-[#3a3b3c] text-gray-200' : 'hover:bg-[#3a3b3c] text-gray-200'
+          aria-label={showComments ? 'Hide comments' : `Show comments (${currentPost.commentsCount})`}
+          aria-pressed={showComments}
+          className={`flex items-center justify-center gap-2 flex-1 px-4 py-2 rounded-lg transition-all ${
+            showComments ? 'bg-fb-hover text-blue-400' : 'hover:bg-fb-hover text-gray-300'
           }`}
         >
-          <span className="text-xl">💬</span>
+          <MessageCircle size={18} aria-hidden="true" />
           <span className="text-sm font-medium">Comment</span>
         </button>
 
@@ -230,14 +241,20 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
         {user && (
           <button
             onClick={handleBookmark}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+            aria-label={currentPost.isBookmarked ? 'Remove bookmark' : 'Save post'}
+            aria-pressed={currentPost.isBookmarked}
+            className={`flex items-center justify-center gap-2 flex-1 px-4 py-2 rounded-lg transition-all ${
               currentPost.isBookmarked
-                ? 'bg-[#3a3b3c] text-yellow-300'
-                : 'hover:bg-[#3a3b3c] text-gray-200'
+                ? 'bg-fb-hover text-yellow-400'
+                : 'hover:bg-fb-hover text-gray-300'
             }`}
             disabled={isBookmarking}
           >
-            <span className="text-xl">{currentPost.isBookmarked ? '🔖' : '📑'}</span>
+            {currentPost.isBookmarked ? (
+              <BookmarkCheck size={18} aria-hidden="true" />
+            ) : (
+              <Bookmark size={18} aria-hidden="true" />
+            )}
             <span className="text-sm font-medium">
               {currentPost.isBookmarked ? 'Saved' : 'Save'}
             </span>
@@ -250,4 +267,11 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
       )}
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  return prevProps.post._id === nextProps.post._id &&
+         prevProps.post.updatedAt === nextProps.post.updatedAt &&
+         prevProps.post.reactionsCount.total === nextProps.post.reactionsCount.total &&
+         prevProps.post.commentsCount === nextProps.post.commentsCount &&
+         prevProps.post.isBookmarked === nextProps.post.isBookmarked &&
+         prevProps.post.userReaction === nextProps.post.userReaction;
+});

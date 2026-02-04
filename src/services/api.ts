@@ -141,6 +141,75 @@ export interface CommentResponse {
   };
 }
 
+export interface Folder {
+  _id: string;
+  name: string;
+  path: string;
+  depth: number;
+  parentFolder: string | null;
+  createdBy: {
+    _id: string;
+    username: string;
+    displayName: string;
+    role: 'teacher' | 'student';
+  };
+  filesCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FileItem {
+  _id: string;
+  filename: string;
+  originalName: string;
+  mimeType: string;
+  size: number;
+  extension: string;
+  storageType: 'gridfs' | 'cloudinary';
+  folder: string | null;
+  uploadedBy: {
+    _id: string;
+    username: string;
+    displayName: string;
+    role: 'teacher' | 'student';
+  };
+  downloadsCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Breadcrumb {
+  _id: string;
+  name: string;
+  path: string;
+}
+
+export interface FilesResponse {
+  folders: Folder[];
+  files: FileItem[];
+  pagination: {
+    page: number;
+    limit: number;
+    totalFolders: number;
+    totalFiles: number;
+    totalPages: number;
+  };
+}
+
+export interface FolderContentsResponse {
+  folder: Folder;
+  breadcrumbs: Breadcrumb[];
+  subfolders: Folder[];
+  files: FileItem[];
+  pagination: {
+    page: number;
+    limit: number;
+    totalSubfolders: number;
+    totalFiles: number;
+    totalPages: number;
+  };
+}
+
 export interface PostsResponse {
   success: boolean;
   data: {
@@ -321,6 +390,265 @@ export const pinComment = async (commentId: string): Promise<{ success: boolean;
 // Unpin comment (teacher only)
 export const unpinComment = async (commentId: string): Promise<{ success: boolean; data: { comment: Comment } }> => {
   const response = await api.delete(`/comments/${commentId}/pin`);
+  return response.data;
+};
+
+// Files & Folders API
+
+// Get root files and folders
+export const getFiles = async (page = 1, limit = 50): Promise<FilesResponse> => {
+  const response = await api.get('/files', {
+    params: { page, limit }
+  });
+  return response.data;
+};
+
+// Get files in a specific folder
+export const getFilesInFolder = async (folderId: string, page = 1, limit = 50): Promise<FolderContentsResponse> => {
+  const response = await api.get(`/files/folder/${folderId}`, {
+    params: { page, limit }
+  });
+  return response.data;
+};
+
+// Upload file
+export const uploadFile = async (file: File, folderId?: string | null): Promise<{ message: string; file: FileItem }> => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  if (folderId) {
+    formData.append('folderId', folderId);
+  }
+
+  const response = await api.post('/files/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+  return response.data;
+};
+
+// Download file
+export const downloadFile = async (fileId: string): Promise<Blob> => {
+  const response = await api.get(`/files/${fileId}/download`, {
+    responseType: 'blob'
+  });
+  return response.data;
+};
+
+// Create folder
+export const createFolder = async (name: string, parentFolderId?: string | null): Promise<{ message: string; folder: Folder }> => {
+  const response = await api.post('/files/folder', {
+    name,
+    parentFolderId
+  });
+  return response.data;
+};
+
+// Rename file
+export const renameFile = async (fileId: string, newName: string): Promise<{ message: string; file: FileItem }> => {
+  const response = await api.put(`/files/${fileId}`, {
+    originalName: newName
+  });
+  return response.data;
+};
+
+// Move file to different folder
+export const moveFile = async (fileId: string, targetFolderId: string | null): Promise<{ message: string; file: FileItem }> => {
+  const response = await api.patch(`/files/${fileId}/move`, {
+    targetFolderId
+  });
+  return response.data;
+};
+
+// Delete file or folder
+export const deleteFileOrFolder = async (id: string, type: 'file' | 'folder'): Promise<{ message: string }> => {
+  const response = await api.delete(`/files/${id}`, {
+    params: { type }
+  });
+  return response.data;
+};
+
+// Messages & Conversations Types
+
+export interface MessageUser {
+  _id: string;
+  username: string;
+  displayName: string;
+  avatarUrl?: string;
+  role: 'teacher' | 'student';
+}
+
+export interface Message {
+  _id: string;
+  conversation: string;
+  sender: MessageUser;
+  content: string;
+  image?: {
+    url: string;
+    publicId: string;
+    width: number;
+    height: number;
+  };
+  isRead: boolean;
+  readBy: string[];
+  readAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Conversation {
+  _id: string;
+  participants: Array<{
+    user: string;
+    unreadCount: number;
+    lastReadAt?: string;
+  }>;
+  otherUser: MessageUser;
+  lastMessage?: {
+    content: string;
+    sender: MessageUser;
+    hasImage: boolean;
+    createdAt: string;
+  };
+  unreadCount: number;
+  updatedAt: string;
+  createdAt: string;
+}
+
+// Messages & Conversations API
+
+// Get all conversations
+export const getConversations = async (): Promise<{
+  success: boolean;
+  data: { conversations: Conversation[] };
+}> => {
+  const response = await api.get('/messages/conversations');
+  return response.data;
+};
+
+// Get or create conversation with a user
+export const getConversation = async (userId: string): Promise<{
+  success: boolean;
+  data: { conversation: Conversation };
+}> => {
+  const response = await api.get(`/messages/conversation/${userId}`);
+  return response.data;
+};
+
+// Get messages in a conversation
+export const getMessages = async (
+  conversationId: string,
+  page = 1,
+  limit = 30
+): Promise<{
+  success: boolean;
+  data: { messages: Message[] };
+  pagination: any;
+}> => {
+  const response = await api.get(`/messages/conversation/${conversationId}/messages`, {
+    params: { page, limit }
+  });
+  return response.data;
+};
+
+// Send message with optional image
+export const sendMessage = async (formData: FormData): Promise<{
+  success: boolean;
+  data: { message: Message; conversation: Conversation };
+}> => {
+  const response = await api.post('/messages/send', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
+};
+
+// Mark messages as read
+export const markAsRead = async (conversationId: string): Promise<{
+  success: boolean;
+  data: { markedRead: number };
+}> => {
+  const response = await api.patch(`/messages/conversation/${conversationId}/read`);
+  return response.data;
+};
+
+// Notifications Types
+
+export interface Notification {
+  _id: string;
+  type: 'comment_reply' | 'comment_like' | 'mention' | 'new_post' | 'pinned_comment' | 'direct_message';
+  actor: {
+    _id: string;
+    username: string;
+    displayName: string;
+    avatar: string | null;
+  };
+  reference: {
+    type: 'post' | 'comment' | 'message';
+    id: string;
+    postId?: string;
+  };
+  content: string;
+  isRead: boolean;
+  readAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Notifications API
+
+// Get notifications with pagination
+export const getNotifications = async (page = 1, limit = 20): Promise<{
+  success: boolean;
+  data: {
+    notifications: Notification[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+      hasMore: boolean;
+    };
+  };
+}> => {
+  const response = await api.get(`/notifications?page=${page}&limit=${limit}`);
+  return response.data;
+};
+
+// Get unread notification count
+export const getUnreadCount = async (): Promise<{
+  success: boolean;
+  data: { count: number };
+}> => {
+  const response = await api.get('/notifications/unread-count');
+  return response.data;
+};
+
+// Mark single notification as read
+export const markNotificationAsRead = async (notificationId: string): Promise<{
+  success: boolean;
+  data: { notification: Notification };
+}> => {
+  const response = await api.patch(`/notifications/${notificationId}/read`);
+  return response.data;
+};
+
+// Mark all notifications as read
+export const markAllNotificationsAsRead = async (): Promise<{
+  success: boolean;
+  message: string;
+  data: { modifiedCount: number };
+}> => {
+  const response = await api.patch('/notifications/read-all');
+  return response.data;
+};
+
+// Delete notification
+export const deleteNotification = async (notificationId: string): Promise<{
+  success: boolean;
+  message: string;
+}> => {
+  const response = await api.delete(`/notifications/${notificationId}`);
   return response.data;
 };
 

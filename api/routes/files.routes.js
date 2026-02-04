@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import * as filesController from '../controllers/files.controller.js'
+import { upload } from '../controllers/files.controller.js'
 import { authenticate, optionalAuth } from '../middleware/auth.middleware.js'
 import { requireTeacher } from '../middleware/role.middleware.js'
 
@@ -13,7 +14,7 @@ router.get('/folder/:folderId', optionalAuth, filesController.getFilesInFolder)
 router.get('/:id/download', authenticate, filesController.downloadFile)
 
 // Upload file (teacher only)
-router.post('/upload', authenticate, requireTeacher, filesController.uploadFile)
+router.post('/upload', authenticate, requireTeacher, upload.single('file'), filesController.uploadFile)
 
 // Create folder (teacher only)
 router.post('/folder', authenticate, requireTeacher, filesController.createFolder)

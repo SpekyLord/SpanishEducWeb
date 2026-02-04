@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Image, Video, Pin, X } from 'lucide-react';
 import { createPost } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -131,7 +132,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
   };
 
   return (
-    <div className="bg-[#242526] rounded-lg border border-[#3a3b3c] p-8">
+    <div className="bg-fb-card rounded-lg border border-fb-border p-6 shadow-fb-lg">
       <form onSubmit={handleSubmit}>
         {/* Header */}
         <div className="flex items-center mb-6">
@@ -178,9 +179,9 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
-                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600"
+                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600 shadow-fb transition-colors"
                   >
-                    ✕
+                    <X size={16} />
                   </button>
                 </div>
               ))}
@@ -199,9 +200,9 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
               <button
                 type="button"
                 onClick={removeVideo}
-                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600"
+                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600 shadow-fb transition-colors"
               >
-                ✕
+                <X size={16} />
               </button>
             </div>
             <div className="text-sm text-gray-400 mt-2">
@@ -216,17 +217,17 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
         )}
 
         {/* Actions */}
-        <div className="flex items-center justify-between pt-4 border-t border-[#3a3b3c]">
+        <div className="flex items-center justify-between pt-4 border-t border-fb-border">
           <div className="flex items-center gap-2">
             {/* Image Upload */}
             <button
               type="button"
               onClick={() => imageInputRef.current?.click()}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#3a3b3c] text-gray-200 hover:bg-[#4e4f50] transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fb-hover text-gray-200 hover:bg-[#4e4f50] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isSubmitting || images.length >= 5 || video !== null}
             >
-              <span className="text-xl">📷</span>
-              <span className="text-sm font-medium">Images</span>
+              <Image size={20} className="text-green-400" />
+              <span className="text-sm font-medium">Photo</span>
             </button>
             <input
               ref={imageInputRef}
@@ -241,10 +242,10 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
             <button
               type="button"
               onClick={() => videoInputRef.current?.click()}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#3a3b3c] text-gray-200 hover:bg-[#4e4f50] transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fb-hover text-gray-200 hover:bg-[#4e4f50] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isSubmitting || video !== null || images.length > 0}
             >
-              <span className="text-xl">🎥</span>
+              <Video size={20} className="text-red-400" />
               <span className="text-sm font-medium">Video</span>
             </button>
             <input
@@ -256,15 +257,16 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
             />
 
             {/* Pin Toggle */}
-            <label className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-[#3a3b3c] cursor-pointer">
+            <label className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-fb-hover cursor-pointer transition-colors">
               <input
                 type="checkbox"
                 checked={isPinned}
                 onChange={(e) => setIsPinned(e.target.checked)}
-                className="w-4 h-4"
+                className="w-4 h-4 rounded border-fb-border"
                 disabled={isSubmitting}
               />
-              <span className="text-sm font-medium text-gray-200">📌 Pin Post</span>
+              <Pin size={16} className="text-yellow-400" />
+              <span className="text-sm font-medium text-gray-200">Pin Post</span>
             </label>
           </div>
 
@@ -272,7 +274,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
           <button
             type="submit"
             disabled={isSubmitting || !content.trim()}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-[#3a3b3c] disabled:cursor-not-allowed transition-colors font-medium"
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-fb-hover disabled:cursor-not-allowed transition-colors font-medium shadow-fb"
           >
             {isSubmitting ? 'Posting...' : 'Post'}
           </button>

@@ -37,6 +37,11 @@ const UPLOAD_LIMITS = {
     folder: 'spanishconnect/messages',
     transformation: { width: 800, quality: 'auto' },
   },
+  fileAudio: {
+    maxSize: 10 * 1024 * 1024, // 10MB
+    folder: 'spanishconnect/files/audio',
+    resource_type: 'video', // Cloudinary uses video for audio
+  },
 }
 
 export async function uploadImage(file, options = {}) {
@@ -88,6 +93,29 @@ export async function uploadVideo(file, options = {}) {
   } catch (error) {
     console.error('Cloudinary video upload error:', error)
     throw new Error('Failed to upload video')
+  }
+}
+
+export async function uploadAudio(file, options = {}) {
+  const { folder = 'spanishconnect/files/audio' } = options
+
+  try {
+    const result = await cloudinary.uploader.upload(file, {
+      folder,
+      resource_type: 'video', // Cloudinary uses video resource type for audio
+      eager: [{ format: 'mp3', quality: 'auto' }],
+      eager_async: true,
+    })
+
+    return {
+      url: result.secure_url,
+      publicId: result.public_id,
+      duration: result.duration,
+      format: result.format,
+    }
+  } catch (error) {
+    console.error('Cloudinary audio upload error:', error)
+    throw new Error('Failed to upload audio')
   }
 }
 

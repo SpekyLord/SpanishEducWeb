@@ -71,6 +71,20 @@ export async function createMentionNotification(mentionedUserId, comment, post) 
   })
 }
 
+export async function createPinnedCommentNotification(comment, post, pinner) {
+  return createNotification({
+    recipient: comment.author._id,
+    type: 'pinned_comment',
+    actor: pinner,
+    reference: {
+      type: 'comment',
+      id: comment._id,
+      postId: post._id || post,
+    },
+    content: comment.content.substring(0, 100),
+  })
+}
+
 export async function createNewPostNotification(post, recipientIds) {
   const notifications = recipientIds.map((recipientId) => ({
     recipient: recipientId,

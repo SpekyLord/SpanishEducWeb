@@ -13,7 +13,7 @@ interface CommentItemProps {
   onRefresh?: () => void;
 }
 
-export const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, depth = 0, onRefresh }) => {
+export const CommentItem = React.memo<CommentItemProps>(({ comment, postId, depth = 0, onRefresh }) => {
   const { user } = useAuth();
   const { toggleCollapse, isCollapsed, highlightedCommentId } = useCommentThread();
   const [isReplying, setIsReplying] = useState(false);
@@ -284,4 +284,12 @@ export const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, depth
       </div>
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  return prevProps.comment._id === nextProps.comment._id &&
+         prevProps.comment.content === nextProps.comment.content &&
+         prevProps.comment.likesCount === nextProps.comment.likesCount &&
+         prevProps.comment.isLiked === nextProps.comment.isLiked &&
+         prevProps.comment.repliesCount === nextProps.comment.repliesCount &&
+         prevProps.comment.isPinned === nextProps.comment.isPinned &&
+         prevProps.comment.isDeleted === nextProps.comment.isDeleted;
+});

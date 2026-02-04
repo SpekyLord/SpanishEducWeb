@@ -1,6 +1,7 @@
 import Post from '../models/Post.js';
 import User from '../models/User.js';
 import cloudinary from '../config/cloudinary.js';
+import { createNewPostNotification } from '../services/notification.service.js';
 
 // Helper: Create author object from user
 const createAuthorObject = (user) => ({
@@ -235,6 +236,20 @@ export async function createPost(req, res) {
     await User.findByIdAndUpdate(req.user._id, {
       $inc: { 'stats.postsCount': 1 }
     })
+
+    // Create notifications for all students (if poster is teacher)
+    if (req.user.role === 'teacher') {
+      try {
+        const students = await User.find({ role: 'student' }).select('_id')
+        const studentIds = students.map(s => s._id)
+
+        if (studentIds.length > 0) {
+          await createNewPostNotification(post, studentIds)
+        }
+      } catch (notifError) {
+        console.error('Failed to create new post notifications:', notifError)
+      }
+    }
 
     res.status(201).json({
       success: true,

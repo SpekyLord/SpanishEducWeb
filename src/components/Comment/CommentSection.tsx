@@ -4,6 +4,7 @@ import { Comment, getComment, getComments } from '../../services/api';
 import { CommentForm } from './CommentForm';
 import { CommentItem } from './CommentItem';
 import { CommentThreadProvider, useCommentThread } from '../../contexts/CommentThreadContext';
+import { CommentSkeleton } from '../common/Skeleton';
 
 interface CommentSectionProps {
   postId: string;
@@ -133,6 +134,15 @@ const CommentSectionContent: React.FC<CommentSectionProps> = ({ postId }) => {
       )}
 
       <CommentForm postId={postId} onCreated={handleRefresh} />
+
+      {/* Initial Loading Skeletons */}
+      {loading && comments.length === 0 && (
+        <div className="mt-4 space-y-3">
+          <CommentSkeleton />
+          <CommentSkeleton />
+          <CommentSkeleton />
+        </div>
+      )}
 
       {pinnedComment && (
         <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
