@@ -1,7 +1,6 @@
 import Post from '../models/Post.js';
 import User from '../models/User.js';
-import cloudinary from '../config/cloudinary.js';
-import { createNewPostNotification } from '../services/notification.service.js';
+import { v2 as cloudinary } from 'cloudinary';
 
 // Helper: Create author object from user
 const createAuthorObject = (user) => ({
@@ -14,6 +13,19 @@ const createAuthorObject = (user) => ({
 
 // Helper: Upload media to Cloudinary
 const uploadMedia = async (file, type) => {
+  // Configure cloudinary with environment variables
+  console.log('Cloudinary config:', {
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY ? '✓ Present' : '✗ Missing',
+    api_secret: process.env.CLOUDINARY_API_SECRET ? '✓ Present' : '✗ Missing'
+  });
+  
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+
   const options = {
     folder: 'spanishconnect/posts',
     resource_type: type === 'video' ? 'video' : 'image'
@@ -25,37 +37,10 @@ const uploadMedia = async (file, type) => {
       { quality: 'auto:good' }
     ];
   } else if (type === 'video') {
-    // Comprehensive video compression for educational content
-    // Target: 20-30MB output, 720p resolution, 1.5 Mbps bitrate
     options.transformation = [
-      {
-        width: 1280,
-        height: 720,
-        crop: 'limit',
-        quality: 'auto:good',
-        fetch_format: 'mp4',
-        video_codec: 'h264',
-        bit_rate: '1.5m',        // 1.5 Mbps for excellent 720p quality
-        audio_codec: 'aac',
-        audio_frequency: 44100
-      }
+      { width: 1280, height: 720, crop: 'limit' },
+      { quality: 'auto:good' }
     ];
-
-    // Eager transformation for async processing (prevents upload timeout)
-    options.eager = [
-      {
-        width: 1280,
-        height: 720,
-        crop: 'limit',
-        quality: 'auto:good',
-        format: 'mp4',
-        video_codec: 'h264',
-        bit_rate: '1.5m',
-        audio_codec: 'aac',
-        audio_frequency: 44100
-      }
-    ];
-    options.eager_async = true;  // Process in background to prevent timeout
   }
 
   // Handle both file path and buffer
@@ -188,10 +173,10 @@ export async function createPost(req, res) {
     }
 
     // Validate video size
-    if (video && video.size > 200 * 1024 * 1024) {
+    if (video && video.size > 50 * 1024 * 1024) {
       return res.status(400).json({
         success: false,
-        message: 'Video must be less than 200MB (will be automatically compressed to 20-30MB)'
+        message: 'Video must be less than 50MB'
       });
     }
 
@@ -236,20 +221,6 @@ export async function createPost(req, res) {
     await User.findByIdAndUpdate(req.user._id, {
       $inc: { 'stats.postsCount': 1 }
     })
-
-    // Create notifications for all students (if poster is teacher)
-    if (req.user.role === 'teacher') {
-      try {
-        const students = await User.find({ role: 'student' }).select('_id')
-        const studentIds = students.map(s => s._id)
-
-        if (studentIds.length > 0) {
-          await createNewPostNotification(post, studentIds)
-        }
-      } catch (notifError) {
-        console.error('Failed to create new post notifications:', notifError)
-      }
-    }
 
     res.status(201).json({
       success: true,

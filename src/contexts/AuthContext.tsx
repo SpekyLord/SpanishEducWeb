@@ -25,7 +25,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+const API_URL = '/api'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
@@ -35,6 +35,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Initialize auth state
   useEffect(() => {
+    const savedToken = localStorage.getItem('accessToken')
+    if (savedToken) {
+      setAccessToken(savedToken)
+    }
     initializeAuth()
   }, [])
 
@@ -66,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshToken = async (): Promise<boolean> => {
     try {
-      const response = await fetch(`${API_URL}/api/auth/refresh`, {
+      const response = await fetch(`${API_URL}/auth/refresh`, {
         method: 'POST',
         credentials: 'include',
       })
@@ -77,9 +81,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const data = await response.json()
       setAccessToken(data.accessToken)
+      localStorage.setItem('accessToken', data.accessToken)
 
       // Get current user
-      const userResponse = await fetch(`${API_URL}/api/auth/me`, {
+      const userResponse = await fetch(`${API_URL}/auth/me`, {
         headers: {
           Authorization: `Bearer ${data.accessToken}`,
         },
@@ -106,7 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     username?: string
   ) => {
     try {
-      const response = await fetch(`${API_URL}/api/auth/register`, {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -121,6 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error(data.error || 'Registration failed')
       }
 
+      localStorage.setItem('accessToken', data.accessToken)
       setAccessToken(data.accessToken)
       setUser(data.user)
       navigate('/')
@@ -132,7 +138,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string, rememberMe = false) => {
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -147,6 +153,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error(data.error || 'Login failed')
       }
 
+      localStorage.setItem('accessToken', data.accessToken)
       setAccessToken(data.accessToken)
       setUser(data.user)
       navigate('/')
@@ -158,7 +165,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      await fetch(`${API_URL}/api/auth/logout`, {
+      await fetch(`${API_URL}/auth/logout`, {
         method: 'POST',
         credentials: 'include',
       })

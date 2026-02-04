@@ -1,7 +1,16 @@
+import dotenv from 'dotenv'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+// Load environment variables from the project root
+dotenv.config({ path: path.join(__dirname, '..', '.env') })
+
 import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-import dotenv from 'dotenv'
 import connectDB from './utils/db.js'
 
 // Import routes
@@ -13,14 +22,32 @@ import messagesRoutes from './routes/messages.routes.js'
 import notificationsRoutes from './routes/notifications.routes.js'
 import usersRoutes from './routes/users.routes.js'
 
-dotenv.config()
-
 const app = express()
 
 // Middleware
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      // Allow localhost on any port in development
+      if (process.env.NODE_ENV !== 'production' && origin.startsWith('http://localhost:')) {
+        return callback(null, true);
+      }
+
+      // In production, only allow the configured CLIENT_URL
+      if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL) {
+        return callback(null, true);
+      }
+
+      // Default to allowing in development, blocking in production
+      if (process.env.NODE_ENV !== 'production') {
+        return callback(null, true);
+      }
+
+      callback(new Error('Not allowed by CORS'));
+    },
     credentials: true,
   })
 )
