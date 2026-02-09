@@ -2,6 +2,7 @@ import Conversation from '../models/Conversation.js'
 import Message from '../models/Message.js'
 import User from '../models/User.js'
 import { v2 as cloudinary } from 'cloudinary'
+import { sanitizeString } from '../utils/validators.js'
 import { createDirectMessageNotification } from '../services/notification.service.js'
 
 // Helper: Create sender object (like Post.author pattern)
@@ -49,7 +50,10 @@ export async function sendMessage(req, res) {
       })
     }
 
-    if (content.length > 2000) {
+    // Sanitize content to prevent XSS attacks
+    const sanitizedContent = sanitizeString(content.trim())
+
+    if (sanitizedContent.length > 2000) {
       return res.status(400).json({
         success: false,
         message: 'Message cannot exceed 2000 characters'
@@ -115,7 +119,7 @@ export async function sendMessage(req, res) {
     const message = await Message.create({
       conversation: conversation._id,
       sender: createSenderObject(sender),
-      content: content.trim(),
+      content: sanitizedContent,
       image
     })
 
@@ -126,7 +130,7 @@ export async function sendMessage(req, res) {
     recipientParticipant.unreadCount += 1
 
     conversation.lastMessage = {
-      content: content.trim().substring(0, 100),
+      content: sanitizedContent.substring(0, 100),
       sender: createSenderObject(sender),
       hasImage: !!image,
       createdAt: message.createdAt

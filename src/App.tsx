@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { AuthProvider } from './contexts/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { ErrorBoundary } from './components/common/ErrorBoundary'
@@ -7,6 +7,7 @@ import { LoginPage } from './pages/Login'
 import { RegisterPage } from './pages/Register'
 import { HomePage } from './pages/Home'
 import { FeedPage } from './pages/Feed/FeedPage'
+import { initCSRF } from './services/api'
 import './App.css'
 
 // Lazy load heavy pages for better performance
@@ -21,6 +22,11 @@ const PageLoader = () => (
 )
 
 function App() {
+  // Initialize CSRF token on app mount
+  useEffect(() => {
+    initCSRF();
+  }, []);
+
   return (
     <ErrorBoundary>
       <Router>

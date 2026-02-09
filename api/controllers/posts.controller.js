@@ -1,6 +1,7 @@
 import Post from '../models/Post.js';
 import User from '../models/User.js';
 import { v2 as cloudinary } from 'cloudinary';
+import { sanitizeString } from '../utils/validators.js';
 
 // Helper: Create author object from user
 const createAuthorObject = (user) => ({
@@ -142,7 +143,10 @@ export async function createPost(req, res) {
       });
     }
 
-    if (content.length > 10000) {
+    // Sanitize content to prevent XSS attacks
+    const sanitizedContent = sanitizeString(content.trim());
+
+    if (sanitizedContent.length > 10000) {
       return res.status(400).json({
         success: false,
         message: 'Content cannot exceed 10000 characters'
@@ -211,7 +215,7 @@ export async function createPost(req, res) {
     // Create post
     const post = await Post.create({
       author: createAuthorObject(req.user),
-      content: content.trim(),
+      content: sanitizedContent,
       media,
       isPinned: isPinned === 'true' || isPinned === true,
       pinnedAt: (isPinned === 'true' || isPinned === true) ? new Date() : null
@@ -267,7 +271,8 @@ export async function updatePost(req, res) {
           message: 'Content cannot be empty'
         });
       }
-      post.content = content.trim();
+      // Sanitize content to prevent XSS attacks
+      post.content = sanitizeString(content.trim());
     }
 
     if (isPinned !== undefined) {

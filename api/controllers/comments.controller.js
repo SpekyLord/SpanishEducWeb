@@ -1,6 +1,7 @@
 import Comment from '../models/Comment.js'
 import Post from '../models/Post.js'
 import User from '../models/User.js'
+import { sanitizeString } from '../utils/validators.js'
 import {
   createCommentReplyNotification,
   createCommentLikeNotification,
@@ -206,7 +207,11 @@ export async function createComment(req, res) {
     if (!content || content.trim().length === 0) {
       return res.status(400).json({ success: false, message: 'Comment content is required' })
     }
-    if (content.length > 2000) {
+
+    // Sanitize content to prevent XSS attacks
+    const sanitizedContent = sanitizeString(content.trim())
+
+    if (sanitizedContent.length > 2000) {
       return res.status(400).json({ success: false, message: 'Comment cannot exceed 2000 characters' })
     }
 
@@ -238,12 +243,13 @@ export async function createComment(req, res) {
       path = parent.path || parent._id.toString()
     }
 
-    const mentions = extractMentions(content)
+    // Extract mentions from sanitized content
+    const mentions = extractMentions(sanitizedContent)
 
     const comment = await Comment.create({
       post: postId,
       author: createAuthorObject(req.user),
-      content: content.trim(),
+      content: sanitizedContent,
       mentions,
       parentComment: parent ? parent._id : null,
       rootComment: rootComment || null,
@@ -300,7 +306,11 @@ export async function updateComment(req, res) {
     if (!content || content.trim().length === 0) {
       return res.status(400).json({ success: false, message: 'Content cannot be empty' })
     }
-    if (content.length > 2000) {
+
+    // Sanitize content to prevent XSS attacks
+    const sanitizedContent = sanitizeString(content.trim())
+
+    if (sanitizedContent.length > 2000) {
       return res.status(400).json({ success: false, message: 'Comment cannot exceed 2000 characters' })
     }
 
@@ -323,8 +333,8 @@ export async function updateComment(req, res) {
       }
     }
 
-    comment.content = content.trim()
-    comment.mentions = extractMentions(content)
+    comment.content = sanitizedContent
+    comment.mentions = extractMentions(sanitizedContent)
     comment.isEdited = true
     comment.editedAt = new Date()
     await comment.save()
@@ -419,6 +429,20 @@ export async function pinComment(req, res) {
       return res.status(404).json({ success: false, message: 'Comment not found' })
     }
 
+    // Get the post to verify authorization
+    const post = await Post.findById(comment.post)
+    if (!post) {
+      return res.status(404).json({ success: false, message: 'Post not found' })
+    }
+
+    // AUTHORIZATION: Only post author can pin comments
+    if (post.author._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'Only post author can pin comments'
+      })
+    }
+
     await Comment.updateMany({ post: comment.post }, { $set: { isPinned: false } })
     comment.isPinned = true
     await comment.save()
@@ -442,6 +466,20 @@ export async function unpinComment(req, res) {
     const comment = await Comment.findById(req.params.id)
     if (!comment || comment.isDeleted) {
       return res.status(404).json({ success: false, message: 'Comment not found' })
+    }
+
+    // Get the post to verify authorization
+    const post = await Post.findById(comment.post)
+    if (!post) {
+      return res.status(404).json({ success: false, message: 'Post not found' })
+    }
+
+    // AUTHORIZATION: Only post author can unpin comments
+    if (post.author._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'Only post author can unpin comments'
+      })
     }
 
     comment.isPinned = false

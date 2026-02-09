@@ -1,9 +1,9 @@
 # SpanishConnect - Product Requirements Document
 
-**Version:** 2.0.0  
-**Last Updated:** February 2026  
-**Status:** Approved for Development  
-**Document Owner:** Product & Engineering Team  
+**Version:** 2.1.0
+**Last Updated:** February 5, 2026
+**Status:** Approved for Development
+**Document Owner:** Product & Engineering Team
 **Stakeholders:** Spanish Language Instructor, Development Team
 
 ---
@@ -996,9 +996,11 @@ Files & Modules
 | Comment Reply | Someone replies to your comment | High |
 | Comment Like | Someone likes your comment | Low (batched) |
 | Mention | Someone @mentions you | High |
-| New Post | Teacher creates a new post | Medium |
+| ~~New Post~~ | ~~Teacher creates a new post~~ *[Feature removed in refactoring]* | ~~Medium~~ |
 | Pinned Comment | Your comment gets pinned | High |
 | Direct Message | New message received | High |
+
+**Note:** The "New Post" notification feature was removed to reduce notification noise. Students discover new posts via the feed page instead of push notifications.
 
 #### 4.7.2 Notification Delivery
 - **In-App**: Bell icon with unread count
@@ -1256,6 +1258,32 @@ src/
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+#### 5.2.3 Development Proxy Configuration
+
+In development, the frontend uses Vite's proxy to route API requests:
+
+**vite.config.ts:**
+```typescript
+server: {
+  proxy: {
+    '/api': {
+      target: 'http://localhost:3001',
+      changeOrigin: true,
+    },
+  },
+}
+```
+
+**Frontend API calls use relative paths:**
+```typescript
+const API_BASE_URL = '/api';  // Proxied in dev, absolute in production
+```
+
+This approach:
+- Eliminates CORS issues in development
+- Simplifies environment configuration (no VITE_API_URL needed)
+- Maintains consistency between dev and production
+
 ### 5.3 Backend Architecture
 
 #### 5.3.1 API Structure
@@ -1306,6 +1334,27 @@ api/
     ├── jwt.js                    # Token utilities
     └── validators.js             # Validation schemas
 ```
+
+#### Environment Variable Loading
+
+The API explicitly loads `.env` from the project root using path resolution:
+
+**api/index.js:**
+```javascript
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+// Load from project root (one level up from api/)
+dotenv.config({ path: path.join(__dirname, '..', '.env') })
+```
+
+**Why explicit path:**
+- Serverless functions may have different working directories
+- Ensures consistent .env discovery across environments
+- Vercel deployment requires root-level .env access
 
 #### 5.3.2 Middleware Chain
 ```
@@ -1416,73 +1465,93 @@ db.files.createIndex({ folder: 1, createdAt: -1 });
 
 ### 5.5 Cloudinary Integration
 
-#### 5.5.1 Upload Configuration
+#### 5.5.1 Cloudinary Configuration
+
+Cloudinary is configured inline with environment variables and includes diagnostic logging:
+
+**api/controllers/posts.controller.js:**
 ```javascript
-// cloudinary.service.js
-const cloudinary = require('cloudinary').v2;
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-// Upload with transformations
-async function uploadImage(file, options = {}) {
-  const { folder, transformation } = options;
-  
-  return cloudinary.uploader.upload(file, {
-    folder: `spanishconnect/${folder}`,
-    resource_type: 'image',
-    transformation: transformation || [
-      { width: 1200, crop: 'limit' },
-      { quality: 'auto:good' },
-      { fetch_format: 'auto' }
-    ]
+const uploadMedia = async (file, type) => {
+  // Configure with logging for debugging
+  console.log('Cloudinary config:', {
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY ? '✓ Present' : '✗ Missing',
+    api_secret: process.env.CLOUDINARY_API_SECRET ? '✓ Present' : '✗ Missing'
   });
-}
 
-async function uploadVideo(file, options = {}) {
-  const { folder } = options;
-  
-  return cloudinary.uploader.upload(file, {
-    folder: `spanishconnect/${folder}`,
-    resource_type: 'video',
-    eager: [
-      { streaming_profile: 'auto', format: 'm3u8' }  // HLS streaming
-    ],
-    eager_async: true
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
   });
+
+  const options = {
+    folder: 'spanishconnect/posts',
+    resource_type: type === 'video' ? 'video' : 'image'
+  };
+
+  if (type === 'image') {
+    options.transformation = [
+      { width: 1200, height: 1200, crop: 'limit' },
+      { quality: 'auto:good' }
+    ];
+  } else if (type === 'video') {
+    options.transformation = [
+      { width: 1280, height: 720, crop: 'limit' },
+      { quality: 'auto:good' }
+    ];
+  }
+
+  // Handle both file path and buffer
+  const uploadSource = file.path || `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+  const result = await cloudinary.uploader.upload(uploadSource, options);
+
+  return result;
 }
 ```
 
-#### 5.5.2 Video Compression Strategy
+**Pattern Benefits:**
+- Explicit environment validation before upload
+- Diagnostic logging helps debug missing credentials
+- Configuration happens at function call (serverless-friendly)
 
-Videos are automatically compressed during upload using Cloudinary's transformation API:
+#### 5.5.2 Video Upload & Optimization
 
-**Compression Settings:**
-- Maximum upload size: 200MB (raw video)
-- Target output size: 20-30MB (compressed)
-- Resolution: 720p (1280x720)
-- Video codec: H.264
-- Bitrate: 1.5 Mbps (optimal for educational content)
-- Audio codec: AAC at 44.1kHz
-- Format: MP4
+**Upload Limits:**
+- Maximum video size: **50MB** (enforced at Multer level)
+- Maximum 1 video per post
+- Supported formats: MP4, MOV, AVI, WEBM
 
-**Benefits:**
-- Maintains high quality for educational content (text, pronunciation, demonstrations remain clear)
-- Reduces storage costs on Cloudinary
-- Faster streaming for students
-- No client-side processing required
-- Consistent quality across all uploads
+**Cloudinary Transformation:**
+Videos are transformed on upload with basic optimization:
 
-**Implementation:**
-Videos are processed server-side using Cloudinary's eager transformation feature with async processing to prevent upload timeouts.
+```javascript
+const options = {
+  folder: 'spanishconnect/posts',
+  resource_type: 'video',
+  transformation: [
+    { width: 1280, height: 720, crop: 'limit' },
+    { quality: 'auto:good' }
+  ]
+};
+```
 
-**Expected File Sizes:**
-- 5-minute 200MB video → ~25MB (720p, excellent quality)
-- 10-minute 100MB video → ~28MB (720p, excellent quality)
-- 2-minute 50MB video → ~15MB (720p, excellent quality)
+**Transformation Details:**
+- **Resolution:** Maximum 1280x720 (720p), maintains aspect ratio
+- **Quality:** Cloudinary's auto:good balance (quality vs. size)
+- **Processing:** On-demand transformation (no eager async)
+- **Thumbnail:** Automatically generated by Cloudinary (first frame as .jpg)
+
+**Why 50MB limit:**
+- Balances quality with free tier constraints (Cloudinary 25GB bandwidth/month)
+- Typical 50MB video at 720p = ~5-8 minutes of content
+- Students can record phone videos without hitting limit
+- Simpler than elaborate compression pipeline
+
+**Storage Impact:**
+- Average video: 20-40MB after optimization
+- Estimated monthly: 10 videos × 30MB = 300MB
+- Cloudinary free tier: 25GB storage (comfortable headroom)
 
 #### 5.5.3 Folder Structure
 ```
@@ -1526,18 +1595,19 @@ spanishconnect/
 │     └── Generate refresh token (7 days, httpOnly cookie)        │
 │                                                                  │
 │  3. CLIENT STORAGE                                               │
-│     ├── Access token → Memory (NOT localStorage)                │
+│     ├── Access token → localStorage (persists across reloads)   │
 │     └── Refresh token → httpOnly cookie (automatic)             │
 │                                                                  │
 │  4. API REQUESTS                                                 │
 │     Authorization: Bearer <access_token>                        │
 │                                                                  │
-│  5. TOKEN REFRESH (automatic on 401)                            │
+│  5. TOKEN REFRESH (automatic every 14 minutes)                  │
 │     POST /api/auth/refresh                                      │
 │     ├── Server reads refresh token from cookie                  │
 │     ├── Validates refresh token                                 │
 │     ├── Issues new access token                                 │
-│     └── Rotates refresh token (optional, security enhancement)  │
+│     ├── Stores new token in localStorage                        │
+│     └── Updates axios authorization header                      │
 │                                                                  │
 │  6. LOGOUT                                                       │
 │     POST /api/auth/logout                                       │
@@ -1546,6 +1616,29 @@ spanishconnect/
 │                                                                  │
 └──────────────────────────────────────────────────────────────────┘
 ```
+
+#### Access Token Storage
+
+**⚠️ Current Implementation:** Access tokens are stored in `localStorage` for persistence across page reloads:
+
+```typescript
+// AuthContext.tsx
+localStorage.setItem('accessToken', data.accessToken);
+const savedToken = localStorage.getItem('accessToken');
+```
+
+**Security Considerations:**
+- **Vulnerability:** localStorage is accessible to JavaScript, making tokens vulnerable to XSS attacks
+- **Trade-off:** Simplifies token management and maintains sessions across page reloads
+- **Mitigation:** Ensure strict Content Security Policy (CSP) headers to prevent script injection
+
+**Refresh Token Storage:**
+Refresh tokens remain in **httpOnly cookies** (secure from XSS).
+
+**Token Lifecycle:**
+- Access token: 15-minute expiry (stored in localStorage)
+- Refresh token: 7-day expiry (stored in httpOnly cookie)
+- Auto-refresh: Every 14 minutes via interval
 
 #### 5.6.2 Security Headers
 ```javascript
@@ -2092,7 +2185,7 @@ const securityHeaders = {
       'comment_mention',    // Someone mentioned you
       'post_comment',       // Someone commented on your post (teacher)
       'comment_pinned',     // Your comment was pinned
-      'new_post',           // New post from teacher
+      'new_post',           // [DEPRECATED] New post from teacher - feature removed
       'new_message'         // New direct message
     ],
     required: true
@@ -2170,7 +2263,23 @@ const securityHeaders = {
 
 ### 7.1 Base Configuration
 
-**Base URL:** `https://spanishconnect.vercel.app/api`
+**Base URL:**
+- **Production:** `https://spanishconnect.vercel.app/api`
+- **Development:** `/api` (relative path, proxied by Vite to `http://localhost:3001`)
+
+**Frontend Configuration:**
+```typescript
+// src/services/api.ts
+const API_BASE_URL = '/api';
+
+// src/contexts/AuthContext.tsx
+const API_URL = '/api';
+```
+
+**Why relative paths:**
+- Vite proxy handles routing in development
+- Seamless transition to production (no environment variables needed)
+- Eliminates CORS issues during local development
 
 **Authentication:**
 - Bearer token in `Authorization` header
@@ -4891,31 +5000,48 @@ const commentLimiter = rateLimit({
 
 ### 11.4 CORS Configuration
 
+**Dynamic Origin Validation:**
+
 ```javascript
-const cors = require('cors');
+// api/index.js
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, curl)
+      if (!origin) return callback(null, true);
 
-const corsOptions = {
-  origin: (origin, callback) => {
-    const allowedOrigins = [
-      'https://spanishconnect.vercel.app',
-      'http://localhost:3000',
-      'http://localhost:5173'
-    ];
-    
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
+      // Development: Allow all localhost ports
+      if (process.env.NODE_ENV !== 'production' &&
+          origin.startsWith('http://localhost:')) {
+        return callback(null, true);
+      }
+
+      // Production: Strict whitelist
+      if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL) {
+        return callback(null, true);
+      }
+
+      // Default: Allow in dev, block in production
+      if (process.env.NODE_ENV !== 'production') {
+        return callback(null, true);
+      }
+
       callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,  // Allow cookies
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  maxAge: 86400  // Cache preflight for 24 hours
-};
-
-app.use(cors(corsOptions));
+    },
+    credentials: true,
+  })
+);
 ```
+
+**Environment-Based Strategy:**
+- **Development:** Flexible (any localhost:*) for ease of development
+- **Production:** Strict (only CLIENT_URL from environment variable)
+- **Mobile/Testing:** Allows requests with no origin header
+
+**Why Dynamic:**
+- Accommodates Vite's dynamic port selection (5173, 5174, etc.)
+- Simplifies multi-developer environments
+- Maintains security in production
 
 ### 11.5 File Upload Security
 
@@ -5335,7 +5461,19 @@ RESEND_API_KEY=your-resend-key
 # App
 NODE_ENV=production
 FRONTEND_URL=https://spanishconnect.vercel.app
+CLIENT_URL=https://spanishconnect.vercel.app
 ```
+
+**Development:**
+- Loaded from project root `.env` file via explicit path resolution
+- See `api/index.js` for dotenv.config() implementation
+
+**Production (Vercel):**
+- Configured via Vercel dashboard Environment Variables section
+- Available to all serverless functions
+
+**Frontend:**
+- *No frontend environment variables required* (uses relative `/api` path)
 
 #### Security Checklist
 - [ ] Strong JWT secrets (32+ random characters)
@@ -5349,6 +5487,10 @@ FRONTEND_URL=https://spanishconnect.vercel.app
 #### Database Checklist
 - [ ] All indexes created
 - [ ] Teacher account seeded
+- [ ] **Database seeding completed:**
+  - Run `npm run seed` to create test accounts (profesora_maria, carlos_student)
+  - Verify sample posts created (4 posts with realistic content)
+  - Both accounts have `isEmailVerified: true` for testing
 - [ ] Default folders created (Files section)
 - [ ] Connection pooling configured
 
@@ -5836,6 +5978,7 @@ RATE_LIMIT_MAX=100
 |---------|------|--------|---------|
 | 1.0.0 | Jan 2025 | Initial | First draft |
 | 2.0.0 | Feb 2026 | Product Team | Complete expansion - added all sections |
+| 2.1.0 | Feb 5, 2026 | Engineering Team | Post-refactoring documentation update: Added development proxy configuration (5.2.3); documented explicit .env path loading (5.3.1); updated Cloudinary inline config pattern (5.5.1); simplified video compression to 50MB limit (5.5.2); documented localStorage token storage with security notes (5.6.1); clarified dev vs. prod API URLs (7.1); updated to dynamic CORS logic (11.4); added backend env loading and seeding docs (13.1); marked "New Post" notifications as deprecated (4.7.1, 6.8) |
 
 ---
 

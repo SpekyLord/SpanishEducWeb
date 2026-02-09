@@ -7,34 +7,63 @@ const api = axios.create({
   withCredentials: true
 });
 
-// Add auth token to requests
+// CSRF token management
+let csrfToken: string | null = null;
+
+// Fetch CSRF token from server
+export async function initCSRF() {
+  try {
+    console.log('[CSRF Frontend] Fetching CSRF token from /api/csrf-token...');
+    const response = await api.get('/csrf-token');
+    csrfToken = response.data.csrfToken;
+    console.log('[CSRF Frontend] ✓ Token received:', csrfToken?.substring(0, 10) + '...');
+    console.log('[CSRF Frontend] Token length:', csrfToken?.length || 0);
+  } catch (error: any) {
+    console.error('[CSRF Frontend] ✗ Failed to fetch CSRF token:', error);
+    if (error.response) {
+      console.error('[CSRF Frontend] Status:', error.response.status);
+      console.error('[CSRF Frontend] Data:', error.response.data);
+    }
+  }
+}
+
+// Add auth token and CSRF token to requests
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('accessToken');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
+  // Add CSRF token to state-changing requests
+  const method = config.method?.toLowerCase();
+  if (csrfToken && ['post', 'put', 'delete', 'patch'].includes(method || '')) {
+    config.headers['x-csrf-token'] = csrfToken;
+    console.log(`[CSRF Frontend] Adding token to ${method?.toUpperCase()} ${config.url}`);
+  }
+
   return config;
 });
 
-// Handle token refresh on 401
+// Handle token refresh on 401 and CSRF refresh on 403
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    
+
+    // Handle 401 Unauthorized - refresh access token
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      
+
       try {
         const { data } = await axios.post(
           `${API_BASE_URL}/auth/refresh`,
           {},
           { withCredentials: true }
         );
-        
-        localStorage.setItem('accessToken', data.data.accessToken);
-        originalRequest.headers.Authorization = `Bearer ${data.data.accessToken}`;
-        
+
+        localStorage.setItem('accessToken', data.accessToken);
+        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+
         return api(originalRequest);
       } catch (refreshError) {
         // Refresh failed, logout user
@@ -43,7 +72,29 @@ api.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
-    
+
+    // Handle 403 CSRF token error - refresh CSRF token and retry
+    if (error.response?.status === 403 &&
+        error.response?.data?.error?.includes('csrf') &&
+        !originalRequest._csrfRetry) {
+      originalRequest._csrfRetry = true;
+
+      console.log('[CSRF Frontend] 403 CSRF error detected, refreshing token...');
+
+      try {
+        await initCSRF();
+        // Update the CSRF token header
+        if (csrfToken) {
+          originalRequest.headers['x-csrf-token'] = csrfToken;
+          console.log('[CSRF Frontend] Retrying request with new token');
+        }
+        return api(originalRequest);
+      } catch (csrfError) {
+        console.error('[CSRF Frontend] Failed to refresh CSRF token:', csrfError);
+        return Promise.reject(error);
+      }
+    }
+
     return Promise.reject(error);
   }
 );

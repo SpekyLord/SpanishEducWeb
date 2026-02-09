@@ -80,6 +80,13 @@ const userSchema = new mongoose.Schema(
     lockUntil: Date,
     lastLoginAt: Date,
     lastActiveAt: Date,
+
+    // Refresh token tracking for rotation
+    refreshTokens: [{
+      token: { type: String, required: true },
+      createdAt: { type: Date, default: Date.now },
+      expiresAt: { type: Date, required: true }
+    }],
   },
   {
     timestamps: true,

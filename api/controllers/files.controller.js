@@ -151,6 +151,18 @@ export async function downloadFile(req, res) {
       return res.status(404).json({ error: 'File not found' })
     }
 
+    // AUTHORIZATION CHECK: Only allow if user is:
+    // 1. Teacher (can access all files)
+    // 2. File uploader
+    const isTeacher = req.user.role === 'teacher'
+    const isUploader = file.uploadedBy.toString() === userId.toString()
+
+    if (!isTeacher && !isUploader) {
+      return res.status(403).json({
+        error: 'Not authorized to download this file'
+      })
+    }
+
     // Track download
     file.downloadsCount += 1
     if (userId) {

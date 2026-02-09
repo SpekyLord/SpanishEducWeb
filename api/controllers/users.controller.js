@@ -3,20 +3,35 @@ import User from '../models/User.js';
 
 export async function searchUsers(req, res) {
   try {
-    const { q, limit = 5 } = req.query;
+    let { q, limit = 5 } = req.query;
 
-    if (!q || q.length < 1) {
+    // Validate query parameter type and presence
+    if (!q || typeof q !== 'string' || q.length < 1) {
       return res.json({ success: true, users: [] });
     }
 
+    // Escape special regex characters to prevent NoSQL injection
+    const escapedQ = q.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    // Prevent ReDoS attacks with length limit
+    if (escapedQ.length > 50) {
+      return res.status(400).json({
+        success: false,
+        message: 'Search query too long (max 50 characters)'
+      });
+    }
+
+    // Enforce maximum limit to prevent resource exhaustion
+    const safeLimit = Math.min(parseInt(limit) || 5, 20);
+
     const users = await User.find({
       $or: [
-        { username: { $regex: q, $options: 'i' } },
-        { displayName: { $regex: q, $options: 'i' } }
+        { username: { $regex: escapedQ, $options: 'i' } },
+        { displayName: { $regex: escapedQ, $options: 'i' } }
       ]
     })
     .select('username displayName avatar.url')
-    .limit(parseInt(limit))
+    .limit(safeLimit)
     .lean();
 
     res.json({
@@ -29,7 +44,7 @@ export async function searchUsers(req, res) {
     });
   } catch (error) {
     console.error('User search error:', error);
-    res.status(500).json({ success: false, message: 'Search error' });
+    res.status(500).json({ success: false, message: 'Search failed' });
   }
 }
 

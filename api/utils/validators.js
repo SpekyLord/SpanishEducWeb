@@ -38,12 +38,45 @@ export function validateUsername(username) {
   return { isValid: true }
 }
 
+import xss from 'xss'
+
+// Sanitize plain text content (no HTML allowed)
 export function sanitizeString(str) {
   if (typeof str !== 'string') return ''
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;')
+
+  // Use xss library for comprehensive sanitization
+  const cleaned = xss(str, {
+    whiteList: {}, // No HTML tags allowed
+    stripIgnoreTag: true,
+    stripIgnoreTagBody: ['script', 'style']
+  })
+
+  return cleaned.trim()
+}
+
+// Sanitize HTML content with allowed safe tags
+export function sanitizeHtml(html) {
+  if (typeof html !== 'string') return ''
+
+  // For rich text content, allow specific safe tags
+  return xss(html, {
+    whiteList: {
+      p: [],
+      br: [],
+      strong: [],
+      em: [],
+      u: [],
+      a: ['href', 'title'],
+      ul: [],
+      ol: [],
+      li: [],
+      h1: [],
+      h2: [],
+      h3: [],
+      blockquote: [],
+      code: []
+    },
+    stripIgnoreTag: true,
+    stripIgnoreTagBody: ['script', 'style', 'iframe']
+  })
 }

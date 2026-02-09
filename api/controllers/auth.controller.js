@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
 import User from '../models/User.js'
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/jwt.js'
@@ -56,6 +57,15 @@ export async function register(req, res) {
     // Generate tokens
     const accessToken = generateAccessToken({ userId: user._id })
     const refreshToken = generateRefreshToken({ userId: user._id })
+    const refreshTokenHash = await bcrypt.hash(refreshToken, 10)
+
+    // Store refresh token for rotation tracking
+    user.refreshTokens = [{
+      token: refreshTokenHash,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+    }]
+    user.lastLoginAt = new Date()
+    await user.save()
 
     // Set refresh token cookie
     res.cookie('refreshToken', refreshToken, {
@@ -112,12 +122,29 @@ export async function login(req, res) {
     if (user.loginAttempts > 0) {
       user.loginAttempts = 0
       user.lockUntil = undefined
-      await user.save()
     }
 
     // Generate tokens
     const accessToken = generateAccessToken({ userId: user._id })
     const refreshToken = generateRefreshToken({ userId: user._id }, rememberMe)
+    const refreshTokenHash = await bcrypt.hash(refreshToken, 10)
+
+    // Store refresh token for rotation tracking
+    if (!user.refreshTokens) {
+      user.refreshTokens = []
+    }
+    user.refreshTokens.push({
+      token: refreshTokenHash,
+      expiresAt: new Date(Date.now() + (rememberMe ? 30 * 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000))
+    })
+
+    // Clean up expired tokens (limit to 5 active tokens per user)
+    user.refreshTokens = user.refreshTokens
+      .filter(t => t.expiresAt > new Date())
+      .slice(-5)
+
+    user.lastLoginAt = new Date()
+    await user.save()
 
     // Set refresh token cookie
     res.cookie('refreshToken', refreshToken, {
@@ -146,12 +173,12 @@ export async function login(req, res) {
 
 export async function refreshToken(req, res) {
   try {
-    const token = req.cookies.refreshToken
-    if (!token) {
+    const oldToken = req.cookies.refreshToken
+    if (!oldToken) {
       return res.status(401).json({ error: 'Refresh token not found' })
     }
 
-    const decoded = verifyRefreshToken(token)
+    const decoded = verifyRefreshToken(oldToken)
     if (!decoded) {
       return res.status(401).json({ error: 'Invalid refresh token' })
     }
@@ -161,18 +188,80 @@ export async function refreshToken(req, res) {
       return res.status(401).json({ error: 'User not found or inactive' })
     }
 
+    // Check if token exists in user's valid tokens
+    const tokenIndex = user.refreshTokens?.findIndex(t => {
+      try {
+        return bcrypt.compareSync(oldToken, t.token)
+      } catch (err) {
+        return false
+      }
+    })
+
+    if (tokenIndex === -1 || !user.refreshTokens[tokenIndex]) {
+      return res.status(401).json({ error: 'Token revoked or invalid' })
+    }
+
+    // Remove old token
+    user.refreshTokens.splice(tokenIndex, 1)
+
+    // Generate new tokens
     const accessToken = generateAccessToken({ userId: user._id })
+    const newRefreshToken = generateRefreshToken({ userId: user._id })
+    const refreshTokenHash = await bcrypt.hash(newRefreshToken, 10)
+
+    // Store new refresh token
+    user.refreshTokens.push({
+      token: refreshTokenHash,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+    })
+
+    // Clean up expired tokens
+    user.refreshTokens = user.refreshTokens.filter(t =>
+      t.expiresAt > new Date()
+    )
+
+    await user.save()
+
+    // Set new refresh token cookie
+    res.cookie('refreshToken', newRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    })
 
     res.json({ accessToken })
   } catch (error) {
-    console.error('Refresh token error:', error)
-    res.status(500).json({ error: 'Token refresh failed' })
+    console.error('Refresh token error:', error.message)
+    res.status(401).json({ error: 'Token refresh failed' })
   }
 }
 
 export async function logout(req, res) {
-  res.clearCookie('refreshToken')
-  res.json({ message: 'Logged out successfully' })
+  try {
+    const refreshToken = req.cookies.refreshToken
+    const user = req.user
+
+    if (user && refreshToken) {
+      // Remove this specific token from user's valid tokens
+      user.refreshTokens = user.refreshTokens?.filter(t => {
+        try {
+          return !bcrypt.compareSync(refreshToken, t.token)
+        } catch (err) {
+          return true // Keep tokens that can't be compared
+        }
+      }) || []
+      await user.save()
+    }
+
+    res.clearCookie('refreshToken')
+    res.json({ message: 'Logged out successfully' })
+  } catch (error) {
+    console.error('Logout error:', error)
+    // Still clear cookie even if there's an error
+    res.clearCookie('refreshToken')
+    res.json({ message: 'Logged out successfully' })
+  }
 }
 
 export async function getCurrentUser(req, res) {
@@ -188,33 +277,32 @@ export async function forgotPassword(req, res) {
     }
 
     const user = await User.findOne({ email: email.toLowerCase() })
-    
+
     // Always return success message for security (don't reveal if email exists)
     if (!user) {
       return res.json({ message: 'If email exists, reset link has been sent' })
     }
 
-    // Generate reset token
-    const resetToken = await bcrypt.hash(user._id.toString() + Date.now(), 10)
-    const resetTokenHash = await bcrypt.hash(resetToken, 10)
-    
+    // Use crypto for secure token generation
+    const resetToken = crypto.randomBytes(32).toString('hex')
+    const resetTokenHash = await bcrypt.hash(resetToken, 12)
+
     user.passwordResetToken = resetTokenHash
-    user.passwordResetExpires = Date.now() + 3600000 // 1 hour
+    user.passwordResetExpires = Date.now() + (30 * 60 * 1000) // 30 minutes
     await user.save()
 
-    // TODO: Send email with reset link
-    // For now, return token in response (in production, send via email)
-    const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${encodeURIComponent(resetToken)}&email=${encodeURIComponent(email)}`
-    
-    console.log('Password reset URL:', resetUrl)
+    // TODO: Send email with reset link via email service (Resend, SendGrid, etc.)
+    // const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}&email=${email}`
+    // await sendPasswordResetEmail(user.email, resetUrl)
 
-    res.json({ 
-      message: 'If email exists, reset link has been sent',
-      // Remove this in production, only for development
-      resetUrl: process.env.NODE_ENV === 'development' ? resetUrl : undefined
+    console.log('Password reset requested for:', email)
+
+    // NEVER return token in response - only send via email
+    res.json({
+      message: 'If email exists, reset link has been sent via email'
     })
   } catch (error) {
-    console.error('Forgot password error:', error)
+    console.error('Forgot password error:', error.message)
     res.status(500).json({ error: 'Password reset request failed' })
   }
 }

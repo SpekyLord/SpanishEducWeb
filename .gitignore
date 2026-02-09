@@ -86,3 +86,4 @@ serviceAccountKey.json
 
 # Claude Code local settings
 .claude/
+/logs/*.log
