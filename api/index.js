@@ -82,7 +82,7 @@ app.use(
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token'],
     maxAge: 86400 // 24 hours
   })
 )
@@ -166,7 +166,8 @@ app.use('/api/', (req, res, next) => {
   // Skip CSRF for auth endpoints (they use cookies directly)
   if (path.startsWith('/auth/login') ||
       path.startsWith('/auth/register') ||
-      path.startsWith('/auth/refresh')) {
+      path.startsWith('/auth/refresh') ||
+      path.startsWith('/auth/logout')) {
     console.log(`[CSRF] ${method} ${path} - Skipped (auth endpoint)`)
     return next()
   }

@@ -35,7 +35,7 @@ export const MessagesPage: React.FC = () => {
       <Header variant="feed" />
 
       <main className="mx-auto px-4 sm:px-6 py-6" style={{ maxWidth: '80rem' }}>
-        <div className="bg-fb-card border border-fb-border rounded-lg shadow-fb overflow-hidden" style={{ height: 'calc(100vh - 12rem)' }}>
+        <div className="glass-card-elevated shadow-fb-lg overflow-hidden" style={{ height: 'calc(100vh - 12rem)' }}>
           <div className="flex h-full">
             {/* Conversation List - 1/3 width on desktop, full on mobile when not selected */}
             <div

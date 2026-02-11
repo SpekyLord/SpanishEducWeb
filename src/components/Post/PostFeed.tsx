@@ -160,11 +160,11 @@ export const PostFeed: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between pb-6 border-b border-[#3a3b3c]">
-        <h1 className="text-2xl font-bold text-gray-100">Feed</h1>
+      <div className="flex items-center justify-between pb-6 border-b border-fb-border">
+        <h1 className="text-2xl font-bold text-gray-100 font-heading">Feed</h1>
         <button
           onClick={handleRefresh}
-          className="flex items-center gap-2 px-4 py-2 bg-[#3a3b3c] text-gray-200 rounded-lg hover:bg-[#4e4f50] transition-colors text-sm font-medium"
+          className="flex items-center gap-2 px-4 py-2 bg-[#0f3460] text-gray-200 rounded-lg hover:bg-[#1a3a6e] transition-all hover:shadow-fb text-sm font-medium"
         >
           <span>🔄</span>
           <span>Refresh</span>
@@ -193,7 +193,7 @@ export const PostFeed: React.FC = () => {
       {/* Loading Indicator */}
       {loading && (
         <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold"></div>
         </div>
       )}
 

@@ -124,11 +124,11 @@ const CommentSectionContent: React.FC<CommentSectionProps> = ({ postId }) => {
   const shouldVirtualize = comments.length > 50;
 
   return (
-    <div className="mt-4 border-t border-gray-200 pt-4">
-      <h4 className="text-sm font-semibold text-gray-700 mb-2">Comments</h4>
+    <div className="mt-4 border-t border-fb-border pt-4">
+      <h4 className="text-sm font-semibold text-light/80 mb-2">Comments</h4>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded mb-2 text-sm">
+        <div className="bg-red-900/20 border border-red-700/50 text-red-300 px-3 py-2 rounded mb-2 text-sm">
           {error}
         </div>
       )}
@@ -145,7 +145,7 @@ const CommentSectionContent: React.FC<CommentSectionProps> = ({ postId }) => {
       )}
 
       {pinnedComment && (
-        <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+        <div className="mt-4 bg-gold/10 border border-gold/30 rounded-lg p-3">
           <CommentItem comment={pinnedComment} postId={postId} onRefresh={handleRefresh} />
         </div>
       )}
@@ -173,7 +173,7 @@ const CommentSectionContent: React.FC<CommentSectionProps> = ({ postId }) => {
             <button
               onClick={handleLoadMore}
               disabled={loading}
-              className="mt-4 text-sm text-blue-600 hover:text-blue-800"
+              className="mt-4 text-sm text-gold hover:text-[#d4b87e]"
             >
               {loading ? 'Loading...' : 'Load more comments'}
             </button>

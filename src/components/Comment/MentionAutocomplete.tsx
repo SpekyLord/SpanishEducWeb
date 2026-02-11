@@ -73,24 +73,24 @@ export const MentionAutocomplete: React.FC<MentionAutocompleteProps> = ({
 
   return (
     <div
-      className="absolute z-50 bg-white border border-gray-300 rounded-lg shadow-lg max-w-xs"
+      className="absolute z-50 glass-card-elevated shadow-fb-xl animate-fade-in-up max-w-xs"
       style={{ top: position.top, left: position.left }}
     >
       {loading && (
-        <div className="px-3 py-2 text-sm text-gray-500">Loading...</div>
+        <div className="px-3 py-2 text-sm text-light/50">Loading...</div>
       )}
       {users.map((user, index) => (
         <button
           key={user.username}
           onClick={() => onSelect(user.username)}
-          className={`w-full px-3 py-2 text-left hover:bg-blue-50 ${
-            index === selectedIndex ? 'bg-blue-100' : ''
+          className={`w-full px-3 py-2 text-left hover:bg-fb-hover ${
+            index === selectedIndex ? 'bg-fb-hover' : ''
           } ${index === 0 ? 'rounded-t-lg' : ''} ${
             index === users.length - 1 ? 'rounded-b-lg' : ''
           }`}
         >
-          <div className="text-sm font-medium text-gray-900">{user.displayName}</div>
-          <div className="text-xs text-gray-500">@{user.username}</div>
+          <div className="text-sm font-medium text-light">{user.displayName}</div>
+          <div className="text-xs text-light/50">@{user.username}</div>
         </button>
       ))}
     </div>

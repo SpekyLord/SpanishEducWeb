@@ -118,12 +118,12 @@ export const CommentForm: React.FC<CommentFormProps> = ({
   return (
     <form onSubmit={handleSubmit} className={compact ? 'mt-2' : 'mt-4'}>
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded mb-2 text-sm">
+        <div className="bg-red-900/20 border border-red-700/50 text-red-300 px-3 py-2 rounded mb-2 text-sm">
           {error}
         </div>
       )}
       <div className="flex gap-2">
-        <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-semibold">
+        <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white text-sm font-semibold">
           {user.displayName.charAt(0).toUpperCase()}
         </div>
         <div className="flex-1">
@@ -132,7 +132,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
             value={content}
             onChange={handleContentChange}
             placeholder={placeholder}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            className="w-full p-2 rounded-lg input-glow resize-none bg-fb-card text-light placeholder-light/40"
             rows={compact ? 2 : 3}
             disabled={isSubmitting}
             maxLength={2000}
@@ -146,11 +146,11 @@ export const CommentForm: React.FC<CommentFormProps> = ({
             />
           )}
           <div className="flex items-center justify-between mt-2">
-            <span className="text-xs text-gray-500">{content.length}/2000</span>
+            <span className="text-xs text-light/50">{content.length}/2000</span>
             <button
               type="submit"
               disabled={isSubmitting || !content.trim()}
-              className="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              className="px-3 py-1 btn-accent-gradient text-sm disabled:bg-light/20 disabled:cursor-not-allowed"
             >
               {isSubmitting ? 'Posting...' : 'Post'}
             </button>
@@ -158,7 +158,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
               <button
                 type="button"
                 onClick={onCancel}
-                className="px-3 py-1 text-gray-600 hover:text-gray-800 text-sm"
+                className="px-3 py-1 text-light/60 hover:text-light/80 text-sm"
               >
                 Cancel
               </button>

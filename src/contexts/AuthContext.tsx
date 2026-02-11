@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
+import api from '../services/api'
 
 interface User {
   _id: string
@@ -165,15 +166,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      await fetch(`${API_URL}/auth/logout`, {
-        method: 'POST',
-        credentials: 'include',
-      })
+      await api.post('/auth/logout')
     } catch (error) {
       console.error('Logout error:', error)
     } finally {
       setUser(null)
       setAccessToken(null)
+      localStorage.removeItem('accessToken')
       navigate('/login')
     }
   }

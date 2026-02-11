@@ -132,11 +132,11 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
   };
 
   return (
-    <div className="bg-fb-card rounded-lg border border-fb-border p-6 shadow-fb-lg">
+    <div className="glass-card-elevated p-6 shadow-fb-lg">
       <form onSubmit={handleSubmit}>
         {/* Header */}
         <div className="flex items-center mb-6">
-          <div className="w-11 h-11 rounded-full bg-[#3a3b3c] flex items-center justify-center text-white font-semibold">
+          <div className="w-11 h-11 rounded-full bg-[#0f3460] flex items-center justify-center text-white font-semibold">
             {user.displayName.charAt(0).toUpperCase()}
           </div>
           <div className="ml-3">
@@ -150,7 +150,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Share a lesson, assignment, or announcement..."
-          className="w-full min-h-[110px] p-4 border border-[#3a3b3c] rounded-lg bg-[#3a3b3c] text-gray-100 placeholder-gray-400 focus:outline-none resize-none"
+          className="w-full min-h-[110px] p-4 rounded-lg bg-[#0f3460] text-gray-100 placeholder-gray-400 input-glow resize-none"
           disabled={isSubmitting}
         />
 
@@ -208,7 +208,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
             <div className="text-sm text-gray-400 mt-2">
               Original size: {(video!.size / (1024 * 1024)).toFixed(2)} MB
               {video!.size > 30 * 1024 * 1024 && (
-                <span className="text-blue-400 ml-2">
+                <span className="text-gold ml-2">
                   (Will be compressed to ~20-30MB)
                 </span>
               )}
@@ -223,7 +223,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
             <button
               type="button"
               onClick={() => imageInputRef.current?.click()}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fb-hover text-gray-200 hover:bg-[#4e4f50] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fb-hover text-gray-200 hover:bg-[#1a3a6e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isSubmitting || images.length >= 5 || video !== null}
             >
               <Image size={20} className="text-green-400" />
@@ -242,7 +242,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
             <button
               type="button"
               onClick={() => videoInputRef.current?.click()}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fb-hover text-gray-200 hover:bg-[#4e4f50] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fb-hover text-gray-200 hover:bg-[#1a3a6e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isSubmitting || video !== null || images.length > 0}
             >
               <Video size={20} className="text-red-400" />
@@ -274,7 +274,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
           <button
             type="submit"
             disabled={isSubmitting || !content.trim()}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-fb-hover disabled:cursor-not-allowed transition-colors font-medium shadow-fb"
+            className="px-6 py-2 btn-accent-gradient disabled:bg-fb-hover disabled:cursor-not-allowed font-medium shadow-fb"
           >
             {isSubmitting ? 'Posting...' : 'Post'}
           </button>

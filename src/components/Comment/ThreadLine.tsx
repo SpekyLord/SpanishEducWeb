@@ -16,17 +16,17 @@ export const ThreadLine: React.FC<ThreadLineProps> = ({ depth, isLast }) => {
           <div key={index} className="relative" style={{ width: '32px' }}>
             {/* Vertical line for parent levels */}
             {!isCurrentLevel && (
-              <div className="absolute left-4 top-0 bottom-0 w-px bg-gray-300" />
+              <div className="absolute left-4 top-0 bottom-0 w-px bg-gradient-to-b from-gold/30 to-light/10" />
             )}
 
             {/* L-shaped connector for current level */}
             {isCurrentLevel && (
               <>
                 {!isLast && (
-                  <div className="absolute left-4 top-0 bottom-0 w-px bg-gray-300" />
+                  <div className="absolute left-4 top-0 bottom-0 w-px bg-gradient-to-b from-gold/30 to-light/10" />
                 )}
                 <div
-                  className="absolute left-4 w-3 h-px bg-gray-300"
+                  className="absolute left-4 w-3 h-px bg-gold/25"
                   style={{ top: '24px' }} // Align with avatar center
                 />
               </>

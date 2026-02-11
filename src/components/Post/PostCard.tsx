@@ -98,20 +98,20 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
   };
 
   return (
-    <div className="bg-fb-card rounded-lg border border-fb-border p-6 mb-4 shadow-fb">
+    <div className="glass-card-elevated hover-lift p-6 mb-4 shadow-fb">
       {/* Author Header */}
       <div className="flex items-center mb-6">
-        <div className="w-11 h-11 rounded-full bg-[#3a3b3c] flex items-center justify-center text-white font-semibold">
+        <div className="w-11 h-11 rounded-full bg-[#0f3460] ring-2 ring-fb-border flex items-center justify-center text-white font-semibold">
           {currentPost.author.displayName.charAt(0).toUpperCase()}
         </div>
         <div className="ml-5">
           <div className="flex items-center gap-2">
             <h3 className="font-semibold text-gray-100">{currentPost.author.displayName}</h3>
-            <span className="text-xs bg-[#3a3b3c] text-gray-300 px-2 py-1 rounded">
+            <span className="text-xs bg-[#0f3460] text-gray-300 px-2 py-1 rounded">
               {currentPost.author.role}
             </span>
             {currentPost.isPinned && (
-              <span className="flex items-center gap-1 text-xs bg-fb-hover text-yellow-400 px-2 py-1 rounded">
+              <span className="flex items-center gap-1 text-xs bg-gold/15 text-gold px-2 py-1 rounded">
                 <Pin size={12} />
                 <span>Pinned</span>
               </span>
@@ -156,7 +156,7 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
 
       {/* Reactions Summary */}
       {currentPost.reactionsCount.total > 0 && (
-        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-[#3a3b3c]">
+        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-fb-border">
           <div className="flex -space-x-1">
             {REACTIONS.map(({ type, emoji }) => 
               currentPost.reactionsCount[type] > 0 && (
@@ -183,7 +183,7 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
             aria-expanded={showReactionPicker}
             className={`flex items-center justify-center gap-2 flex-1 px-4 py-2 rounded-lg transition-all ${
               currentPost.userReaction
-                ? 'bg-fb-hover text-blue-400'
+                ? 'bg-fb-hover text-gold'
                 : 'hover:bg-fb-hover text-gray-300'
             }`}
             disabled={isReacting}
@@ -207,14 +207,14 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
 
           {/* Reaction Picker */}
           {showReactionPicker && (
-            <div role="menu" aria-label="Choose reaction" className="absolute bottom-full left-0 mb-2 bg-fb-card border border-fb-border shadow-fb-xl rounded-lg p-2 flex gap-1 z-10">
+            <div role="menu" aria-label="Choose reaction" className="absolute bottom-full left-0 mb-2 glass-card-elevated shadow-fb-xl animate-scale-in p-2 flex gap-1 z-10">
               {REACTIONS.map(({ type, emoji, label }) => (
                 <button
                   key={type}
                   role="menuitem"
                   onClick={() => handleReaction(type)}
                   aria-label={`React with ${label}`}
-                  className="p-2 hover:bg-fb-hover rounded-lg transition-colors transform hover:scale-110"
+                  className="p-2 hover:bg-fb-hover rounded-lg transition-colors transform hover:scale-125 active:scale-100"
                   title={label}
                 >
                   <span className="text-2xl" aria-hidden="true">{emoji}</span>
@@ -230,7 +230,7 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
           aria-label={showComments ? 'Hide comments' : `Show comments (${currentPost.commentsCount})`}
           aria-pressed={showComments}
           className={`flex items-center justify-center gap-2 flex-1 px-4 py-2 rounded-lg transition-all ${
-            showComments ? 'bg-fb-hover text-blue-400' : 'hover:bg-fb-hover text-gray-300'
+            showComments ? 'bg-fb-hover text-gold' : 'hover:bg-fb-hover text-gray-300'
           }`}
         >
           <MessageCircle size={18} aria-hidden="true" />

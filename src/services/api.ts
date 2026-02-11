@@ -9,21 +9,20 @@ const api = axios.create({
 
 // CSRF token management
 let csrfToken: string | null = null;
+let csrfInitializing = false;
 
 // Fetch CSRF token from server
 export async function initCSRF() {
+  if (csrfToken || csrfInitializing) return;
+  csrfInitializing = true;
   try {
-    console.log('[CSRF Frontend] Fetching CSRF token from /api/csrf-token...');
     const response = await api.get('/csrf-token');
     csrfToken = response.data.csrfToken;
-    console.log('[CSRF Frontend] ✓ Token received:', csrfToken?.substring(0, 10) + '...');
-    console.log('[CSRF Frontend] Token length:', csrfToken?.length || 0);
+    console.log('[CSRF] Token initialized');
   } catch (error: any) {
-    console.error('[CSRF Frontend] ✗ Failed to fetch CSRF token:', error);
-    if (error.response) {
-      console.error('[CSRF Frontend] Status:', error.response.status);
-      console.error('[CSRF Frontend] Data:', error.response.data);
-    }
+    console.error('[CSRF] Failed to fetch token:', error.response?.status || error.message);
+  } finally {
+    csrfInitializing = false;
   }
 }
 
@@ -38,7 +37,6 @@ api.interceptors.request.use((config) => {
   const method = config.method?.toLowerCase();
   if (csrfToken && ['post', 'put', 'delete', 'patch'].includes(method || '')) {
     config.headers['x-csrf-token'] = csrfToken;
-    console.log(`[CSRF Frontend] Adding token to ${method?.toUpperCase()} ${config.url}`);
   }
 
   return config;
@@ -78,19 +76,16 @@ api.interceptors.response.use(
         error.response?.data?.error?.includes('csrf') &&
         !originalRequest._csrfRetry) {
       originalRequest._csrfRetry = true;
-
-      console.log('[CSRF Frontend] 403 CSRF error detected, refreshing token...');
+      csrfToken = null; // Reset so initCSRF refetches
 
       try {
         await initCSRF();
-        // Update the CSRF token header
         if (csrfToken) {
           originalRequest.headers['x-csrf-token'] = csrfToken;
-          console.log('[CSRF Frontend] Retrying request with new token');
         }
         return api(originalRequest);
       } catch (csrfError) {
-        console.error('[CSRF Frontend] Failed to refresh CSRF token:', csrfError);
+        console.error('[CSRF] Retry failed:', csrfError);
         return Promise.reject(error);
       }
     }

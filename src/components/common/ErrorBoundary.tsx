@@ -65,13 +65,13 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             <div className="space-y-3">
               <button
                 onClick={this.handleReset}
-                className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                className="w-full px-4 py-3 bg-accent text-white rounded-lg hover:bg-[#c7304d] transition-colors font-medium"
               >
                 Go to Home
               </button>
               <button
                 onClick={() => window.location.reload()}
-                className="w-full px-4 py-3 bg-fb-hover text-gray-300 rounded-lg hover:bg-[#4e4f50] transition-colors font-medium"
+                className="w-full px-4 py-3 bg-fb-hover text-gray-300 rounded-lg hover:bg-[#1a3a6e] transition-colors font-medium"
               >
                 Reload Page
               </button>

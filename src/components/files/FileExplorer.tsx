@@ -127,7 +127,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
     if (['pdf'].includes(ext)) {
       return <FileIcon className="text-red-400" size={20} />;
     } else if (['doc', 'docx'].includes(ext)) {
-      return <FileIcon className="text-blue-400" size={20} />;
+      return <FileIcon className="text-gold" size={20} />;
     } else if (['ppt', 'pptx'].includes(ext)) {
       return <FileIcon className="text-orange-400" size={20} />;
     } else if (['xls', 'xlsx'].includes(ext)) {
@@ -147,15 +147,15 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
   }
 
   return (
-    <div className="bg-fb-card border border-fb-border rounded-lg shadow-fb">
+    <div className="glass-card-elevated shadow-fb">
       {/* Header with breadcrumbs */}
       <div className="p-4 border-b border-fb-border">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-gray-100">Files & Resources</h2>
+          <h2 className="text-lg font-bold text-gray-100 font-heading">Files & Resources</h2>
           {isTeacher && !showNewFolderInput && (
             <button
               onClick={() => setShowNewFolderInput(true)}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 text-sm btn-accent-gradient"
             >
               <FolderPlus size={16} />
               New Folder
@@ -167,7 +167,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
         <div className="flex items-center gap-2 text-sm text-gray-400">
           <button
             onClick={() => handleBreadcrumbClick(-1)}
-            className={`hover:text-blue-400 transition-colors ${!currentFolderId ? 'text-blue-400 font-medium' : ''}`}
+            className={`hover:text-gold transition-colors ${!currentFolderId ? 'text-gold font-medium' : ''}`}
           >
             Root
           </button>
@@ -176,7 +176,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
               <ChevronRight size={16} />
               <button
                 onClick={() => handleBreadcrumbClick(index)}
-                className={`hover:text-blue-400 transition-colors ${index === breadcrumbs.length - 1 ? 'text-blue-400 font-medium' : ''}`}
+                className={`hover:text-gold transition-colors ${index === breadcrumbs.length - 1 ? 'text-gold font-medium' : ''}`}
               >
                 {crumb.name}
               </button>
@@ -194,7 +194,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
 
       {/* New folder input */}
       {showNewFolderInput && (
-        <div className="p-4 border-b border-fb-border bg-[#1c1c1e]">
+        <div className="p-4 border-b border-fb-border bg-[#0d1b3e]">
           <div className="flex items-center gap-2">
             <FolderIcon className="text-yellow-500" size={20} />
             <input
@@ -293,7 +293,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleDownload(file)}
-                    className="p-2 text-blue-400 hover:bg-blue-400/10 rounded transition-colors"
+                    className="p-2 text-gold hover:bg-gold/10 hover:scale-110 rounded-lg transition-all"
                   >
                     <Download size={16} />
                   </button>
@@ -314,8 +314,8 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
 
       {/* Delete confirmation modal */}
       {deleteConfirm && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-fb-card border border-fb-border rounded-lg p-6 max-w-md w-full">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="glass-card-elevated p-6 animate-scale-in max-w-md w-full">
             <h3 className="text-lg font-semibold text-gray-100 mb-2">
               Delete {deleteConfirm.type === 'folder' ? 'Folder' : 'File'}?
             </h3>

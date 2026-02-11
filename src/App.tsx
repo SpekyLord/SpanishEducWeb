@@ -13,11 +13,13 @@ import './App.css'
 // Lazy load heavy pages for better performance
 const FilesPage = lazy(() => import('./pages/Files/FilesPage').then(m => ({ default: m.FilesPage })))
 const MessagesPage = lazy(() => import('./pages/Messages/MessagesPage').then(m => ({ default: m.MessagesPage })))
+const NotificationsPage = lazy(() => import('./pages/Notifications/NotificationsPage').then(m => ({ default: m.NotificationsPage })))
+const GroupsPage = lazy(() => import('./pages/Groups/GroupsPage').then(m => ({ default: m.GroupsPage })))
 
 // Loading fallback component
 const PageLoader = () => (
   <div className="min-h-screen bg-fb-bg flex items-center justify-center">
-    <div className="text-gray-400">Loading...</div>
+    <div className="text-light/50">Loading...</div>
   </div>
 )
 
@@ -75,6 +77,23 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <MessagesPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/notifications"
+                element={
+                  <ProtectedRoute>
+                    <NotificationsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/groups"
+                element={
+                  <ProtectedRoute>
+                    <GroupsPage />
                   </ProtectedRoute>
                 }
               />

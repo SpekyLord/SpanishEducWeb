@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead, Notification } from '../../services/api';
 import { NotificationItem } from './NotificationItem';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Bell } from 'lucide-react';
 
 interface NotificationDropdownProps {
   onNotificationRead: () => void;
@@ -107,16 +107,16 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
       role="dialog"
       aria-label="Notifications"
       aria-modal="false"
-      className="absolute top-full right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] bg-fb-card border border-fb-border shadow-fb-xl rounded-lg z-50"
+      className="absolute top-full right-0 mt-2 w-[28rem] max-w-[calc(100vw-2rem)] glass-card-elevated shadow-fb-xl rounded-xl z-50 animate-fade-in-up"
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-fb-border">
-        <h3 id="notifications-title" className="text-lg font-semibold text-gray-100">Notifications</h3>
+      <div className="flex items-center justify-between px-5 py-4 border-b border-fb-border/50">
+        <h3 id="notifications-title" className="text-lg font-semibold text-gray-100 font-heading">Notifications</h3>
         {notifications.some(n => !n.isRead) && (
           <button
             onClick={handleMarkAllRead}
             disabled={markingAllRead}
-            className="text-sm text-blue-400 hover:text-blue-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="text-sm text-gold hover:text-gold-light font-medium px-3 py-1 rounded-md hover:bg-gold/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {markingAllRead ? 'Marking...' : 'Mark all read'}
           </button>
@@ -124,10 +124,10 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
       </div>
 
       {/* Body */}
-      <div className="max-h-[400px] overflow-y-auto">
+      <div className="max-h-[480px] overflow-y-auto">
         {loading ? (
           <div className="flex items-center justify-center p-8">
-            <Loader2 className="animate-spin text-gray-400" size={24} />
+            <Loader2 className="animate-spin text-gold" size={24} />
           </div>
         ) : error ? (
           <div className="p-4">
@@ -136,11 +136,13 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
             </div>
           </div>
         ) : notifications.length === 0 ? (
-          <div className="p-8 text-center">
-            <p className="text-gray-400">No notifications yet</p>
+          <div className="p-10 text-center">
+            <Bell size={32} className="mx-auto text-gray-600 mb-3" />
+            <p className="text-gray-400 font-medium">No notifications yet</p>
+            <p className="text-gray-500 text-xs mt-1">You'll be notified when something happens</p>
           </div>
         ) : (
-          <div className="divide-y divide-fb-border">
+          <div className="divide-y divide-fb-border/50">
             {notifications.map(notification => (
               <NotificationItem
                 key={notification._id}
@@ -154,15 +156,15 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
 
       {/* Footer */}
       {!loading && !error && notifications.length > 0 && (
-        <div className="p-3 border-t border-fb-border text-center">
+        <div className="px-5 py-3 border-t border-fb-border/50 text-center">
           <button
             onClick={() => {
               navigate('/notifications');
               onClose();
             }}
-            className="text-sm text-blue-400 hover:text-blue-300"
+            className="text-sm text-gold hover:text-gold-light font-medium transition-colors"
           >
-            See all notifications
+            See all notifications →
           </button>
         </div>
       )}

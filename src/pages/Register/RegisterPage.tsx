@@ -66,20 +66,20 @@ export function RegisterPage() {
 
       <div className="min-h-[calc(100vh-80px)] flex items-center justify-center px-6 py-16">
         <div className="max-w-md w-full">
-          <div className="bg-fb-card border border-fb-border rounded-lg p-10 shadow-fb-lg">
+          <div className="glass-card-elevated rounded-xl p-10 shadow-fb-xl">
             {/* Logo and title */}
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-fb">
+              <div className="w-14 h-14 bg-accent rounded-full flex items-center justify-center text-white font-bold text-xl shadow-glow-accent-md">
                 SC
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-100">SpanishConnect</div>
+                <div className="text-2xl font-bold font-heading text-gray-100">SpanishConnect</div>
                 <div className="text-sm text-gray-400">Create your account</div>
               </div>
             </div>
 
             {/* Divider */}
-            <div className="border-t border-fb-border my-6" />
+            <div className="border-t border-fb-border/50 my-6" />
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -102,7 +102,7 @@ export function RegisterPage() {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="appearance-none block w-full px-4 py-3 border border-fb-border rounded-lg bg-[#1c1c1e] text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors sm:text-sm"
+                className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#0d1b3e] text-gray-100 placeholder-gray-500 input-glow sm:text-sm"
                 placeholder="student@example.com"
               />
             </div>
@@ -118,7 +118,7 @@ export function RegisterPage() {
                 required
                 value={formData.displayName}
                 onChange={handleChange}
-                className="appearance-none block w-full px-4 py-3 border border-fb-border rounded-lg bg-[#1c1c1e] text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors sm:text-sm"
+                className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#0d1b3e] text-gray-100 placeholder-gray-500 input-glow sm:text-sm"
                 placeholder="John Doe"
                 maxLength={50}
               />
@@ -134,7 +134,7 @@ export function RegisterPage() {
                 type="text"
                 value={formData.username}
                 onChange={handleChange}
-                className="appearance-none block w-full px-4 py-3 border border-fb-border rounded-lg bg-[#1c1c1e] text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors sm:text-sm"
+                className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#0d1b3e] text-gray-100 placeholder-gray-500 input-glow sm:text-sm"
                 placeholder="johndoe"
                 pattern="^[a-z0-9_]{3,30}$"
               />
@@ -155,7 +155,7 @@ export function RegisterPage() {
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className="appearance-none block w-full px-4 py-3 border border-fb-border rounded-lg bg-[#1c1c1e] text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors sm:text-sm"
+                className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#0d1b3e] text-gray-100 placeholder-gray-500 input-glow sm:text-sm"
               />
               <div className="mt-3 space-y-2">
                 <p
@@ -188,7 +188,7 @@ export function RegisterPage() {
                 required
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="appearance-none block w-full px-4 py-3 border border-fb-border rounded-lg bg-[#1c1c1e] text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors sm:text-sm"
+                className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#0d1b3e] text-gray-100 placeholder-gray-500 input-glow sm:text-sm"
               />
             </div>
               </div>
@@ -197,7 +197,7 @@ export function RegisterPage() {
                 <button
                   type="submit"
                   disabled={isLoading || !isPasswordValid}
-                  className="group relative w-full flex justify-center py-3 px-4 text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-fb"
+                  className="group relative w-full flex justify-center py-3 px-4 text-sm btn-accent-gradient disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? 'Creating account...' : 'Create Account'}
                 </button>
@@ -206,7 +206,7 @@ export function RegisterPage() {
               <div className="text-center">
                 <p className="text-sm text-gray-400">
                   Already have an account?{' '}
-                  <Link to="/login" className="font-medium text-blue-400 hover:text-blue-300">
+                  <Link to="/login" className="font-medium text-gold hover:text-[#d4b87e]">
                     Sign in
                   </Link>
                 </p>

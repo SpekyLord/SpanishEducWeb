@@ -55,36 +55,36 @@ export const NotificationItem = React.memo<NotificationItemProps>(({ notificatio
   const timeAgo = formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true });
 
   // Truncate content preview
-  const contentPreview = notification.content.length > 60
-    ? notification.content.substring(0, 60) + '...'
+  const contentPreview = notification.content.length > 120
+    ? notification.content.substring(0, 120) + '...'
     : notification.content;
 
   return (
     <button
       onClick={onClick}
-      className={`w-full p-4 text-left hover:bg-fb-hover transition-colors flex gap-3 ${
-        !notification.isRead ? 'bg-blue-900/10' : ''
+      className={`w-full px-5 py-4 text-left hover:bg-fb-hover/80 transition-all flex gap-4 ${
+        !notification.isRead ? 'unread-shimmer' : ''
       }`}
     >
       {/* Avatar with icon badge */}
       <div className="relative flex-shrink-0">
         <img
-          src={notification.actor.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(notification.actor.displayName || notification.actor.username)}&background=3b82f6&color=fff`}
+          src={notification.actor.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(notification.actor.displayName || notification.actor.username)}&background=e94560&color=fff`}
           alt={notification.actor.displayName || notification.actor.username}
-          className="w-10 h-10 rounded-full object-cover"
+          className="w-11 h-11 rounded-full object-cover ring-2 ring-fb-border"
         />
-        <div className="absolute -bottom-1 -right-1 bg-fb-card rounded-full p-0.5">
+        <div className="absolute -bottom-0.5 -right-0.5 bg-fb-card rounded-full p-1 shadow-fb border border-fb-border">
           {icon}
         </div>
       </div>
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm text-gray-100 mb-0.5">
+        <p className="text-sm text-gray-100 mb-1 leading-snug">
           {message}
         </p>
         {notification.content && (
-          <p className="text-xs text-gray-400 mb-1 truncate">
+          <p className="text-xs text-gray-400 mb-1.5 line-clamp-2">
             {contentPreview}
           </p>
         )}
@@ -96,7 +96,7 @@ export const NotificationItem = React.memo<NotificationItemProps>(({ notificatio
       {/* Unread indicator */}
       {!notification.isRead && (
         <div className="flex-shrink-0 pt-2">
-          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+          <div className="w-2.5 h-2.5 bg-accent rounded-full shadow-glow-accent animate-pulse"></div>
         </div>
       )}
     </button>

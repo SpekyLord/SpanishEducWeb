@@ -130,8 +130,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({ currentFolderId, onUploa
   };
 
   return (
-    <div className="bg-fb-card border border-fb-border rounded-lg shadow-fb p-6">
-      <h3 className="text-lg font-semibold text-gray-100 mb-4">Upload File</h3>
+    <div className="glass-card-elevated shadow-fb p-6">
+      <h3 className="text-lg font-bold text-gray-100 font-heading mb-4">Upload File</h3>
 
       {/* File picker */}
       <div className="mb-4">
@@ -149,7 +149,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ currentFolderId, onUploa
           className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
             isUploading
               ? 'border-gray-600 bg-gray-800/50 cursor-not-allowed'
-              : 'border-fb-border bg-fb-hover hover:bg-gray-700 hover:border-blue-500'
+              : 'border-fb-border bg-fb-hover hover:bg-gray-700 hover:border-accent hover:shadow-glow-accent'
           }`}
         >
           <Upload className="text-gray-400 mb-2" size={32} />
@@ -203,7 +203,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ currentFolderId, onUploa
             <div className="mb-3">
               <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-blue-500 transition-all duration-300"
+                  className="h-full bg-gradient-to-r from-accent to-gold transition-all duration-300 rounded-full"
                   style={{ width: `${uploadProgress}%` }}
                 />
               </div>
@@ -216,7 +216,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ currentFolderId, onUploa
             <button
               onClick={handleUpload}
               disabled={isUploading}
-              className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-4 py-2 btn-accent-gradient disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Upload File
             </button>

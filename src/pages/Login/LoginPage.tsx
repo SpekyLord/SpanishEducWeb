@@ -31,20 +31,20 @@ export function LoginPage() {
 
       <div className="min-h-[calc(100vh-80px)] flex items-center justify-center px-6 py-16">
         <div className="max-w-md w-full">
-          <div className="bg-fb-card border border-fb-border rounded-lg p-10 shadow-fb-lg">
+          <div className="glass-card-elevated rounded-xl p-10 shadow-fb-xl">
             {/* Logo and title */}
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-fb">
+              <div className="w-14 h-14 bg-accent rounded-full flex items-center justify-center text-white font-bold text-xl shadow-glow-accent-md">
                 SC
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-100">SpanishConnect</div>
+                <div className="text-2xl font-bold font-heading text-gray-100">SpanishConnect</div>
                 <div className="text-sm text-gray-400">Learn Spanish Together</div>
               </div>
             </div>
 
             {/* Divider */}
-            <div className="border-t border-fb-border my-6" />
+            <div className="border-t border-fb-border/50 my-6" />
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -67,7 +67,7 @@ export function LoginPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="appearance-none block w-full px-4 py-3 border border-fb-border rounded-lg bg-[#1c1c1e] text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#0d1b3e] text-gray-100 placeholder-gray-500 input-glow"
                     placeholder="Email address"
                   />
                 </div>
@@ -83,7 +83,7 @@ export function LoginPage() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="appearance-none block w-full px-4 py-3 border border-fb-border rounded-lg bg-[#1c1c1e] text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#0d1b3e] text-gray-100 placeholder-gray-500 input-glow"
                     placeholder="Password"
                   />
                 </div>
@@ -107,7 +107,7 @@ export function LoginPage() {
                 <div className="text-sm">
                   <Link
                     to="/forgot-password"
-                    className="font-medium text-blue-400 hover:text-blue-300"
+                    className="font-medium text-gold hover:text-[#d4b87e]"
                   >
                     Forgot your password?
                   </Link>
@@ -118,7 +118,7 @@ export function LoginPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="group relative w-full flex justify-center py-3 px-4 text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-fb"
+                  className="group relative w-full flex justify-center py-3 px-4 text-sm btn-accent-gradient disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? 'Signing in...' : 'Sign in'}
                 </button>
@@ -127,7 +127,7 @@ export function LoginPage() {
               <div className="text-center">
                 <p className="text-sm text-gray-400">
                   Don't have an account?{' '}
-                  <Link to="/register" className="font-medium text-blue-400 hover:text-blue-300">
+                  <Link to="/register" className="font-medium text-gold hover:text-[#d4b87e]">
                     Register
                   </Link>
                 </p>

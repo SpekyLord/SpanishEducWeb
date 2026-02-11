@@ -20,7 +20,7 @@ export const MentionText: React.FC<MentionTextProps> = ({ content, mentions }) =
               <a
                 key={index}
                 href={`/profile/${username}`}
-                className="text-blue-600 hover:text-blue-800 font-medium hover:underline"
+                className="text-gold hover:text-[#d4b87e] font-medium hover:underline"
                 onClick={(e) => {
                   e.stopPropagation();
                 }}

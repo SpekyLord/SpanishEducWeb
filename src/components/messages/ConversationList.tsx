@@ -80,7 +80,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
             placeholder="Search conversations..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-fb-hover rounded-lg pl-10 pr-4 py-2 text-sm text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full bg-fb-hover rounded-lg pl-10 pr-4 py-2 text-sm text-gray-100 placeholder-gray-400 input-glow"
           />
         </div>
       </div>
@@ -106,11 +106,11 @@ export const ConversationList: React.FC<ConversationListProps> = ({
               key={conv._id}
               onClick={() => onSelectConversation(conv._id, conv.otherUser)}
               className={`w-full p-4 flex items-start gap-3 hover:bg-fb-hover transition-colors border-b border-fb-border/50 ${
-                selectedConversationId === conv._id ? 'bg-fb-hover' : ''
+                selectedConversationId === conv._id ? 'bg-fb-hover border-l-2 border-gold' : ''
               }`}
             >
               {/* Avatar */}
-              <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold flex-shrink-0">
+              <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center text-white font-semibold flex-shrink-0">
                 {conv.otherUser.displayName.charAt(0).toUpperCase()}
               </div>
 
@@ -143,7 +143,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                       {conv.lastMessage.content}
                     </p>
                     {conv.unreadCount > 0 && (
-                      <span className="bg-blue-600 text-white text-xs rounded-full px-2 py-0.5 font-medium flex-shrink-0">
+                      <span className="bg-accent text-white text-xs rounded-full px-2 py-0.5 font-bold shadow-glow-accent flex-shrink-0">
                         {conv.unreadCount}
                       </span>
                     )}

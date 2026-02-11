@@ -163,11 +163,11 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   return (
     <div className="flex flex-col h-full bg-fb-bg">
       {/* Header */}
-      <div className="bg-fb-card border-b border-fb-border p-4 flex items-center gap-3">
+      <div className="bg-fb-card/95 backdrop-blur-sm border-b border-fb-border/50 p-4 flex items-center gap-3">
         <button onClick={onBack} className="lg:hidden text-gray-300 hover:text-gray-100">
           <ChevronLeft size={24} />
         </button>
-        <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
+        <div className="w-10 h-10 rounded-full bg-accent ring-2 ring-accent/30 flex items-center justify-center text-white font-semibold">
           {otherUser.displayName.charAt(0).toUpperCase()}
         </div>
         <div className="flex-1">
@@ -197,7 +197,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
             return (
               <div key={message._id} className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
                 {!isOwnMessage && (
-                  <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm mr-2 flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white text-sm mr-2 flex-shrink-0">
                     {showAvatar ? message.sender.displayName.charAt(0).toUpperCase() : ''}
                   </div>
                 )}
@@ -215,7 +215,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                   {message.content.trim() && (
                     <div
                       className={`rounded-2xl px-4 py-2 ${
-                        isOwnMessage ? 'bg-blue-600 text-white' : 'bg-fb-card text-gray-100'
+                        isOwnMessage ? 'bg-gradient-to-br from-accent to-[#c7304d] text-white' : 'bg-fb-card/80 text-gray-100 border border-fb-border/50'
                       }`}
                     >
                       <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
@@ -277,7 +277,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
               }
             }}
             placeholder="Type a message..."
-            className="flex-1 bg-fb-hover rounded-2xl px-4 py-2 text-sm text-gray-100 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-32"
+            className="flex-1 bg-fb-hover rounded-2xl px-4 py-2 text-sm text-gray-100 placeholder-gray-400 resize-none input-glow max-h-32"
             rows={1}
             maxLength={2000}
             disabled={isSending}
@@ -286,7 +286,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           <button
             onClick={handleSendMessage}
             disabled={(!newMessage.trim() && !selectedImage) || isSending}
-            className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="p-2.5 bg-accent text-white rounded-full hover:bg-[#c7304d] hover:shadow-glow-accent hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             <Send size={20} />
           </button>
