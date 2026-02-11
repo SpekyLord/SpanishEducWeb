@@ -4,6 +4,7 @@ import { Home, Users, MessageCircle, FileText, Search, Menu } from 'lucide-react
 import { useAuth } from '../../contexts/AuthContext';
 import { NotificationBell } from '../notifications';
 import { MobileDrawer } from './MobileDrawer';
+import { UserAvatar } from '../common/UserAvatar';
 
 interface HeaderProps {
   variant?: 'auth' | 'feed';
@@ -100,21 +101,19 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
         {/* Right side */}
         {variant === 'feed' && user ? (
           <div className="flex items-center gap-2">
-            <button onClick={() => setMenuOpen(true)} className="md:hidden p-2 rounded-full hover:bg-fb-hover" aria-label="Open menu">
-              <Menu size={20} className="text-gray-300" aria-hidden="true" />
+            <button onClick={() => setMenuOpen(true)} className="md:hidden" style={{ padding: '8px', borderRadius: '50%', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} aria-label="Open menu">
+              <Menu size={20} style={{ color: '#d1d5db' }} aria-hidden="true" />
             </button>
             <MobileDrawer isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
             <NotificationBell />
             <div className="hidden sm:flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-fb-hover ring-2 ring-gold/30 flex items-center justify-center text-white font-semibold text-sm" aria-hidden="true">
-                {user.displayName.charAt(0).toUpperCase()}
-              </div>
+              <UserAvatar name={user.displayName} avatarUrl={user.avatar?.url} size="md" className="ring-2 ring-gold/30" />
               <span className="text-sm text-gray-300">{user.displayName}</span>
             </div>
             <button
               onClick={logout}
               aria-label="Logout"
-              className="px-3 py-1.5 text-sm font-medium text-white bg-fb-hover rounded-lg hover:bg-[#1a3a6e] transition-all hover:shadow-fb-lg"
+              style={{ padding: '6px 12px', fontSize: '0.875rem', fontWeight: 500, color: 'white', backgroundColor: '#0f3460', borderRadius: '8px', border: 'none', cursor: 'pointer', transition: 'background 0.2s' }}
             >
               Logout
             </button>

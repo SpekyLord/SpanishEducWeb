@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, MessageCircle, FileText, Users, Bell, LogOut, X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { UserAvatar } from '../common/UserAvatar';
 
 interface MobileDrawerProps {
   isOpen: boolean;
@@ -48,82 +49,156 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
     logout();
   };
 
+  if (!isOpen) return null;
+
   return createPortal(
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998] transition-opacity duration-300 ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
         onClick={onClose}
         aria-hidden="true"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 9998,
+        }}
       />
 
       {/* Drawer panel */}
       <div
-        className={`fixed top-0 left-0 h-full w-[300px] bg-[#16213e] border-r border-white/10 z-[9999] transform transition-transform duration-300 ease-in-out flex flex-col shadow-fb-xl ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
         role="dialog"
         aria-label="Navigation menu"
         aria-modal="true"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          height: '100%',
+          width: '300px',
+          backgroundColor: '#16213e',
+          boxShadow: '4px 0 24px rgba(0,0,0,0.5)',
+          zIndex: 9999,
+          display: 'flex',
+          flexDirection: 'column',
+          overflowY: 'auto',
+        }}
       >
         {/* Header with close button */}
-        <div className="flex items-center justify-between p-4 border-b border-white/10">
-          <span className="font-heading text-lg font-semibold" style={{ color: '#f0e6d3' }}>SpanishConnect</span>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '16px',
+            borderBottom: '1px solid rgba(255,255,255,0.1)',
+          }}
+        >
+          <span
+            style={{
+              fontSize: '18px',
+              fontWeight: 600,
+              color: '#f0e6d3',
+              fontFamily: "'Playfair Display', serif",
+            }}
+          >
+            SpanishConnect
+          </span>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-[#0f3460] transition-colors"
             aria-label="Close menu"
+            style={{
+              padding: '6px',
+              borderRadius: '50%',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: '#9ca3af',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
-            <X size={20} className="text-gray-400" />
+            <X size={20} />
           </button>
         </div>
 
         {/* Profile section */}
         {user && (
-          <div className="p-4 border-b border-white/10">
-            <div className="flex items-center gap-3">
-              <div className="avatar-ring">
-                <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center text-white font-semibold text-lg">
-                  {user.displayName.charAt(0).toUpperCase()}
-                </div>
-              </div>
+          <div
+            style={{
+              padding: '16px',
+              borderBottom: '1px solid rgba(255,255,255,0.1)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <UserAvatar name={user.displayName} avatarUrl={user.avatar?.url} size="md" />
               <div>
-                <p className="text-white font-medium">{user.displayName}</p>
-                <p className="text-gray-400 text-sm capitalize">{user.role || 'Student'}</p>
+                <p style={{ color: 'white', fontWeight: 500, margin: 0, fontSize: '15px' }}>
+                  {user.displayName}
+                </p>
+                <p style={{ color: '#9ca3af', fontSize: '13px', margin: 0, textTransform: 'capitalize' }}>
+                  {user.role || 'Student'}
+                </p>
               </div>
             </div>
           </div>
         )}
 
         {/* Navigation links */}
-        <nav className="flex-1 py-2 overflow-y-auto" aria-label="Mobile navigation">
+        <nav style={{ flex: 1, padding: '8px 0', overflowY: 'auto' }} aria-label="Mobile navigation">
           {navLinks.map(({ to, icon: Icon, label }) => (
             <Link
               key={to}
               to={to}
               onClick={onClose}
-              className={`flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-colors ${
-                isActive(to)
-                  ? 'bg-gold/10 text-gold border-l-2 border-gold'
-                  : 'text-gray-300 hover:bg-[#0f3460] hover:text-white'
-              }`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '12px 16px',
+                margin: '2px 8px',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                color: isActive(to) ? '#c9a96e' : '#d1d5db',
+                backgroundColor: isActive(to) ? 'rgba(201,169,110,0.1)' : 'transparent',
+                borderLeft: isActive(to) ? '3px solid #c9a96e' : '3px solid transparent',
+                fontWeight: 500,
+                fontSize: '15px',
+                transition: 'background-color 0.15s ease',
+              }}
             >
               <Icon size={20} aria-hidden="true" />
-              <span className="font-medium">{label}</span>
+              <span>{label}</span>
             </Link>
           ))}
         </nav>
 
         {/* Logout button */}
-        <div className="p-4 border-t border-white/10">
+        <div style={{ padding: '16px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-all hover:translate-x-1"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              width: '100%',
+              padding: '12px 16px',
+              borderRadius: '8px',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: '#f87171',
+              fontWeight: 500,
+              fontSize: '15px',
+              transition: 'background-color 0.15s ease',
+            }}
           >
             <LogOut size={20} aria-hidden="true" />
-            <span className="font-medium">Logout</span>
+            <span>Logout</span>
           </button>
         </div>
       </div>

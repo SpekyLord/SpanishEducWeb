@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { getConversations, type Conversation } from '../../services/api';
+import { UserAvatar } from '../common/UserAvatar';
 
 interface ConversationListProps {
   onSelectConversation: (conversationId: string, otherUser: any) => void;
@@ -110,9 +111,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
               }`}
             >
               {/* Avatar */}
-              <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center text-white font-semibold flex-shrink-0">
-                {conv.otherUser.displayName.charAt(0).toUpperCase()}
-              </div>
+              <UserAvatar name={conv.otherUser.displayName} avatarUrl={conv.otherUser.avatarUrl} size="md" />
 
               {/* Content */}
               <div className="flex-1 min-w-0 text-left">

@@ -49,7 +49,8 @@ folderSchema.index({ path: 1 })
 folderSchema.index({ isDeleted: 1, createdAt: -1 })
 
 // Pre-save middleware to compute path and depth
-folderSchema.pre('save', async function(next) {
+// Note: Mongoose 8+ async middleware doesn't use next() — just return/throw
+folderSchema.pre('save', async function() {
   if (this.isNew || this.isModified('parentFolder')) {
     if (!this.parentFolder) {
       // Root folder
@@ -59,16 +60,15 @@ folderSchema.pre('save', async function(next) {
       // Nested folder - find parent and compute path
       const parent = await this.constructor.findById(this.parentFolder)
       if (!parent) {
-        return next(new Error('Parent folder not found'))
+        throw new Error('Parent folder not found')
       }
       if (parent.depth >= 3) {
-        return next(new Error('Maximum folder depth of 3 levels exceeded'))
+        throw new Error('Maximum folder depth of 3 levels exceeded')
       }
       this.path = parent.path + '/' + this.name
       this.depth = parent.depth + 1
     }
   }
-  next()
 })
 
 const Folder = mongoose.model('Folder', folderSchema)

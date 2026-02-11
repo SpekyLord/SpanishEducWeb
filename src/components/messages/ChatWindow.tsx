@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, Image as ImageIcon, Send, X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { getMessages, sendMessage as sendMessageAPI, markAsRead, type Message } from '../../services/api';
+import { UserAvatar } from '../common/UserAvatar';
 
 interface ChatWindowProps {
   conversationId: string;
@@ -167,9 +168,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         <button onClick={onBack} className="lg:hidden text-gray-300 hover:text-gray-100">
           <ChevronLeft size={24} />
         </button>
-        <div className="w-10 h-10 rounded-full bg-accent ring-2 ring-accent/30 flex items-center justify-center text-white font-semibold">
-          {otherUser.displayName.charAt(0).toUpperCase()}
-        </div>
+        <UserAvatar name={otherUser.displayName} avatarUrl={otherUser.avatarUrl} size="md" className="ring-2 ring-accent/30" />
         <div className="flex-1">
           <h2 className="font-semibold text-gray-100">{otherUser.displayName}</h2>
           <p className="text-xs text-gray-500">@{otherUser.username}</p>
@@ -197,8 +196,12 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
             return (
               <div key={message._id} className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
                 {!isOwnMessage && (
-                  <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white text-sm mr-2 flex-shrink-0">
-                    {showAvatar ? message.sender.displayName.charAt(0).toUpperCase() : ''}
+                  <div className="mr-2 flex-shrink-0">
+                    {showAvatar ? (
+                      <UserAvatar name={message.sender.displayName} size="sm" />
+                    ) : (
+                      <div className="w-8 h-8" />
+                    )}
                   </div>
                 )}
 
@@ -225,7 +228,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                   <div className="flex items-center gap-1 mt-1 px-2">
                     <span className="text-xs text-gray-500">{formatMessageTime(message.createdAt)}</span>
                     {isOwnMessage && message.isRead && (
-                      <span className="text-blue-400 text-xs ml-1">✓✓</span>
+                      <span className="text-gold text-xs ml-1">✓✓</span>
                     )}
                   </div>
                 </div>

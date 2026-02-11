@@ -46,6 +46,7 @@ router.post('/:id/pin', authenticate, requireTeacher, postsController.pinPost)
 router.delete('/:id/pin', authenticate, requireTeacher, postsController.unpinPost)
 
 // Reactions
+router.get('/:id/reactions', authenticate, postsController.getReactions)
 router.post('/:id/reactions', authenticate, postsController.addReaction)
 router.delete('/:id/reactions', authenticate, postsController.removeReaction)
 

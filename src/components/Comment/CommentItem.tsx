@@ -5,6 +5,7 @@ import { CommentForm } from './CommentForm';
 import { ThreadLine } from './ThreadLine';
 import { useCommentThread } from '../../contexts/CommentThreadContext';
 import { MentionText } from './MentionText';
+import { UserAvatar } from '../common/UserAvatar';
 
 interface CommentItemProps {
   comment: Comment;
@@ -131,17 +132,18 @@ export const CommentItem = React.memo<CommentItemProps>(({ comment, postId, dept
       }`}
     >
       <ThreadLine depth={depth} isLast={false} />
-      <div className="flex gap-3">
-        <div className="w-8 h-8 rounded-full bg-accent/80 ring-1 ring-fb-border flex items-center justify-center text-white text-sm font-semibold">
-          {comment.author.displayName.charAt(0).toUpperCase()}
-        </div>
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-light text-sm">{comment.author.displayName}</span>
-            <span className="text-xs text-light/50">@{comment.author.username}</span>
-            <span className="text-xs text-light/50">· {formatDate(comment.createdAt)}</span>
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <UserAvatar name={comment.author.displayName} avatarUrl={comment.author.avatarUrl} size="sm" className="ring-1 ring-fb-border" />
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <span style={{ fontWeight: 600, color: '#f0e6d3', fontSize: '0.875rem' }}>{comment.author.displayName}</span>
+            <span style={{ fontSize: '0.75rem', backgroundColor: '#0f3460', color: '#d1d5db', padding: '2px 6px', borderRadius: '4px' }}>
+              {comment.author.role}
+            </span>
+            <span style={{ fontSize: '0.75rem', color: 'rgba(240,230,211,0.5)' }}>@{comment.author.username}</span>
+            <span style={{ fontSize: '0.75rem', color: 'rgba(240,230,211,0.5)' }}>· {formatDate(comment.createdAt)}</span>
             {comment.isPinned && (
-              <span className="text-xs bg-gold/20 text-gold px-2 py-1 rounded font-semibold shadow-sm">
+              <span style={{ fontSize: '0.75rem', backgroundColor: 'rgba(201,169,110,0.2)', color: '#c9a96e', padding: '2px 8px', borderRadius: '4px', fontWeight: 600 }}>
                 📌 Pinned by Teacher
               </span>
             )}
@@ -179,10 +181,10 @@ export const CommentItem = React.memo<CommentItemProps>(({ comment, postId, dept
           )}
 
           {!comment.isDeleted && (
-            <div className="flex items-center gap-4 mt-2">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '8px' }}>
               <button
                 onClick={handleLike}
-                className={`text-xs ${comment.isLiked ? 'text-gold' : 'text-light/50'} hover:text-gold`}
+                style={{ fontSize: '0.75rem', color: comment.isLiked ? '#c9a96e' : 'rgba(240,230,211,0.5)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0' }}
                 disabled={isLiking}
               >
                 👍 {comment.likesCount}
@@ -190,7 +192,7 @@ export const CommentItem = React.memo<CommentItemProps>(({ comment, postId, dept
               {canReply && (
                 <button
                   onClick={() => setIsReplying(!isReplying)}
-                  className="text-xs text-light/50 hover:text-light/80"
+                  style={{ fontSize: '0.75rem', color: 'rgba(240,230,211,0.5)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0' }}
                 >
                   Reply
                 </button>
@@ -198,7 +200,7 @@ export const CommentItem = React.memo<CommentItemProps>(({ comment, postId, dept
               {canEdit && !comment.isDeleted && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="text-xs text-light/50 hover:text-light/80"
+                  style={{ fontSize: '0.75rem', color: 'rgba(240,230,211,0.5)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0' }}
                 >
                   Edit
                 </button>
@@ -206,7 +208,7 @@ export const CommentItem = React.memo<CommentItemProps>(({ comment, postId, dept
               {isOwner && !comment.isDeleted && (
                 <button
                   onClick={handleDelete}
-                  className="text-xs text-accent hover:text-red-300"
+                  style={{ fontSize: '0.75rem', color: '#e94560', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0' }}
                 >
                   Delete
                 </button>
@@ -214,7 +216,7 @@ export const CommentItem = React.memo<CommentItemProps>(({ comment, postId, dept
               {user?.role === 'teacher' && !comment.isDeleted && (
                 <button
                   onClick={handlePin}
-                  className="text-xs text-light/50 hover:text-yellow-600"
+                  style={{ fontSize: '0.75rem', color: 'rgba(240,230,211,0.5)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0' }}
                   title={comment.isPinned ? 'Unpin comment' : 'Pin comment'}
                 >
                   {comment.isPinned ? '📌 Unpin' : '📌 Pin'}
@@ -223,7 +225,7 @@ export const CommentItem = React.memo<CommentItemProps>(({ comment, postId, dept
               {hasReplies && (
                 <button
                   onClick={() => toggleCollapse(comment._id)}
-                  className="text-xs text-light/50 hover:text-light/80 flex items-center gap-1"
+                  style={{ fontSize: '0.75rem', color: 'rgba(240,230,211,0.5)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0', display: 'flex', alignItems: 'center', gap: '4px' }}
                 >
                   {collapsed ? '▶' : '▼'}{' '}
                   {collapsed ? `Show ${comment.totalRepliesCount || comment.repliesCount} replies` : 'Hide replies'}
@@ -234,7 +236,7 @@ export const CommentItem = React.memo<CommentItemProps>(({ comment, postId, dept
                   const url = `${window.location.origin}${window.location.pathname}#comment-${comment._id}`;
                   navigator.clipboard.writeText(url);
                 }}
-                className="text-xs text-light/50 hover:text-light/80"
+                style={{ fontSize: '0.75rem', color: 'rgba(240,230,211,0.5)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0' }}
                 title="Copy link to comment"
               >
                 🔗 Share

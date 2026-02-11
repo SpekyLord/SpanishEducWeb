@@ -29,9 +29,25 @@ export function LoginPage() {
     <div className="min-h-screen bg-fb-bg">
       <Header variant="auth" />
 
-      <div className="min-h-[calc(100vh-80px)] flex items-center justify-center px-6 py-16">
-        <div className="max-w-md w-full">
-          <div className="glass-card-elevated rounded-xl p-10 shadow-fb-xl">
+      <div
+        className="min-h-[calc(100vh-80px)] flex items-center justify-center px-6 py-16"
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '64px 24px' }}
+      >
+        <div
+          className="max-w-md w-full"
+          style={{ maxWidth: '448px', width: '100%' }}
+        >
+          <div
+            className="glass-card-elevated rounded-xl p-10 shadow-fb-xl"
+            style={{
+              borderRadius: '12px',
+              padding: '40px',
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(12px)',
+              boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+            }}
+          >
             {/* Logo and title */}
             <div className="flex items-center gap-4 mb-6">
               <div className="w-14 h-14 bg-accent rounded-full flex items-center justify-center text-white font-bold text-xl shadow-glow-accent-md">
@@ -97,7 +113,7 @@ export function LoginPage() {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="h-4 w-4 text-gray-700 border-gray-300 rounded"
+                    className="h-4 w-4 rounded bg-[#0d1b3e] border-fb-border accent-accent"
                   />
                   <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-100">
                     Remember me

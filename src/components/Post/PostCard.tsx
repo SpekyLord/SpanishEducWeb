@@ -3,6 +3,8 @@ import { ThumbsUp, MessageCircle, Bookmark, BookmarkCheck, Pin } from 'lucide-re
 import { Post, addReaction, removeReaction, bookmarkPost, removeBookmark } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { CommentSection } from '../Comment/CommentSection';
+import { UserAvatar } from '../common/UserAvatar';
+import { ReactionsPanel } from './ReactionsPanel';
 
 interface PostCardProps {
   post: Post;
@@ -24,6 +26,7 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
   const [isReacting, setIsReacting] = useState(false);
   const [isBookmarking, setIsBookmarking] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [showReactionsPanel, setShowReactionsPanel] = useState(false);
 
   useEffect(() => {
     setCurrentPost(post);
@@ -98,26 +101,24 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
   };
 
   return (
-    <div className="glass-card-elevated hover-lift p-6 mb-4 shadow-fb">
+    <div className="glass-card-elevated hover-lift shadow-fb" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
       {/* Author Header */}
-      <div className="flex items-center mb-6">
-        <div className="w-11 h-11 rounded-full bg-[#0f3460] ring-2 ring-fb-border flex items-center justify-center text-white font-semibold">
-          {currentPost.author.displayName.charAt(0).toUpperCase()}
-        </div>
-        <div className="ml-5">
-          <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-gray-100">{currentPost.author.displayName}</h3>
-            <span className="text-xs bg-[#0f3460] text-gray-300 px-2 py-1 rounded">
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <UserAvatar name={currentPost.author.displayName} avatarUrl={currentPost.author.avatarUrl} size="lg" className="ring-2 ring-fb-border" />
+        <div style={{ marginLeft: '1.25rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <h3 style={{ fontWeight: 600, color: '#f3f4f6', margin: 0 }}>{currentPost.author.displayName}</h3>
+            <span style={{ fontSize: '0.75rem', backgroundColor: '#0f3460', color: '#d1d5db', padding: '2px 8px', borderRadius: '4px' }}>
               {currentPost.author.role}
             </span>
             {currentPost.isPinned && (
-              <span className="flex items-center gap-1 text-xs bg-gold/15 text-gold px-2 py-1 rounded">
+              <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', backgroundColor: 'rgba(201,169,110,0.15)', color: '#c9a96e', padding: '2px 8px', borderRadius: '4px' }}>
                 <Pin size={12} />
                 <span>Pinned</span>
               </span>
             )}
           </div>
-          <p className="text-xs text-gray-500 mt-2">@{currentPost.author.username} · {formatDate(currentPost.createdAt)}</p>
+          <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '8px' }}>@{currentPost.author.username} · {formatDate(currentPost.createdAt)}</p>
         </div>
       </div>
 
@@ -155,69 +156,71 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
       )}
 
       {/* Reactions Summary */}
-      {currentPost.reactionsCount.total > 0 && (
-        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-fb-border">
-          <div className="flex -space-x-1">
-            {REACTIONS.map(({ type, emoji }) => 
-              currentPost.reactionsCount[type] > 0 && (
-                <span key={type} className="text-lg">
-                  {emoji}
-                </span>
-              )
-            )}
+      {currentPost.reactionsCount.total > 0 && (() => {
+        const topReaction = REACTIONS.reduce<typeof REACTIONS[number] | null>((top, r) =>
+          currentPost.reactionsCount[r.type] > (top ? currentPost.reactionsCount[top.type] : 0) ? r : top,
+          null
+        );
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+            <button
+              onClick={() => setShowReactionsPanel(true)}
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px', borderRadius: '16px', color: '#d1d5db', fontSize: '0.875rem', transition: 'background 0.2s' }}
+            >
+              {topReaction && <span style={{ fontSize: '1.125rem' }}>{topReaction.emoji}</span>}
+              <span>{currentPost.reactionsCount.total}</span>
+            </button>
+            <span style={{ flex: 1 }} />
+            <span style={{ fontSize: '0.875rem', color: '#9ca3af' }}>{currentPost.commentsCount} comments</span>
           </div>
-          <span className="text-sm text-gray-300">{currentPost.reactionsCount.total}</span>
-          <span className="flex-1" />
-          <span className="text-sm text-gray-300">{currentPost.commentsCount} comments</span>
-        </div>
+        );
+      })()}
+      {showReactionsPanel && (
+        <ReactionsPanel postId={currentPost._id} onClose={() => setShowReactionsPanel(false)} />
       )}
 
       {/* Action Buttons */}
-      <div role="group" aria-label="Post actions" className="flex items-center gap-2 pt-3 border-t border-fb-border/50">
+      <div role="group" aria-label="Post actions" style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
         {/* Reaction Button */}
-        <div className="relative">
+        <div style={{ position: 'relative', flex: 1 }}>
           <button
             onClick={() => setShowReactionPicker(!showReactionPicker)}
             aria-label={currentPost.userReaction ? `Change reaction (currently ${REACTIONS.find(r => r.type === currentPost.userReaction)?.label})` : 'Add reaction'}
             aria-haspopup="true"
             aria-expanded={showReactionPicker}
-            className={`flex items-center justify-center gap-2 flex-1 px-4 py-2 rounded-lg transition-all ${
-              currentPost.userReaction
-                ? 'bg-fb-hover text-gold'
-                : 'hover:bg-fb-hover text-gray-300'
-            }`}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', padding: '8px 16px', borderRadius: '8px', border: 'none', background: currentPost.userReaction ? '#0f3460' : 'transparent', color: currentPost.userReaction ? '#c9a96e' : '#d1d5db', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s' }}
             disabled={isReacting}
           >
             {currentPost.userReaction ? (
               <>
-                <span className="text-lg">
+                <span style={{ fontSize: '1.125rem' }}>
                   {REACTIONS.find(r => r.type === currentPost.userReaction)?.emoji}
                 </span>
-                <span className="text-sm font-medium">
+                <span>
                   {REACTIONS.find(r => r.type === currentPost.userReaction)?.label}
                 </span>
               </>
             ) : (
               <>
                 <ThumbsUp size={18} />
-                <span className="text-sm font-medium">Like</span>
+                <span>Like</span>
               </>
             )}
           </button>
 
           {/* Reaction Picker */}
           {showReactionPicker && (
-            <div role="menu" aria-label="Choose reaction" className="absolute bottom-full left-0 mb-2 glass-card-elevated shadow-fb-xl animate-scale-in p-2 flex gap-1 z-10">
+            <div role="menu" aria-label="Choose reaction" className="glass-card-elevated" style={{ position: 'absolute', bottom: '100%', left: 0, marginBottom: '8px', padding: '8px', display: 'flex', gap: '4px', zIndex: 10, boxShadow: '0 8px 16px rgba(0,0,0,0.5)' }}>
               {REACTIONS.map(({ type, emoji, label }) => (
                 <button
                   key={type}
                   role="menuitem"
                   onClick={() => handleReaction(type)}
                   aria-label={`React with ${label}`}
-                  className="p-2 hover:bg-fb-hover rounded-lg transition-colors transform hover:scale-125 active:scale-100"
+                  style={{ padding: '8px', borderRadius: '8px', border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '1.5rem', transition: 'transform 0.15s, background 0.15s' }}
                   title={label}
                 >
-                  <span className="text-2xl" aria-hidden="true">{emoji}</span>
+                  <span aria-hidden="true">{emoji}</span>
                 </button>
               ))}
             </div>
@@ -229,12 +232,10 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
           onClick={() => setShowComments(!showComments)}
           aria-label={showComments ? 'Hide comments' : `Show comments (${currentPost.commentsCount})`}
           aria-pressed={showComments}
-          className={`flex items-center justify-center gap-2 flex-1 px-4 py-2 rounded-lg transition-all ${
-            showComments ? 'bg-fb-hover text-gold' : 'hover:bg-fb-hover text-gray-300'
-          }`}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', flex: 1, padding: '8px 16px', borderRadius: '8px', border: 'none', background: showComments ? '#0f3460' : 'transparent', color: showComments ? '#c9a96e' : '#d1d5db', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s' }}
         >
           <MessageCircle size={18} aria-hidden="true" />
-          <span className="text-sm font-medium">Comment</span>
+          <span>Comment</span>
         </button>
 
         {/* Bookmark Button */}
@@ -243,11 +244,7 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
             onClick={handleBookmark}
             aria-label={currentPost.isBookmarked ? 'Remove bookmark' : 'Save post'}
             aria-pressed={currentPost.isBookmarked}
-            className={`flex items-center justify-center gap-2 flex-1 px-4 py-2 rounded-lg transition-all ${
-              currentPost.isBookmarked
-                ? 'bg-fb-hover text-yellow-400'
-                : 'hover:bg-fb-hover text-gray-300'
-            }`}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', flex: 1, padding: '8px 16px', borderRadius: '8px', border: 'none', background: currentPost.isBookmarked ? '#0f3460' : 'transparent', color: currentPost.isBookmarked ? '#facc15' : '#d1d5db', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s' }}
             disabled={isBookmarking}
           >
             {currentPost.isBookmarked ? (
@@ -255,7 +252,7 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
             ) : (
               <Bookmark size={18} aria-hidden="true" />
             )}
-            <span className="text-sm font-medium">
+            <span>
               {currentPost.isBookmarked ? 'Saved' : 'Save'}
             </span>
           </button>

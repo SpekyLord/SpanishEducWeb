@@ -122,17 +122,18 @@ export const CommentForm: React.FC<CommentFormProps> = ({
           {error}
         </div>
       )}
-      <div className="flex gap-2">
-        <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white text-sm font-semibold">
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={{ width: 32, height: 32, minWidth: 32, borderRadius: '50%', backgroundColor: '#e94560', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.875rem', fontWeight: 600 }}>
           {user.displayName.charAt(0).toUpperCase()}
         </div>
-        <div className="flex-1">
+        <div style={{ flex: 1 }}>
           <textarea
             ref={textareaRef}
             value={content}
             onChange={handleContentChange}
             placeholder={placeholder}
-            className="w-full p-2 rounded-lg input-glow resize-none bg-fb-card text-light placeholder-light/40"
+            className="input-glow"
+            style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', resize: 'none', backgroundColor: '#16213e', color: '#f0e6d3', fontSize: '0.875rem', border: '1px solid rgba(255,255,255,0.08)', outline: 'none' }}
             rows={compact ? 2 : 3}
             disabled={isSubmitting}
             maxLength={2000}
@@ -145,24 +146,27 @@ export const CommentForm: React.FC<CommentFormProps> = ({
               onClose={() => setShowMentions(false)}
             />
           )}
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-xs text-light/50">{content.length}/2000</span>
-            <button
-              type="submit"
-              disabled={isSubmitting || !content.trim()}
-              className="px-3 py-1 btn-accent-gradient text-sm disabled:bg-light/20 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? 'Posting...' : 'Post'}
-            </button>
-            {onCancel && (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '8px' }}>
+            <span style={{ fontSize: '0.75rem', color: 'rgba(240,230,211,0.5)' }}>{content.length}/2000</span>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              {onCancel && (
+                <button
+                  type="button"
+                  onClick={onCancel}
+                  style={{ padding: '4px 12px', fontSize: '0.875rem', color: 'rgba(240,230,211,0.6)', background: 'none', border: 'none', cursor: 'pointer' }}
+                >
+                  Cancel
+                </button>
+              )}
               <button
-                type="button"
-                onClick={onCancel}
-                className="px-3 py-1 text-light/60 hover:text-light/80 text-sm"
+                type="submit"
+                disabled={isSubmitting || !content.trim()}
+                className="btn-accent-gradient"
+                style={{ padding: '6px 16px', fontSize: '0.875rem', border: 'none', cursor: (isSubmitting || !content.trim()) ? 'not-allowed' : 'pointer' }}
               >
-                Cancel
+                {isSubmitting ? 'Posting...' : 'Post'}
               </button>
-            )}
+            </div>
           </div>
         </div>
       </div>

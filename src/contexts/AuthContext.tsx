@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../services/api'
 
@@ -34,8 +34,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [accessToken, setAccessToken] = useState<string | null>(null)
   const navigate = useNavigate()
 
+  // Guard against React 18 StrictMode double-invoking effects
+  // (which would fire two concurrent refresh requests, causing token rotation to fail)
+  const initializedRef = useRef(false)
+
   // Initialize auth state
   useEffect(() => {
+    if (initializedRef.current) return
+    initializedRef.current = true
+
     const savedToken = localStorage.getItem('accessToken')
     if (savedToken) {
       setAccessToken(savedToken)
@@ -204,6 +211,5 @@ export function useAuth() {
 
 // Export for API calls
 export function getAccessToken() {
-  // This is a simple implementation. In production, consider using a more robust solution
-  return sessionStorage.getItem('accessToken')
+  return localStorage.getItem('accessToken')
 }

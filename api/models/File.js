@@ -73,13 +73,13 @@ fileSchema.index({ filename: 'text', originalName: 'text' })
 fileSchema.index({ isDeleted: 1, createdAt: -1 })
 
 // Validation for storage-specific fields
-fileSchema.pre('validate', function(next) {
+// Note: Mongoose 8+ middleware doesn't use next() — just throw for errors
+fileSchema.pre('validate', function() {
   if (this.storageType === 'gridfs' && !this.gridfsId) {
-    next(new Error('gridfsId required for GridFS storage'))
-  } else if (this.storageType === 'cloudinary' && (!this.cloudinaryUrl || !this.cloudinaryPublicId)) {
-    next(new Error('Cloudinary URL and publicId required for Cloudinary storage'))
-  } else {
-    next()
+    throw new Error('gridfsId required for GridFS storage')
+  }
+  if (this.storageType === 'cloudinary' && (!this.cloudinaryUrl || !this.cloudinaryPublicId)) {
+    throw new Error('Cloudinary URL and publicId required for Cloudinary storage')
   }
 })
 

@@ -342,6 +342,37 @@ export const removeReaction = async (postId: string): Promise<{ success: boolean
   return response.data;
 };
 
+// Get reactions (who reacted)
+export interface ReactionsUser {
+  _id: string;
+  username: string;
+  displayName: string;
+  avatarUrl?: string | null;
+}
+
+export interface ReactionsData {
+  reactions: {
+    like: ReactionsUser[];
+    love: ReactionsUser[];
+    celebrate: ReactionsUser[];
+    insightful: ReactionsUser[];
+    question: ReactionsUser[];
+  };
+  reactionsCount: {
+    like: number;
+    love: number;
+    celebrate: number;
+    insightful: number;
+    question: number;
+    total: number;
+  };
+}
+
+export const getPostReactions = async (postId: string): Promise<{ success: boolean; data: ReactionsData }> => {
+  const response = await api.get(`/posts/${postId}/reactions`);
+  return response.data;
+};
+
 // Bookmark post
 export const bookmarkPost = async (postId: string): Promise<{ success: boolean; data: { bookmarked: boolean } }> => {
   const response = await api.post(`/posts/${postId}/bookmark`);

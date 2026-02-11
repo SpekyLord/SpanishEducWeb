@@ -107,16 +107,26 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
       role="dialog"
       aria-label="Notifications"
       aria-modal="false"
-      className="absolute top-full right-0 mt-2 w-[28rem] max-w-[calc(100vw-2rem)] glass-card-elevated shadow-fb-xl rounded-xl z-50 animate-fade-in-up"
+      className="glass-card-elevated"
+      style={{
+        position: 'fixed',
+        top: '60px',
+        right: '16px',
+        width: 'min(32rem, calc(100vw - 32px))',
+        zIndex: 9997,
+        borderRadius: '12px',
+        boxShadow: '0 8px 16px rgba(0,0,0,0.5)',
+        overflow: 'hidden',
+      }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-fb-border/50">
-        <h3 id="notifications-title" className="text-lg font-semibold text-gray-100 font-heading">Notifications</h3>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+        <h3 id="notifications-title" style={{ fontSize: '1.125rem', fontWeight: 600, color: '#f3f4f6', margin: 0 }}>Notifications</h3>
         {notifications.some(n => !n.isRead) && (
           <button
             onClick={handleMarkAllRead}
             disabled={markingAllRead}
-            className="text-sm text-gold hover:text-gold-light font-medium px-3 py-1 rounded-md hover:bg-gold/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            style={{ fontSize: '0.875rem', color: '#c9a96e', fontWeight: 500, padding: '4px 12px', borderRadius: '6px', background: 'transparent', border: 'none', cursor: markingAllRead ? 'not-allowed' : 'pointer', opacity: markingAllRead ? 0.5 : 1 }}
           >
             {markingAllRead ? 'Marking...' : 'Mark all read'}
           </button>
@@ -124,25 +134,25 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
       </div>
 
       {/* Body */}
-      <div className="max-h-[480px] overflow-y-auto">
+      <div style={{ maxHeight: '560px', overflowY: 'auto' }}>
         {loading ? (
-          <div className="flex items-center justify-center p-8">
-            <Loader2 className="animate-spin text-gold" size={24} />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px' }}>
+            <Loader2 style={{ color: '#c9a96e', animation: 'spin 1s linear infinite' }} size={24} />
           </div>
         ) : error ? (
-          <div className="p-4">
-            <div className="bg-red-900/30 border border-red-700/60 text-red-200 p-3 rounded-lg">
-              <p className="text-sm">{error}</p>
+          <div style={{ padding: '16px' }}>
+            <div style={{ backgroundColor: 'rgba(127,29,29,0.3)', border: '1px solid rgba(185,28,28,0.6)', color: '#fca5a5', padding: '12px', borderRadius: '8px', fontSize: '0.875rem' }}>
+              {error}
             </div>
           </div>
         ) : notifications.length === 0 ? (
-          <div className="p-10 text-center">
-            <Bell size={32} className="mx-auto text-gray-600 mb-3" />
-            <p className="text-gray-400 font-medium">No notifications yet</p>
-            <p className="text-gray-500 text-xs mt-1">You'll be notified when something happens</p>
+          <div style={{ padding: '40px 16px', textAlign: 'center' }}>
+            <Bell size={32} style={{ margin: '0 auto 12px', color: '#4b5563', display: 'block' }} />
+            <p style={{ color: '#9ca3af', fontWeight: 500, margin: '0 0 4px' }}>No notifications yet</p>
+            <p style={{ color: '#6b7280', fontSize: '0.75rem', margin: 0 }}>You'll be notified when something happens</p>
           </div>
         ) : (
-          <div className="divide-y divide-fb-border/50">
+          <div>
             {notifications.map(notification => (
               <NotificationItem
                 key={notification._id}
@@ -156,13 +166,13 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
 
       {/* Footer */}
       {!loading && !error && notifications.length > 0 && (
-        <div className="px-5 py-3 border-t border-fb-border/50 text-center">
+        <div style={{ padding: '12px 20px', borderTop: '1px solid rgba(255,255,255,0.08)', textAlign: 'center' }}>
           <button
             onClick={() => {
               navigate('/notifications');
               onClose();
             }}
-            className="text-sm text-gold hover:text-gold-light font-medium transition-colors"
+            style={{ fontSize: '0.875rem', color: '#c9a96e', fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer' }}
           >
             See all notifications →
           </button>

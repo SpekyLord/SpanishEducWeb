@@ -456,6 +456,47 @@ export async function addReaction(req, res) {
   }
 }
 
+export async function getReactions(req, res) {
+  try {
+    const post = await Post.findOne({
+      _id: req.params.id,
+      isDeleted: false
+    })
+      .populate('reactions.like', 'username displayName avatarUrl')
+      .populate('reactions.love', 'username displayName avatarUrl')
+      .populate('reactions.celebrate', 'username displayName avatarUrl')
+      .populate('reactions.insightful', 'username displayName avatarUrl')
+      .populate('reactions.question', 'username displayName avatarUrl')
+
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      })
+    }
+
+    res.json({
+      success: true,
+      data: {
+        reactions: {
+          like: post.reactions.like,
+          love: post.reactions.love,
+          celebrate: post.reactions.celebrate,
+          insightful: post.reactions.insightful,
+          question: post.reactions.question
+        },
+        reactionsCount: post.reactionsCount
+      }
+    })
+  } catch (error) {
+    console.error('Get reactions error:', error)
+    res.status(500).json({
+      success: false,
+      message: 'Server error fetching reactions'
+    })
+  }
+}
+
 export async function removeReaction(req, res) {
   try {
     const post = await Post.findOne({

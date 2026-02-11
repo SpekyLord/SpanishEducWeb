@@ -30,12 +30,13 @@ export async function uploadToGridFS(buffer, filename, metadata = {}) {
     })
 
     uploadStream.on('error', reject)
-    uploadStream.on('finish', (file) => {
+    // MongoDB driver v6+ doesn't pass file doc to finish callback
+    uploadStream.on('finish', () => {
       resolve({
-        id: file._id,
-        filename: file.filename,
-        size: file.length,
-        uploadedAt: file.uploadDate
+        id: uploadStream.id,
+        filename: filename,
+        size: buffer.length,
+        uploadedAt: new Date()
       })
     })
 

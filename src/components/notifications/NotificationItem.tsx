@@ -1,6 +1,7 @@
 import React from 'react';
 import { MessageCircle, Heart, AtSign, FileText, Pin, Mail } from 'lucide-react';
 import { Notification } from '../../services/api';
+import { UserAvatar } from '../common/UserAvatar';
 import { formatDistanceToNow } from 'date-fns';
 
 interface NotificationItemProps {
@@ -11,19 +12,19 @@ interface NotificationItemProps {
 const getNotificationIcon = (type: Notification['type']) => {
   switch (type) {
     case 'comment_reply':
-      return <MessageCircle size={16} className="text-blue-400" />;
+      return <MessageCircle size={16} style={{ color: '#60a5fa' }} />;
     case 'comment_like':
-      return <Heart size={16} className="text-red-400" />;
+      return <Heart size={16} style={{ color: '#f87171' }} />;
     case 'mention':
-      return <AtSign size={16} className="text-green-400" />;
+      return <AtSign size={16} style={{ color: '#4ade80' }} />;
     case 'new_post':
-      return <FileText size={16} className="text-purple-400" />;
+      return <FileText size={16} style={{ color: '#c084fc' }} />;
     case 'pinned_comment':
-      return <Pin size={16} className="text-yellow-400" />;
+      return <Pin size={16} style={{ color: '#facc15' }} />;
     case 'direct_message':
-      return <Mail size={16} className="text-blue-400" />;
+      return <Mail size={16} style={{ color: '#60a5fa' }} />;
     default:
-      return <MessageCircle size={16} className="text-gray-400" />;
+      return <MessageCircle size={16} style={{ color: '#9ca3af' }} />;
   }
 };
 
@@ -62,41 +63,47 @@ export const NotificationItem = React.memo<NotificationItemProps>(({ notificatio
   return (
     <button
       onClick={onClick}
-      className={`w-full px-5 py-4 text-left hover:bg-fb-hover/80 transition-all flex gap-4 ${
-        !notification.isRead ? 'unread-shimmer' : ''
-      }`}
+      style={{
+        width: '100%',
+        padding: '14px 20px',
+        textAlign: 'left' as const,
+        display: 'flex',
+        gap: '14px',
+        alignItems: 'flex-start',
+        background: !notification.isRead ? 'linear-gradient(135deg, rgba(233,69,96,0.08) 0%, rgba(233,69,96,0.04) 50%, rgba(233,69,96,0.08) 100%)' : 'transparent',
+        border: 'none',
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        cursor: 'pointer',
+        transition: 'background 0.2s',
+      }}
     >
       {/* Avatar with icon badge */}
-      <div className="relative flex-shrink-0">
-        <img
-          src={notification.actor.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(notification.actor.displayName || notification.actor.username)}&background=e94560&color=fff`}
-          alt={notification.actor.displayName || notification.actor.username}
-          className="w-11 h-11 rounded-full object-cover ring-2 ring-fb-border"
-        />
-        <div className="absolute -bottom-0.5 -right-0.5 bg-fb-card rounded-full p-1 shadow-fb border border-fb-border">
+      <div style={{ position: 'relative', flexShrink: 0 }}>
+        <UserAvatar name={notification.actor.displayName || notification.actor.username} avatarUrl={notification.actor.avatar} size="lg" />
+        <div style={{ position: 'absolute', bottom: '-2px', right: '-2px', backgroundColor: '#16213e', borderRadius: '50%', padding: '3px', boxShadow: '0 1px 3px rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)' }}>
           {icon}
         </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 min-w-0">
-        <p className="text-sm text-gray-100 mb-1 leading-snug">
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ fontSize: '0.875rem', color: '#f3f4f6', margin: '0 0 4px', lineHeight: 1.4 }}>
           {message}
         </p>
         {notification.content && (
-          <p className="text-xs text-gray-400 mb-1.5 line-clamp-2">
+          <p style={{ fontSize: '0.75rem', color: '#9ca3af', margin: '0 0 6px', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const }}>
             {contentPreview}
           </p>
         )}
-        <p className="text-xs text-gray-500">
+        <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>
           {timeAgo}
         </p>
       </div>
 
       {/* Unread indicator */}
       {!notification.isRead && (
-        <div className="flex-shrink-0 pt-2">
-          <div className="w-2.5 h-2.5 bg-accent rounded-full shadow-glow-accent animate-pulse"></div>
+        <div style={{ flexShrink: 0, paddingTop: '8px' }}>
+          <div style={{ width: '10px', height: '10px', backgroundColor: '#e94560', borderRadius: '50%', boxShadow: '0 0 8px rgba(233,69,96,0.4)' }} />
         </div>
       )}
     </button>

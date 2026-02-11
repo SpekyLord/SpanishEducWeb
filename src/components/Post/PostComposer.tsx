@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Image, Video, Pin, X } from 'lucide-react';
 import { createPost } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { UserAvatar } from '../common/UserAvatar';
 
 interface PostComposerProps {
   onPostCreated?: () => void;
@@ -136,9 +137,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
       <form onSubmit={handleSubmit}>
         {/* Header */}
         <div className="flex items-center mb-6">
-          <div className="w-11 h-11 rounded-full bg-[#0f3460] flex items-center justify-center text-white font-semibold">
-            {user.displayName.charAt(0).toUpperCase()}
-          </div>
+          <UserAvatar name={user.displayName} avatarUrl={user.avatar?.url} size="lg" />
           <div className="ml-3">
             <h3 className="font-semibold text-gray-100">{user.displayName}</h3>
             <p className="text-sm text-gray-400">Create a new post</p>

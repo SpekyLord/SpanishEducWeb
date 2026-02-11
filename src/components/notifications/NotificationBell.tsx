@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bell } from 'lucide-react';
 import { getUnreadCount } from '../../services/api';
 import { NotificationDropdown } from './NotificationDropdown';
 
 export const NotificationBell: React.FC = () => {
+  const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -47,15 +49,21 @@ export const NotificationBell: React.FC = () => {
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div style={{ position: 'relative' }} ref={dropdownRef}>
       <button
-        onClick={() => setShowDropdown(!showDropdown)}
-        className="relative p-2 rounded-full hover:bg-fb-hover transition-all hover:scale-105"
+        onClick={() => {
+          if (window.innerWidth < 640) {
+            navigate('/notifications');
+          } else {
+            setShowDropdown(!showDropdown);
+          }
+        }}
+        style={{ position: 'relative', padding: '8px', borderRadius: '50%', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         aria-label={`Notifications ${unreadCount > 0 ? `(${unreadCount} unread)` : ''}`}
       >
-        <Bell size={20} className="text-gray-300" />
+        <Bell size={20} style={{ color: '#d1d5db' }} />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 bg-red-600 text-white text-xs font-bold rounded-full min-w-[20px] h-[20px] flex items-center justify-center px-1 shadow-glow-accent animate-glow-pulse">
+          <span style={{ position: 'absolute', top: '-2px', right: '-2px', backgroundColor: '#dc2626', color: 'white', fontSize: '0.7rem', fontWeight: 700, borderRadius: '9999px', minWidth: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', boxShadow: '0 0 8px rgba(233,69,96,0.4)' }}>
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}

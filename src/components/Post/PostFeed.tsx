@@ -1,99 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { FileText, RefreshCw } from 'lucide-react';
 import { Post, getPosts } from '../../services/api';
 import { PostCard } from './PostCard';
 
 export const PostFeed: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [usingMock, setUsingMock] = useState(false);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const mockPosts: Post[] = [
-    {
-      _id: 'mock-1',
-      author: {
-        _id: 'u1',
-        username: 'profesora',
-        displayName: 'Profesora María',
-        avatarUrl: 'https://placehold.co/80x80',
-        role: 'teacher'
-      },
-      content: 'Lesson 5: Ser vs Estar — quick guide and practice prompts for today’s session.',
-      media: [
-        {
-          type: 'image',
-          url: 'https://placehold.co/800x450',
-          publicId: 'mock-1',
-          mimeType: 'image/png',
-          width: 800,
-          height: 450
-        }
-      ],
-      reactionsCount: { like: 12, love: 6, celebrate: 3, insightful: 9, question: 1, total: 31 },
-      userReaction: null,
-      commentsCount: 18,
-      bookmarksCount: 5,
-      isBookmarked: false,
-      isPinned: true,
-      pinnedAt: new Date().toISOString(),
-      createdAt: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-      updatedAt: new Date().toISOString(),
-      contentHtml: ''
-    },
-    {
-      _id: 'mock-2',
-      author: {
-        _id: 'u2',
-        username: 'carlosmendez',
-        displayName: 'Carlos Mendez',
-        avatarUrl: 'https://placehold.co/80x80',
-        role: 'student'
-      },
-      content: 'Question: When should I use “estoy” vs “soy” for temporary states? Examples appreciated! 😊',
-      media: [],
-      reactionsCount: { like: 4, love: 0, celebrate: 1, insightful: 2, question: 2, total: 9 },
-      userReaction: null,
-      commentsCount: 6,
-      bookmarksCount: 1,
-      isBookmarked: false,
-      isPinned: false,
-      createdAt: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
-      updatedAt: new Date().toISOString(),
-      contentHtml: ''
-    },
-    {
-      _id: 'mock-3',
-      author: {
-        _id: 'u1',
-        username: 'profesora',
-        displayName: 'Profesora María',
-        avatarUrl: 'https://placehold.co/80x80',
-        role: 'teacher'
-      },
-      content: 'Vocabulary List Week 3 — Colors PDF attached. Please review before Friday.',
-      media: [
-        {
-          type: 'image',
-          url: 'https://placehold.co/800x520',
-          publicId: 'mock-3',
-          mimeType: 'image/png',
-          width: 800,
-          height: 520
-        }
-      ],
-      reactionsCount: { like: 8, love: 2, celebrate: 4, insightful: 1, question: 0, total: 15 },
-      userReaction: null,
-      commentsCount: 3,
-      bookmarksCount: 7,
-      isBookmarked: false,
-      isPinned: false,
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
-      updatedAt: new Date().toISOString(),
-      contentHtml: ''
-    }
-  ];
   
   const observer = useRef<IntersectionObserver | null>(null);
   const lastPostRef = useCallback((node: HTMLDivElement | null) => {
@@ -110,14 +25,14 @@ export const PostFeed: React.FC = () => {
   }, [loading, hasMore]);
 
   const loadPosts = async () => {
-    if (loading || !hasMore || usingMock) return;
-    
+    if (loading || !hasMore) return;
+
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await getPosts(page, 10);
-      
+
       if (response.success) {
         setPosts(prev => {
           const existingIds = new Set(prev.map(p => p._id));
@@ -125,14 +40,10 @@ export const PostFeed: React.FC = () => {
           return [...prev, ...newPosts];
         });
         setHasMore(response.data.pagination.hasMore);
-        if (response.data.posts.length > 0) {
-          setUsingMock(false);
-        }
       }
     } catch (err: any) {
       console.error('Error loading posts:', err);
       setError(err.response?.data?.message || 'Failed to load posts');
-      setUsingMock(true);
       setHasMore(false);
     } finally {
       setLoading(false);
@@ -147,27 +58,41 @@ export const PostFeed: React.FC = () => {
     setPosts(prev => prev.map(p => p._id === updatedPost._id ? updatedPost : p));
   };
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setPosts([]);
     setPage(1);
     setHasMore(true);
     setError(null);
-    setUsingMock(false);
-  };
+    setLoading(true);
 
-  const displayPosts = (posts.length === 0 || usingMock) ? mockPosts : posts;
+    try {
+      const response = await getPosts(1, 10);
+      if (response.success) {
+        setPosts(response.data.posts);
+        setHasMore(response.data.pagination.hasMore);
+      }
+    } catch (err: any) {
+      console.error('Error loading posts:', err);
+      setError(err.response?.data?.message || 'Failed to load posts');
+      setHasMore(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between pb-6 border-b border-fb-border">
-        <h1 className="text-2xl font-bold text-gray-100 font-heading">Feed</h1>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+        <h1 className="font-heading" style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f3f4f6', margin: 0 }}>Feed</h1>
         <button
           onClick={handleRefresh}
-          className="flex items-center gap-2 px-4 py-2 bg-[#0f3460] text-gray-200 rounded-lg hover:bg-[#1a3a6e] transition-all hover:shadow-fb text-sm font-medium"
+          aria-label="Refresh feed"
+          style={{ padding: '8px', borderRadius: '50%', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s, border-color 0.2s' }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(201,169,110,0.1)'; e.currentTarget.style.borderColor = 'rgba(201,169,110,0.3)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
         >
-          <span>🔄</span>
-          <span>Refresh</span>
+          <RefreshCw size={18} style={{ color: '#c9a96e' }} />
         </button>
       </div>
 
@@ -178,9 +103,18 @@ export const PostFeed: React.FC = () => {
         </div>
       )}
 
+      {/* Empty State */}
+      {posts.length === 0 && !loading && !error && (
+        <div className="glass-card-elevated p-12 text-center">
+          <FileText size={48} className="mx-auto text-gray-600 mb-4" />
+          <h3 className="text-lg font-heading font-semibold text-gray-300 mb-2">No posts yet</h3>
+          <p className="text-gray-500 text-sm">Be the first to share something with the class!</p>
+        </div>
+      )}
+
       {/* Posts */}
-      {displayPosts.map((post, index) => {
-        if (!usingMock && index === displayPosts.length - 1) {
+      {posts.map((post, index) => {
+        if (index === posts.length - 1) {
           return (
             <div key={post._id} ref={lastPostRef}>
               <PostCard post={post} onUpdate={handlePostUpdate} />
