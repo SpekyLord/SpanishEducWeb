@@ -15,6 +15,7 @@ const FilesPage = lazy(() => import('./pages/Files/FilesPage').then(m => ({ defa
 const MessagesPage = lazy(() => import('./pages/Messages/MessagesPage').then(m => ({ default: m.MessagesPage })))
 const NotificationsPage = lazy(() => import('./pages/Notifications/NotificationsPage').then(m => ({ default: m.NotificationsPage })))
 const GroupsPage = lazy(() => import('./pages/Groups/GroupsPage').then(m => ({ default: m.GroupsPage })))
+const ProfilePage = lazy(() => import('./pages/Profile/ProfilePage').then(m => ({ default: m.ProfilePage })))
 
 // Loading fallback component
 const PageLoader = () => (
@@ -94,6 +95,15 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <GroupsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/profile/:username"
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
                   </ProtectedRoute>
                 }
               />

@@ -173,7 +173,9 @@ const CommentSectionContent: React.FC<CommentSectionProps> = ({ postId }) => {
             <button
               onClick={handleLoadMore}
               disabled={loading}
-              className="mt-4 text-sm text-gold hover:text-[#d4b87e]"
+              style={{ marginTop: '16px', fontSize: '0.875rem', color: '#c9a96e', background: 'none', border: 'none', cursor: 'pointer', padding: 0, transition: 'color 0.2s' }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#d4b87e'; }}
+              onMouseLeave={e => { e.currentTarget.style.color = '#c9a96e'; }}
             >
               {loading ? 'Loading...' : 'Load more comments'}
             </button>

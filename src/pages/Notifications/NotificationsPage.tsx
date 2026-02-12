@@ -7,6 +7,7 @@ import {
   getNotifications,
   markNotificationAsRead,
   markAllNotificationsAsRead,
+  clearAllNotifications,
   Notification
 } from '../../services/api';
 
@@ -19,6 +20,7 @@ export const NotificationsPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [markingAllRead, setMarkingAllRead] = useState(false);
+  const [clearingAll, setClearingAll] = useState(false);
 
   const loadNotifications = useCallback(async (pageNum: number, append = false) => {
     try {
@@ -76,7 +78,16 @@ export const NotificationsPage: React.FC = () => {
     } else if (type === 'new_post') {
       navigate(`/feed#post-${reference.id}`);
     } else if (type === 'direct_message') {
-      navigate('/messages');
+      navigate('/messages', {
+        state: {
+          userId: notification.actor._id,
+          otherUser: {
+            _id: notification.actor._id,
+            displayName: notification.actor.displayName,
+            avatarUrl: notification.actor.avatar,
+          }
+        }
+      });
     }
   };
 
@@ -92,6 +103,20 @@ export const NotificationsPage: React.FC = () => {
     }
   };
 
+  const handleClearAll = async () => {
+    if (!window.confirm('Clear all notifications? This cannot be undone.')) return;
+    try {
+      setClearingAll(true);
+      await clearAllNotifications();
+      setNotifications([]);
+      setHasMore(false);
+    } catch (err) {
+      console.error('Failed to clear notifications:', err);
+    } finally {
+      setClearingAll(false);
+    }
+  };
+
   const hasUnread = notifications.some(n => !n.isRead);
 
   return (
@@ -102,15 +127,26 @@ export const NotificationsPage: React.FC = () => {
         {/* Page header */}
         <div className="flex items-center justify-between mb-6">
           <h1 className="font-heading text-2xl font-bold text-light heading-accent">Notifications</h1>
-          {hasUnread && (
-            <button
-              onClick={handleMarkAllRead}
-              disabled={markingAllRead}
-              className="text-sm text-gold hover:text-[#d4b87e] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {markingAllRead ? 'Marking...' : 'Mark all as read'}
-            </button>
-          )}
+          <div style={{ display: 'flex', gap: '12px' }}>
+            {hasUnread && (
+              <button
+                onClick={handleMarkAllRead}
+                disabled={markingAllRead}
+                className="text-sm text-gold hover:text-[#d4b87e] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {markingAllRead ? 'Marking...' : 'Mark all as read'}
+              </button>
+            )}
+            {notifications.length > 0 && (
+              <button
+                onClick={handleClearAll}
+                disabled={clearingAll}
+                style={{ fontSize: '0.875rem', color: '#f87171', fontWeight: 500, background: 'none', border: 'none', cursor: clearingAll ? 'not-allowed' : 'pointer', opacity: clearingAll ? 0.5 : 1, transition: 'color 0.2s' }}
+              >
+                {clearingAll ? 'Clearing...' : 'Clear all'}
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Content */}

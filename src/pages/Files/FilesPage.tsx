@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Header } from '../../components';
-import { FileExplorer } from '../../components/Files/FileExplorer';
-import { FileUpload } from '../../components/Files/FileUpload';
+import { FileExplorer } from '../../components/files/FileExplorer';
+import { FileUpload } from '../../components/files/FileUpload';
 import { useAuth } from '../../contexts/AuthContext';
 
 export const FilesPage: React.FC = () => {
@@ -20,22 +20,22 @@ export const FilesPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-fb-bg text-gray-100">
+    <div style={{ minHeight: '100vh', backgroundColor: '#1a1a2e', color: '#f3f4f6' }}>
       <Header variant="feed" />
 
-      <main className="mx-auto px-4 sm:px-6 py-6" style={{ maxWidth: '80rem' }}>
+      <main style={{ maxWidth: '80rem', margin: '0 auto', padding: '1.5rem 1rem' }}>
         {/* Page header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-100">Files & Resources</h1>
-          <p className="text-gray-400 mt-1">
+        <div style={{ marginBottom: '1.5rem' }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f3f4f6', margin: 0 }}>Files & Resources</h1>
+          <p style={{ color: '#9ca3af', marginTop: '4px' }}>
             Access course materials, documents, and audio files
           </p>
         </div>
 
         {/* Main content */}
-        <div className={`grid gap-6 ${isTeacher ? 'lg:grid-cols-3' : 'grid-cols-1'}`}>
+        <div className={`grid gap-6 grid-cols-1 ${isTeacher ? 'lg:grid-cols-[2fr_1fr]' : ''}`}>
           {/* File explorer - takes 2/3 width on desktop for teachers, full width for students */}
-          <div className={isTeacher ? 'lg:col-span-2' : 'col-span-1'}>
+          <div>
             <FileExplorer
               currentFolderId={currentFolderId}
               onFolderChange={handleFolderChange}
@@ -45,7 +45,7 @@ export const FilesPage: React.FC = () => {
 
           {/* Upload component - only for teachers */}
           {isTeacher && (
-            <div className="lg:col-span-1">
+            <div>
               <FileUpload
                 currentFolderId={currentFolderId}
                 onUploadComplete={handleUploadComplete}

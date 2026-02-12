@@ -6,6 +6,7 @@ import { ThreadLine } from './ThreadLine';
 import { useCommentThread } from '../../contexts/CommentThreadContext';
 import { MentionText } from './MentionText';
 import { UserAvatar } from '../common/UserAvatar';
+import { UserPopover } from '../common/UserPopover';
 
 interface CommentItemProps {
   comment: Comment;
@@ -27,6 +28,7 @@ export const CommentItem = React.memo<CommentItemProps>(({ comment, postId, dept
   const [replyPage, setReplyPage] = useState(1);
   const [loadingReplies, setLoadingReplies] = useState(false);
   const [hasMoreReplies, setHasMoreReplies] = useState(comment.hasMoreReplies || false);
+  const [popoverAnchor, setPopoverAnchor] = useState<{ top: number; left: number; bottom: number } | null>(null);
 
   const isOwner = user?._id === comment.author._id;
   const collapsed = isCollapsed(comment._id);
@@ -133,14 +135,32 @@ export const CommentItem = React.memo<CommentItemProps>(({ comment, postId, dept
     >
       <ThreadLine depth={depth} isLast={false} />
       <div style={{ display: 'flex', gap: '12px' }}>
-        <UserAvatar name={comment.author.displayName} avatarUrl={comment.author.avatarUrl} size="sm" className="ring-1 ring-fb-border" />
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+        <div
+          onClick={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            setPopoverAnchor({ top: rect.top, left: rect.left, bottom: rect.bottom });
+          }}
+          style={{ cursor: 'pointer', display: 'flex' }}
+        >
+          <UserAvatar name={comment.author.displayName} avatarUrl={comment.author.avatarUrl} size="sm" className="ring-1 ring-fb-border" />
+        </div>
+        <div>
+          <div
+            onClick={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              setPopoverAnchor({ top: rect.top, left: rect.left, bottom: rect.bottom });
+            }}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', cursor: 'pointer' }}
+          >
             <span style={{ fontWeight: 600, color: '#f0e6d3', fontSize: '0.875rem' }}>{comment.author.displayName}</span>
             <span style={{ fontSize: '0.75rem', backgroundColor: '#0f3460', color: '#d1d5db', padding: '2px 6px', borderRadius: '4px' }}>
               {comment.author.role}
             </span>
             <span style={{ fontSize: '0.75rem', color: 'rgba(240,230,211,0.5)' }}>@{comment.author.username}</span>
+          </div>
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
             <span style={{ fontSize: '0.75rem', color: 'rgba(240,230,211,0.5)' }}>· {formatDate(comment.createdAt)}</span>
             {comment.isPinned && (
               <span style={{ fontSize: '0.75rem', backgroundColor: 'rgba(201,169,110,0.2)', color: '#c9a96e', padding: '2px 8px', borderRadius: '4px', fontWeight: 600 }}>
@@ -284,6 +304,20 @@ export const CommentItem = React.memo<CommentItemProps>(({ comment, postId, dept
           )}
         </div>
       </div>
+
+      {popoverAnchor && (
+        <UserPopover
+          user={{
+            _id: comment.author._id,
+            username: comment.author.username,
+            displayName: comment.author.displayName,
+            avatarUrl: comment.author.avatarUrl,
+            role: comment.author.role,
+          }}
+          anchorRect={popoverAnchor}
+          onClose={() => setPopoverAnchor(null)}
+        />
+      )}
     </div>
   );
 }, (prevProps, nextProps) => {

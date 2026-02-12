@@ -729,4 +729,52 @@ export const deleteNotification = async (notificationId: string): Promise<{
   return response.data;
 };
 
+// Clear all notifications
+export const clearAllNotifications = async (): Promise<{
+  success: boolean;
+  message: string;
+  data: { deletedCount: number };
+}> => {
+  const response = await api.delete('/notifications/clear-all');
+  return response.data;
+};
+
+// User Profile API
+
+export const getUserProfile = async (username: string): Promise<{
+  success: boolean;
+  data: {
+    user: {
+      _id: string;
+      displayName: string;
+      username: string;
+      role: 'teacher' | 'student';
+      avatar: { url: string | null; publicId: string | null };
+      bio: string;
+      stats: {
+        commentsCount: number;
+        likesGiven: number;
+        downloadsCount: number;
+        postsCount: number;
+      };
+      createdAt: string;
+    };
+    recentPosts: Post[];
+  };
+}> => {
+  const response = await api.get(`/users/${username}`);
+  return response.data;
+};
+
+export const updateProfile = async (data: {
+  displayName?: string;
+  bio?: string;
+}): Promise<{
+  success: boolean;
+  data: { user: any };
+}> => {
+  const response = await api.put('/users/profile', data);
+  return response.data;
+};
+
 export default api;

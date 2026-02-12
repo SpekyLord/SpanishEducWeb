@@ -4,6 +4,7 @@ import { Post, addReaction, removeReaction, bookmarkPost, removeBookmark } from 
 import { useAuth } from '../../contexts/AuthContext';
 import { CommentSection } from '../Comment/CommentSection';
 import { UserAvatar } from '../common/UserAvatar';
+import { UserPopover } from '../common/UserPopover';
 import { ReactionsPanel } from './ReactionsPanel';
 
 interface PostCardProps {
@@ -27,6 +28,7 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
   const [isBookmarking, setIsBookmarking] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [showReactionsPanel, setShowReactionsPanel] = useState(false);
+  const [popoverAnchor, setPopoverAnchor] = useState<{ top: number; left: number; bottom: number } | null>(null);
 
   useEffect(() => {
     setCurrentPost(post);
@@ -104,23 +106,53 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
     <div className="glass-card-elevated hover-lift shadow-fb" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
       {/* Author Header */}
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <UserAvatar name={currentPost.author.displayName} avatarUrl={currentPost.author.avatarUrl} size="lg" className="ring-2 ring-fb-border" />
-        <div style={{ marginLeft: '1.25rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            <h3 style={{ fontWeight: 600, color: '#f3f4f6', margin: 0 }}>{currentPost.author.displayName}</h3>
-            <span style={{ fontSize: '0.75rem', backgroundColor: '#0f3460', color: '#d1d5db', padding: '2px 8px', borderRadius: '4px' }}>
-              {currentPost.author.role}
-            </span>
-            {currentPost.isPinned && (
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', backgroundColor: 'rgba(201,169,110,0.15)', color: '#c9a96e', padding: '2px 8px', borderRadius: '4px' }}>
-                <Pin size={12} />
-                <span>Pinned</span>
-              </span>
-            )}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div
+            onClick={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              setPopoverAnchor({ top: rect.top, left: rect.left, bottom: rect.bottom });
+            }}
+            style={{ cursor: 'pointer', display: 'flex' }}
+          >
+            <UserAvatar name={currentPost.author.displayName} avatarUrl={currentPost.author.avatarUrl} size="lg" className="ring-2 ring-fb-border" />
           </div>
-          <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '8px' }}>@{currentPost.author.username} · {formatDate(currentPost.createdAt)}</p>
+          <div style={{ marginLeft: '1.25rem' }}>
+            <div
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                setPopoverAnchor({ top: rect.top, left: rect.left, bottom: rect.bottom });
+              }}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', cursor: 'pointer' }}
+            >
+              <h3 style={{ fontWeight: 600, color: '#f3f4f6', margin: 0 }}>{currentPost.author.displayName}</h3>
+              <span style={{ fontSize: '0.75rem', backgroundColor: '#0f3460', color: '#d1d5db', padding: '2px 8px', borderRadius: '4px' }}>
+                {currentPost.author.role}
+              </span>
+              {currentPost.isPinned && (
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', backgroundColor: 'rgba(201,169,110,0.15)', color: '#c9a96e', padding: '2px 8px', borderRadius: '4px' }}>
+                  <Pin size={12} />
+                  <span>Pinned</span>
+                </span>
+              )}
+            </div>
+            <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '8px' }}>@{currentPost.author.username} · {formatDate(currentPost.createdAt)}</p>
+          </div>
         </div>
       </div>
+
+      {popoverAnchor && (
+        <UserPopover
+          user={{
+            _id: currentPost.author._id,
+            username: currentPost.author.username,
+            displayName: currentPost.author.displayName,
+            avatarUrl: currentPost.author.avatarUrl,
+            role: currentPost.author.role,
+          }}
+          anchorRect={popoverAnchor}
+          onClose={() => setPopoverAnchor(null)}
+        />
+      )}
 
       {/* Content */}
       <div className="mb-6">

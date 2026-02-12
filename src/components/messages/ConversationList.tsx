@@ -62,95 +62,130 @@ export const ConversationList: React.FC<ConversationListProps> = ({
 
   if (isLoading) {
     return (
-      <div className="flex flex-col h-full bg-fb-card border-r border-fb-border">
-        <div className="p-4 flex items-center justify-center flex-1">
-          <p className="text-gray-400">Loading conversations...</p>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#16213e', borderRight: '1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+          <p style={{ color: '#9ca3af', margin: 0 }}>Loading conversations...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full bg-fb-card border-r border-fb-border">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#16213e', borderRight: '1px solid rgba(255,255,255,0.08)' }}>
       {/* Search bar */}
-      <div className="p-4 border-b border-fb-border">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+      <div style={{ padding: '1rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ position: 'relative' }}>
+          <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
           <input
             type="text"
             placeholder="Search conversations..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-fb-hover rounded-lg pl-10 pr-4 py-2 text-sm text-gray-100 placeholder-gray-400 input-glow"
+            className="input-glow"
+            style={{ width: '100%', backgroundColor: '#0f3460', borderRadius: '8px', paddingLeft: '40px', paddingRight: '16px', paddingTop: '8px', paddingBottom: '8px', fontSize: '0.875rem', color: '#f3f4f6', border: '1px solid rgba(255,255,255,0.08)', outline: 'none', boxSizing: 'border-box' }}
           />
         </div>
       </div>
 
       {/* Error message */}
       {error && (
-        <div className="mx-4 mt-4 p-3 bg-red-900/30 border border-red-700/60 rounded-lg">
-          <p className="text-sm text-red-200">{error}</p>
+        <div style={{ margin: '16px 16px 0', padding: '12px', backgroundColor: 'rgba(127,29,29,0.3)', border: '1px solid rgba(185,28,28,0.6)', borderRadius: '8px' }}>
+          <p style={{ fontSize: '0.875rem', color: '#fecaca', margin: 0 }}>{error}</p>
         </div>
       )}
 
       {/* Conversation list */}
-      <div className="flex-1 overflow-y-auto">
+      <div style={{ flex: 1, overflowY: 'auto' }}>
         {filteredConversations.length === 0 ? (
-          <div className="flex items-center justify-center h-full px-4 text-center">
-            <p className="text-gray-400">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '0 16px', textAlign: 'center' }}>
+            <p style={{ color: '#9ca3af', margin: 0 }}>
               {searchQuery ? 'No conversations found' : 'No conversations yet'}
             </p>
           </div>
         ) : (
-          filteredConversations.map((conv) => (
-            <button
-              key={conv._id}
-              onClick={() => onSelectConversation(conv._id, conv.otherUser)}
-              className={`w-full p-4 flex items-start gap-3 hover:bg-fb-hover transition-colors border-b border-fb-border/50 ${
-                selectedConversationId === conv._id ? 'bg-fb-hover border-l-2 border-gold' : ''
-              }`}
-            >
-              {/* Avatar */}
-              <UserAvatar name={conv.otherUser.displayName} avatarUrl={conv.otherUser.avatarUrl} size="md" />
+          filteredConversations.map((conv) => {
+            const isSelected = selectedConversationId === conv._id;
+            return (
+              <button
+                key={conv._id}
+                onClick={() => onSelectConversation(conv._id, conv.otherUser)}
+                style={{
+                  width: '100%',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '12px',
+                  backgroundColor: isSelected ? '#0f3460' : 'transparent',
+                  borderBottom: '1px solid rgba(255,255,255,0.04)',
+                  borderLeft: isSelected ? '3px solid #c9a96e' : '3px solid transparent',
+                  borderTop: 'none',
+                  borderRight: 'none',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s',
+                  textAlign: 'left',
+                }}
+                onMouseEnter={e => { if (!isSelected) e.currentTarget.style.backgroundColor = '#0f3460'; }}
+                onMouseLeave={e => { if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent'; }}
+              >
+                {/* Avatar */}
+                <UserAvatar name={conv.otherUser.displayName} avatarUrl={conv.otherUser.avatarUrl} size="md" />
 
-              {/* Content */}
-              <div className="flex-1 min-w-0 text-left">
-                <div className="flex items-center justify-between mb-1">
-                  <h3
-                    className={`font-semibold truncate ${
-                      conv.unreadCount > 0 ? 'text-gray-100' : 'text-gray-300'
-                    }`}
-                  >
-                    {conv.otherUser.displayName}
-                  </h3>
-                  {conv.lastMessage && (
-                    <span className="text-xs text-gray-500 ml-2 flex-shrink-0">
-                      {formatMessageTime(conv.lastMessage.createdAt)}
-                    </span>
-                  )}
-                </div>
-
-                {conv.lastMessage && (
-                  <div className="flex items-center gap-2">
-                    <p
-                      className={`text-sm truncate flex-1 ${
-                        conv.unreadCount > 0 ? 'text-gray-100 font-medium' : 'text-gray-400'
-                      }`}
-                    >
-                      {conv.lastMessage.sender._id === user?._id && 'You: '}
-                      {conv.lastMessage.hasImage && '📷 '}
-                      {conv.lastMessage.content}
-                    </p>
-                    {conv.unreadCount > 0 && (
-                      <span className="bg-accent text-white text-xs rounded-full px-2 py-0.5 font-bold shadow-glow-accent flex-shrink-0">
-                        {conv.unreadCount}
+                {/* Content */}
+                <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                    <h3 style={{
+                      fontWeight: 600,
+                      color: conv.unreadCount > 0 ? '#f3f4f6' : '#d1d5db',
+                      margin: 0,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      fontSize: '0.875rem',
+                    }}>
+                      {conv.otherUser.displayName}
+                    </h3>
+                    {conv.lastMessage && (
+                      <span style={{ fontSize: '0.75rem', color: '#6b7280', marginLeft: '8px', flexShrink: 0 }}>
+                        {formatMessageTime(conv.lastMessage.createdAt)}
                       </span>
                     )}
                   </div>
-                )}
-              </div>
-            </button>
-          ))
+
+                  {conv.lastMessage && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <p style={{
+                        fontSize: '0.875rem',
+                        color: conv.unreadCount > 0 ? '#f3f4f6' : '#9ca3af',
+                        fontWeight: conv.unreadCount > 0 ? 500 : 400,
+                        margin: 0,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        flex: 1,
+                      }}>
+                        {conv.lastMessage.sender._id === user?._id && 'You: '}
+                        {conv.lastMessage.hasImage && '📷 '}
+                        {conv.lastMessage.content}
+                      </p>
+                      {conv.unreadCount > 0 && (
+                        <span style={{
+                          backgroundColor: '#e94560',
+                          color: 'white',
+                          fontSize: '0.75rem',
+                          borderRadius: '9999px',
+                          padding: '2px 8px',
+                          fontWeight: 700,
+                          flexShrink: 0,
+                        }}>
+                          {conv.unreadCount}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </button>
+            );
+          })
         )}
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, Folder as FolderIcon, File as FileIcon, Download, Trash2, Plus, X, Check, FolderPlus } from 'lucide-react';
+import { ChevronRight, Folder as FolderIcon, File as FileIcon, Download, Trash2, X, Check, FolderPlus } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { getFiles, getFilesInFolder, createFolder, deleteFileOrFolder, downloadFile, type Folder, type FileItem, type Breadcrumb } from '../../services/api';
 
@@ -16,7 +16,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
   const [folders, setFolders] = useState<Folder[]>([]);
   const [files, setFiles] = useState<FileItem[]>([]);
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
-  const [currentFolder, setCurrentFolder] = useState<Folder | null>(null);
+  const [, setCurrentFolder] = useState<Folder | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -63,7 +63,6 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
 
   const handleBreadcrumbClick = (index: number) => {
     if (index === -1) {
-      // Root
       onFolderChange(null);
     } else {
       onFolderChange(breadcrumbs[index]._id);
@@ -124,38 +123,36 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
 
   const getFileIcon = (extension: string) => {
     const ext = extension.toLowerCase();
-    if (['pdf'].includes(ext)) {
-      return <FileIcon className="text-red-400" size={20} />;
-    } else if (['doc', 'docx'].includes(ext)) {
-      return <FileIcon className="text-gold" size={20} />;
-    } else if (['ppt', 'pptx'].includes(ext)) {
-      return <FileIcon className="text-orange-400" size={20} />;
-    } else if (['xls', 'xlsx'].includes(ext)) {
-      return <FileIcon className="text-green-400" size={20} />;
-    } else if (['mp3', 'wav'].includes(ext)) {
-      return <FileIcon className="text-purple-400" size={20} />;
-    }
-    return <FileIcon className="text-gray-400" size={20} />;
+    const colorMap: Record<string, string> = {
+      pdf: '#f87171',
+      doc: '#c9a96e', docx: '#c9a96e',
+      ppt: '#fb923c', pptx: '#fb923c',
+      xls: '#4ade80', xlsx: '#4ade80',
+      mp3: '#c084fc', wav: '#c084fc',
+    };
+    const color = colorMap[ext] || '#9ca3af';
+    return <FileIcon size={20} style={{ color, flexShrink: 0 }} />;
   };
 
   if (isLoading) {
     return (
-      <div className="bg-fb-card border border-fb-border rounded-lg p-6">
-        <div className="text-center text-gray-400">Loading files...</div>
+      <div style={{ backgroundColor: '#16213e', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', padding: '1.5rem' }}>
+        <div style={{ textAlign: 'center', color: '#9ca3af' }}>Loading files...</div>
       </div>
     );
   }
 
   return (
-    <div className="glass-card-elevated shadow-fb">
+    <div className="glass-card-elevated">
       {/* Header with breadcrumbs */}
-      <div className="p-4 border-b border-fb-border">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-bold text-gray-100 font-heading">Files & Resources</h2>
+      <div style={{ padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+          <h2 style={{ fontSize: '1.125rem', fontWeight: 700, color: '#f3f4f6', margin: 0 }}>Files & Resources</h2>
           {isTeacher && !showNewFolderInput && (
             <button
               onClick={() => setShowNewFolderInput(true)}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm btn-accent-gradient"
+              className="btn-accent-gradient"
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 12px', fontSize: '0.875rem', border: 'none', cursor: 'pointer', borderRadius: '8px' }}
             >
               <FolderPlus size={16} />
               New Folder
@@ -164,19 +161,23 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
         </div>
 
         {/* Breadcrumbs */}
-        <div className="flex items-center gap-2 text-sm text-gray-400">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', color: '#9ca3af', flexWrap: 'wrap' }}>
           <button
             onClick={() => handleBreadcrumbClick(-1)}
-            className={`hover:text-gold transition-colors ${!currentFolderId ? 'text-gold font-medium' : ''}`}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: !currentFolderId ? '#c9a96e' : '#9ca3af', fontWeight: !currentFolderId ? 500 : 400, padding: 0, transition: 'color 0.2s', fontSize: '0.875rem' }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#c9a96e'; }}
+            onMouseLeave={e => { if (currentFolderId) e.currentTarget.style.color = '#9ca3af'; }}
           >
             Root
           </button>
           {breadcrumbs.map((crumb, index) => (
             <React.Fragment key={crumb._id}>
-              <ChevronRight size={16} />
+              <ChevronRight size={16} style={{ color: '#6b7280', flexShrink: 0 }} />
               <button
                 onClick={() => handleBreadcrumbClick(index)}
-                className={`hover:text-gold transition-colors ${index === breadcrumbs.length - 1 ? 'text-gold font-medium' : ''}`}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: index === breadcrumbs.length - 1 ? '#c9a96e' : '#9ca3af', fontWeight: index === breadcrumbs.length - 1 ? 500 : 400, padding: 0, transition: 'color 0.2s', fontSize: '0.875rem' }}
+                onMouseEnter={e => { e.currentTarget.style.color = '#c9a96e'; }}
+                onMouseLeave={e => { if (index !== breadcrumbs.length - 1) e.currentTarget.style.color = '#9ca3af'; }}
               >
                 {crumb.name}
               </button>
@@ -187,16 +188,16 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
 
       {/* Error message */}
       {error && (
-        <div className="mx-4 mt-4 p-3 bg-red-900/30 border border-red-700/60 rounded-lg">
-          <p className="text-sm text-red-200">{error}</p>
+        <div style={{ margin: '16px 16px 0', padding: '12px', backgroundColor: 'rgba(127,29,29,0.3)', border: '1px solid rgba(185,28,28,0.6)', borderRadius: '8px' }}>
+          <p style={{ fontSize: '0.875rem', color: '#fecaca', margin: 0 }}>{error}</p>
         </div>
       )}
 
       {/* New folder input */}
       {showNewFolderInput && (
-        <div className="p-4 border-b border-fb-border bg-[#0d1b3e]">
-          <div className="flex items-center gap-2">
-            <FolderIcon className="text-yellow-500" size={20} />
+        <div style={{ padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.08)', backgroundColor: '#0d1b3e' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <FolderIcon size={20} style={{ color: '#eab308', flexShrink: 0 }} />
             <input
               type="text"
               value={newFolderName}
@@ -210,13 +211,15 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
               }}
               placeholder="Folder name..."
               autoFocus
-              className="flex-1 bg-transparent border-none focus:outline-none text-gray-100 placeholder-gray-500"
+              style={{ flex: 1, backgroundColor: 'transparent', border: 'none', outline: 'none', color: '#f3f4f6', fontSize: '0.875rem' }}
               maxLength={100}
             />
             <button
               onClick={handleCreateFolder}
               disabled={isCreatingFolder || !newFolderName.trim()}
-              className="p-1 text-green-400 hover:bg-green-400/10 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ padding: '4px', color: '#4ade80', background: 'none', border: 'none', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', opacity: (isCreatingFolder || !newFolderName.trim()) ? 0.5 : 1 }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(74,222,128,0.1)'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
             >
               <Check size={18} />
             </button>
@@ -226,7 +229,9 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
                 setNewFolderName('');
               }}
               disabled={isCreatingFolder}
-              className="p-1 text-gray-400 hover:bg-gray-400/10 rounded"
+              style={{ padding: '4px', color: '#9ca3af', background: 'none', border: 'none', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(156,163,175,0.1)'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
             >
               <X size={18} />
             </button>
@@ -235,31 +240,33 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
       )}
 
       {/* Contents */}
-      <div className="p-4">
+      <div style={{ padding: '16px' }}>
         {folders.length === 0 && files.length === 0 ? (
-          <div className="text-center py-12 text-gray-400">
-            <FolderIcon size={48} className="mx-auto mb-3 opacity-50" />
-            <p>No files or folders here</p>
+          <div style={{ textAlign: 'center', padding: '3rem 0', color: '#9ca3af' }}>
+            <FolderIcon size={48} style={{ margin: '0 auto 12px', opacity: 0.5, display: 'block' }} />
+            <p style={{ margin: 0 }}>No files or folders here</p>
             {isTeacher && (
-              <p className="text-sm mt-2">Upload files or create a folder to get started</p>
+              <p style={{ fontSize: '0.875rem', marginTop: '8px' }}>Upload files or create a folder to get started</p>
             )}
           </div>
         ) : (
-          <div className="space-y-1">
+          <div>
             {/* Folders */}
             {folders.map((folder) => (
               <div
                 key={folder._id}
-                className="flex items-center justify-between p-3 hover:bg-fb-hover rounded-lg transition-colors group"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', borderRadius: '8px', transition: 'background 0.2s', marginBottom: '4px' }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#0f3460'; }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
               >
                 <button
                   onClick={() => handleFolderClick(folder._id)}
-                  className="flex items-center gap-3 flex-1 text-left"
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                 >
-                  <FolderIcon className="text-yellow-500 flex-shrink-0" size={20} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-gray-100 font-medium truncate">{folder.name}</p>
-                    <p className="text-xs text-gray-500">
+                  <FolderIcon size={20} style={{ color: '#eab308', flexShrink: 0 }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ color: '#f3f4f6', fontWeight: 500, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{folder.name}</p>
+                    <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>
                       {folder.filesCount} {folder.filesCount === 1 ? 'file' : 'files'}
                     </p>
                   </div>
@@ -267,7 +274,9 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
                 {isTeacher && folder.createdBy._id === user?._id && (
                   <button
                     onClick={() => setDeleteConfirm({ id: folder._id, type: 'folder', name: folder.name })}
-                    className="p-2 text-red-400 hover:bg-red-400/10 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                    style={{ padding: '8px', color: '#f87171', background: 'none', border: 'none', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'background 0.2s' }}
+                    onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(248,113,113,0.1)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
                   >
                     <Trash2 size={16} />
                   </button>
@@ -279,28 +288,34 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
             {files.map((file) => (
               <div
                 key={file._id}
-                className="flex items-center justify-between p-3 hover:bg-fb-hover rounded-lg transition-colors group"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', borderRadius: '8px', transition: 'background 0.2s', marginBottom: '4px' }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#0f3460'; }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
               >
-                <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
                   {getFileIcon(file.extension)}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-gray-100 truncate">{file.originalName}</p>
-                    <p className="text-xs text-gray-500">
-                      {formatFileSize(file.size)} • {file.downloadsCount} downloads
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ color: '#f3f4f6', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{file.originalName}</p>
+                    <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>
+                      {formatFileSize(file.size)} · {file.downloadsCount} downloads
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
                   <button
                     onClick={() => handleDownload(file)}
-                    className="p-2 text-gold hover:bg-gold/10 hover:scale-110 rounded-lg transition-all"
+                    style={{ padding: '8px', color: '#c9a96e', background: 'none', border: 'none', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'background 0.2s, transform 0.15s' }}
+                    onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(201,169,110,0.1)'; e.currentTarget.style.transform = 'scale(1.1)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.transform = 'scale(1)'; }}
                   >
                     <Download size={16} />
                   </button>
                   {isTeacher && file.uploadedBy._id === user?._id && (
                     <button
                       onClick={() => setDeleteConfirm({ id: file._id, type: 'file', name: file.originalName })}
-                      className="p-2 text-red-400 hover:bg-red-400/10 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                      style={{ padding: '8px', color: '#f87171', background: 'none', border: 'none', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'background 0.2s' }}
+                      onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(248,113,113,0.1)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
                     >
                       <Trash2 size={16} />
                     </button>
@@ -314,29 +329,33 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
 
       {/* Delete confirmation modal */}
       {deleteConfirm && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="glass-card-elevated p-6 animate-scale-in max-w-md w-full">
-            <h3 className="text-lg font-semibold text-gray-100 mb-2">
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: '16px' }}>
+          <div className="glass-card-elevated" style={{ padding: '1.5rem', maxWidth: '28rem', width: '100%' }}>
+            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#f3f4f6', marginBottom: '8px', marginTop: 0 }}>
               Delete {deleteConfirm.type === 'folder' ? 'Folder' : 'File'}?
             </h3>
-            <p className="text-gray-400 mb-4">
+            <p style={{ color: '#9ca3af', marginBottom: '16px' }}>
               Are you sure you want to delete "{deleteConfirm.name}"?
               {deleteConfirm.type === 'folder' && (
-                <span className="block mt-2 text-sm text-red-400">
+                <span style={{ display: 'block', marginTop: '8px', fontSize: '0.875rem', color: '#f87171' }}>
                   This will also delete all files and subfolders inside it.
                 </span>
               )}
             </p>
-            <div className="flex gap-3 justify-end">
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
               <button
                 onClick={() => setDeleteConfirm(null)}
-                className="px-4 py-2 bg-fb-hover hover:bg-gray-700 text-gray-100 rounded-lg transition-colors"
+                style={{ padding: '8px 16px', backgroundColor: '#16213e', color: '#f3f4f6', borderRadius: '8px', border: 'none', cursor: 'pointer', transition: 'background 0.2s' }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#374151'; }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#16213e'; }}
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleDelete(deleteConfirm.id, deleteConfirm.type)}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                style={{ padding: '8px 16px', backgroundColor: '#dc2626', color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', transition: 'background 0.2s' }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#b91c1c'; }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#dc2626'; }}
               >
                 Delete
               </button>

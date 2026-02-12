@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead, Notification } from '../../services/api';
+import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead, clearAllNotifications, Notification } from '../../services/api';
 import { NotificationItem } from './NotificationItem';
 import { Loader2, Bell } from 'lucide-react';
 
@@ -21,6 +21,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [markingAllRead, setMarkingAllRead] = useState(false);
+  const [clearingAll, setClearingAll] = useState(false);
 
   useEffect(() => {
     loadNotifications();
@@ -82,7 +83,16 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
     } else if (type === 'new_post') {
       navigate(`/feed#post-${reference.id}`);
     } else if (type === 'direct_message') {
-      navigate('/messages');
+      navigate('/messages', {
+        state: {
+          userId: notification.actor._id,
+          otherUser: {
+            _id: notification.actor._id,
+            displayName: notification.actor.displayName,
+            avatarUrl: notification.actor.avatar,
+          }
+        }
+      });
     }
 
     onClose();
@@ -98,6 +108,19 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
       console.error('Failed to mark all as read:', err);
     } finally {
       setMarkingAllRead(false);
+    }
+  };
+
+  const handleClearAll = async () => {
+    try {
+      setClearingAll(true);
+      await clearAllNotifications();
+      setNotifications([]);
+      onMarkAllRead();
+    } catch (err) {
+      console.error('Failed to clear notifications:', err);
+    } finally {
+      setClearingAll(false);
     }
   };
 
@@ -122,15 +145,26 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
         <h3 id="notifications-title" style={{ fontSize: '1.125rem', fontWeight: 600, color: '#f3f4f6', margin: 0 }}>Notifications</h3>
-        {notifications.some(n => !n.isRead) && (
-          <button
-            onClick={handleMarkAllRead}
-            disabled={markingAllRead}
-            style={{ fontSize: '0.875rem', color: '#c9a96e', fontWeight: 500, padding: '4px 12px', borderRadius: '6px', background: 'transparent', border: 'none', cursor: markingAllRead ? 'not-allowed' : 'pointer', opacity: markingAllRead ? 0.5 : 1 }}
-          >
-            {markingAllRead ? 'Marking...' : 'Mark all read'}
-          </button>
-        )}
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {notifications.some(n => !n.isRead) && (
+            <button
+              onClick={handleMarkAllRead}
+              disabled={markingAllRead}
+              style={{ fontSize: '0.875rem', color: '#c9a96e', fontWeight: 500, padding: '4px 12px', borderRadius: '6px', background: 'transparent', border: 'none', cursor: markingAllRead ? 'not-allowed' : 'pointer', opacity: markingAllRead ? 0.5 : 1 }}
+            >
+              {markingAllRead ? 'Marking...' : 'Mark all read'}
+            </button>
+          )}
+          {notifications.length > 0 && (
+            <button
+              onClick={handleClearAll}
+              disabled={clearingAll}
+              style={{ fontSize: '0.875rem', color: '#f87171', fontWeight: 500, padding: '4px 12px', borderRadius: '6px', background: 'transparent', border: 'none', cursor: clearingAll ? 'not-allowed' : 'pointer', opacity: clearingAll ? 0.5 : 1 }}
+            >
+              {clearingAll ? 'Clearing...' : 'Clear all'}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Body */}

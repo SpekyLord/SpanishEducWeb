@@ -16,6 +16,9 @@ router.patch('/:id/read', authenticate, notificationsController.markAsRead)
 // Mark all notifications as read
 router.patch('/read-all', authenticate, notificationsController.markAllAsRead)
 
+// Clear all notifications
+router.delete('/clear-all', authenticate, notificationsController.clearAllNotifications)
+
 // Delete notification
 router.delete('/:id', authenticate, notificationsController.deleteNotification)
 

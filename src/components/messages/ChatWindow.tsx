@@ -153,39 +153,44 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
   if (isLoading) {
     return (
-      <div className="flex flex-col h-full bg-fb-bg">
-        <div className="flex items-center justify-center flex-1">
-          <p className="text-gray-400">Loading messages...</p>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#1a1a2e' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+          <p style={{ color: '#9ca3af', margin: 0 }}>Loading messages...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full bg-fb-bg">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#1a1a2e' }}>
       {/* Header */}
-      <div className="bg-fb-card/95 backdrop-blur-sm border-b border-fb-border/50 p-4 flex items-center gap-3">
-        <button onClick={onBack} className="lg:hidden text-gray-300 hover:text-gray-100">
+      <div style={{ backgroundColor: 'rgba(22,33,62,0.95)', backdropFilter: 'blur(8px)', borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <button
+          onClick={onBack}
+          style={{ padding: '4px', background: 'none', border: 'none', cursor: 'pointer', color: '#d1d5db', display: 'flex', alignItems: 'center' }}
+          onMouseEnter={e => { e.currentTarget.style.color = '#f3f4f6'; }}
+          onMouseLeave={e => { e.currentTarget.style.color = '#d1d5db'; }}
+        >
           <ChevronLeft size={24} />
         </button>
-        <UserAvatar name={otherUser.displayName} avatarUrl={otherUser.avatarUrl} size="md" className="ring-2 ring-accent/30" />
-        <div className="flex-1">
-          <h2 className="font-semibold text-gray-100">{otherUser.displayName}</h2>
-          <p className="text-xs text-gray-500">@{otherUser.username}</p>
+        <UserAvatar name={otherUser.displayName} avatarUrl={otherUser.avatarUrl} size="md" />
+        <div style={{ flex: 1 }}>
+          <h2 style={{ fontWeight: 600, color: '#f3f4f6', margin: 0, fontSize: '1rem' }}>{otherUser.displayName}</h2>
+          <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>@{otherUser.username}</p>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
         {error && (
-          <div className="mx-auto max-w-md p-3 bg-red-900/30 border border-red-700/60 rounded-lg">
-            <p className="text-sm text-red-200">{error}</p>
+          <div style={{ maxWidth: '28rem', margin: '0 auto 12px', padding: '12px', backgroundColor: 'rgba(127,29,29,0.3)', border: '1px solid rgba(185,28,28,0.6)', borderRadius: '8px' }}>
+            <p style={{ fontSize: '0.875rem', color: '#fecaca', margin: 0 }}>{error}</p>
           </div>
         )}
 
         {messages.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
-            <p className="text-gray-400">No messages yet. Start the conversation!</p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+            <p style={{ color: '#9ca3af', margin: 0 }}>No messages yet. Start the conversation!</p>
           </div>
         ) : (
           messages.map((message, index) => {
@@ -194,41 +199,46 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
               !isOwnMessage && (index === 0 || messages[index - 1].sender._id !== message.sender._id);
 
             return (
-              <div key={message._id} className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
+              <div key={message._id} style={{ display: 'flex', justifyContent: isOwnMessage ? 'flex-end' : 'flex-start', marginBottom: '12px' }}>
                 {!isOwnMessage && (
-                  <div className="mr-2 flex-shrink-0">
+                  <div style={{ marginRight: '8px', flexShrink: 0 }}>
                     {showAvatar ? (
                       <UserAvatar name={message.sender.displayName} size="sm" />
                     ) : (
-                      <div className="w-8 h-8" />
+                      <div style={{ width: 32, height: 32 }} />
                     )}
                   </div>
                 )}
 
-                <div className={`max-w-[70%] ${isOwnMessage ? 'ml-auto' : ''}`}>
+                <div style={{ maxWidth: '70%', marginLeft: isOwnMessage ? 'auto' : undefined }}>
                   {message.image && (
                     <img
                       src={message.image.url}
                       alt="Attachment"
-                      className="rounded-lg mb-1 max-w-full cursor-pointer hover:opacity-90"
+                      style={{ borderRadius: '12px', marginBottom: '4px', maxWidth: '100%', cursor: 'pointer' }}
                       onClick={() => window.open(message.image!.url, '_blank')}
+                      onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; }}
+                      onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
                     />
                   )}
 
                   {message.content.trim() && (
-                    <div
-                      className={`rounded-2xl px-4 py-2 ${
-                        isOwnMessage ? 'bg-gradient-to-br from-accent to-[#c7304d] text-white' : 'bg-fb-card/80 text-gray-100 border border-fb-border/50'
-                      }`}
-                    >
-                      <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+                    <div style={{
+                      borderRadius: '16px',
+                      padding: '8px 16px',
+                      ...(isOwnMessage
+                        ? { background: 'linear-gradient(to bottom right, #e94560, #c7304d)', color: 'white' }
+                        : { backgroundColor: 'rgba(22,33,62,0.8)', color: '#f3f4f6', border: '1px solid rgba(255,255,255,0.06)' }
+                      ),
+                    }}>
+                      <p style={{ fontSize: '0.875rem', whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 0 }}>{message.content}</p>
                     </div>
                   )}
 
-                  <div className="flex items-center gap-1 mt-1 px-2">
-                    <span className="text-xs text-gray-500">{formatMessageTime(message.createdAt)}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px', padding: '0 8px' }}>
+                    <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{formatMessageTime(message.createdAt)}</span>
                     {isOwnMessage && message.isRead && (
-                      <span className="text-gold text-xs ml-1">✓✓</span>
+                      <span style={{ color: '#c9a96e', fontSize: '0.75rem', marginLeft: '4px' }}>✓✓</span>
                     )}
                   </div>
                 </div>
@@ -241,31 +251,35 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       </div>
 
       {/* Input */}
-      <div className="bg-fb-card border-t border-fb-border p-4">
+      <div style={{ backgroundColor: '#16213e', borderTop: '1px solid rgba(255,255,255,0.08)', padding: '16px' }}>
         {imagePreview && (
-          <div className="mb-2 relative inline-block">
-            <img src={imagePreview} alt="Preview" className="h-20 rounded-lg" />
+          <div style={{ marginBottom: '8px', position: 'relative', display: 'inline-block' }}>
+            <img src={imagePreview} alt="Preview" style={{ height: '80px', borderRadius: '8px' }} />
             <button
               onClick={handleRemoveImage}
-              className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700"
+              style={{ position: 'absolute', top: '-8px', right: '-8px', backgroundColor: '#dc2626', color: 'white', borderRadius: '50%', padding: '4px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#b91c1c'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#dc2626'; }}
             >
               <X size={16} />
             </button>
           </div>
         )}
 
-        <div className="flex items-end gap-2">
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
           <input
             ref={fileInputRef}
             type="file"
             accept="image/*"
             onChange={handleImageSelect}
-            className="hidden"
+            style={{ display: 'none' }}
             id="message-image"
           />
           <label
             htmlFor="message-image"
-            className="p-2 text-gray-400 hover:text-gray-300 cursor-pointer transition-colors"
+            style={{ padding: '8px', color: '#9ca3af', cursor: 'pointer', transition: 'color 0.2s', display: 'flex', alignItems: 'center' }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#d1d5db'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = '#9ca3af'; }}
           >
             <ImageIcon size={24} />
           </label>
@@ -280,7 +294,8 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
               }
             }}
             placeholder="Type a message..."
-            className="flex-1 bg-fb-hover rounded-2xl px-4 py-2 text-sm text-gray-100 placeholder-gray-400 resize-none input-glow max-h-32"
+            className="input-glow"
+            style={{ flex: 1, backgroundColor: '#0f3460', borderRadius: '16px', padding: '8px 16px', fontSize: '0.875rem', color: '#f3f4f6', resize: 'none', maxHeight: '128px', border: '1px solid rgba(255,255,255,0.08)', outline: 'none', boxSizing: 'border-box' }}
             rows={1}
             maxLength={2000}
             disabled={isSending}
@@ -289,14 +304,29 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           <button
             onClick={handleSendMessage}
             disabled={(!newMessage.trim() && !selectedImage) || isSending}
-            className="p-2.5 bg-accent text-white rounded-full hover:bg-[#c7304d] hover:shadow-glow-accent hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            style={{
+              padding: '10px',
+              backgroundColor: '#e94560',
+              color: 'white',
+              borderRadius: '50%',
+              border: 'none',
+              cursor: ((!newMessage.trim() && !selectedImage) || isSending) ? 'not-allowed' : 'pointer',
+              opacity: ((!newMessage.trim() && !selectedImage) || isSending) ? 0.5 : 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'background 0.2s, transform 0.15s',
+              flexShrink: 0,
+            }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#c7304d'; e.currentTarget.style.transform = 'scale(1.05)'; }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#e94560'; e.currentTarget.style.transform = 'scale(1)'; }}
           >
             <Send size={20} />
           </button>
         </div>
 
         {newMessage.length > 0 && (
-          <p className="text-xs text-gray-500 mt-1 text-right">
+          <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '4px', textAlign: 'right', margin: '4px 0 0' }}>
             {newMessage.length}/2000
           </p>
         )}

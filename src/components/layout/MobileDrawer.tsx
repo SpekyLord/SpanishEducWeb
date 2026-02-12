@@ -128,10 +128,14 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
 
         {/* Profile section */}
         {user && (
-          <div
+          <Link
+            to={`/profile/${user.username}`}
+            onClick={onClose}
             style={{
+              display: 'block',
               padding: '16px',
               borderBottom: '1px solid rgba(255,255,255,0.1)',
+              textDecoration: 'none',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -145,7 +149,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
                 </p>
               </div>
             </div>
-          </div>
+          </Link>
         )}
 
         {/* Navigation links */}
