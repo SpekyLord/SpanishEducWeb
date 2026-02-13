@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:api": "node api/index.js",
-    "seed": "node api/seed.js",
+    "seed": "node lib/seed.js",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

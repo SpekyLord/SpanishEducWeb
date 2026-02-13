@@ -1,7 +1,4 @@
-# Prevent Vercel from creating separate functions for each route file
-api/routes/
-api/controllers/
-api/models/
-api/middleware/
-api/utils/
+# Only api/index.js should be a serverless function
+# All supporting code is in lib/ (not auto-detected by Vercel)
 api/seed.js
+api/temp_post.json

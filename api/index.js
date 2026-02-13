@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { initCloudinary } from './config/cloudinary.js'
+import { initCloudinary } from '../lib/config/cloudinary.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename)
 dotenv.config({ path: path.join(__dirname, '..', '.env') })
 
 // Validate required secrets are configured
-import { validateJWTConfig } from './utils/jwt.js'
+import { validateJWTConfig } from '../lib/utils/jwt.js'
 validateJWTConfig()
 
 // Initialize Cloudinary after env vars are loaded
@@ -22,17 +22,17 @@ import cookieParser from 'cookie-parser'
 import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
 import { doubleCsrf } from 'csrf-csrf'
-import logger from './utils/logger.js'
-import connectDB from './utils/db.js'
+import logger from '../lib/utils/logger.js'
+import connectDB from '../lib/utils/db.js'
 
 // Import routes
-import authRoutes from './routes/auth.routes.js'
-import postsRoutes from './routes/posts.routes.js'
-import commentsRoutes from './routes/comments.routes.js'
-import filesRoutes from './routes/files.routes.js'
-import messagesRoutes from './routes/messages.routes.js'
-import notificationsRoutes from './routes/notifications.routes.js'
-import usersRoutes from './routes/users.routes.js'
+import authRoutes from '../lib/routes/auth.routes.js'
+import postsRoutes from '../lib/routes/posts.routes.js'
+import commentsRoutes from '../lib/routes/comments.routes.js'
+import filesRoutes from '../lib/routes/files.routes.js'
+import messagesRoutes from '../lib/routes/messages.routes.js'
+import notificationsRoutes from '../lib/routes/notifications.routes.js'
+import usersRoutes from '../lib/routes/users.routes.js'
 
 const app = express()
 
