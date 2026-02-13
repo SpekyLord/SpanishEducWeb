@@ -1,0 +1,8 @@
+# Prevent Vercel from creating separate functions for each route file
+api/routes/
+api/controllers/
+api/models/
+api/middleware/
+api/utils/
+api/config/
+api/seed.js
