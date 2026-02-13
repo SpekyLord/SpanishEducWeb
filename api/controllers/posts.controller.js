@@ -127,6 +127,64 @@ export async function getPosts(req, res) {
   }
 }
 
+export async function searchPosts(req, res) {
+  try {
+    const { q, page = 1, limit = 10 } = req.query
+
+    // Validate search query
+    if (!q || typeof q !== 'string' || q.trim().length === 0) {
+      return res.json({
+        success: true,
+        data: {
+          posts: [],
+          pagination: { page: 1, limit: 10, total: 0, totalPages: 0, hasMore: false }
+        }
+      })
+    }
+
+    const searchTerm = q.trim()
+
+    // Prevent excessively long queries
+    if (searchTerm.length > 100) {
+      return res.status(400).json({
+        success: false,
+        message: 'Search query too long (max 100 characters)'
+      })
+    }
+
+    const safePage = Math.max(1, parseInt(page))
+    const safeLimit = Math.min(Math.max(1, parseInt(limit)), 50)
+
+    // Use regex for substring/partial matching (case-insensitive)
+    const query = {
+      isDeleted: false,
+      content: { $regex: searchTerm, $options: 'i' }
+    }
+
+    // Reuse existing pagination helper
+    const result = await Post.getPostsWithUserInfo(
+      query,
+      req.user?._id,
+      {
+        page: safePage,
+        limit: safeLimit,
+        sort: { createdAt: -1 }
+      }
+    )
+
+    res.json({
+      success: true,
+      data: result
+    })
+  } catch (error) {
+    console.error('Post search error:', error)
+    res.status(500).json({
+      success: false,
+      message: 'Search failed'
+    })
+  }
+}
+
 export async function getPost(req, res) {
   try {
     const post = await Post.findOne({

@@ -301,6 +301,14 @@ export const getPost = async (postId: string): Promise<{ success: boolean; data:
   return response.data;
 };
 
+// Search posts
+export const searchPosts = async (query: string, page = 1, limit = 10): Promise<PostsResponse> => {
+  const response = await api.get('/posts/search', {
+    params: { q: query, page, limit }
+  });
+  return response.data;
+};
+
 // Create post (teacher only)
 export const createPost = async (data: CreatePostData): Promise<{ success: boolean; data: { post: Post } }> => {
   const formData = new FormData();

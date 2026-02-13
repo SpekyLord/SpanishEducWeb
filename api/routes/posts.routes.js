@@ -31,6 +31,7 @@ const upload = multer({
 
 // Public routes (with optional auth for personalized data)
 router.get('/', optionalAuth, postsController.getPosts)
+router.get('/search', optionalAuth, postsController.searchPosts)
 router.get('/:id', optionalAuth, postsController.getPost)
 router.get('/:postId/comments', optionalAuth, commentsController.getComments)
 

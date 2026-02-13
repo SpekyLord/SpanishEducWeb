@@ -10,6 +10,7 @@ import { ReactionsPanel } from './ReactionsPanel';
 interface PostCardProps {
   post: Post;
   onUpdate?: (post: Post) => void;
+  showCommentsInitially?: boolean;
 }
 
 const REACTIONS = [
@@ -20,13 +21,13 @@ const REACTIONS = [
   { type: 'question', emoji: '❓', label: 'Question' }
 ] as const;
 
-export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
+export const PostCard = React.memo<PostCardProps>(({ post, onUpdate, showCommentsInitially = false }) => {
   const { user } = useAuth();
   const [currentPost, setCurrentPost] = useState(post);
   const [showReactionPicker, setShowReactionPicker] = useState(false);
   const [isReacting, setIsReacting] = useState(false);
   const [isBookmarking, setIsBookmarking] = useState(false);
-  const [showComments, setShowComments] = useState(false);
+  const [showComments, setShowComments] = useState(showCommentsInitially);
   const [showReactionsPanel, setShowReactionsPanel] = useState(false);
   const [popoverAnchor, setPopoverAnchor] = useState<{ top: number; left: number; bottom: number } | null>(null);
 

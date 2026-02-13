@@ -97,6 +97,7 @@ postSchema.index({ isPinned: -1, createdAt: -1 })
 postSchema.index({ 'author._id': 1, createdAt: -1 })
 postSchema.index({ isDeleted: 1, createdAt: -1 })
 postSchema.index({ bookmarkedBy: 1 })
+postSchema.index({ content: 'text' })
 
 postSchema.virtual('hasMedia').get(function() {
   return this.media && this.media.length > 0
@@ -120,10 +121,17 @@ postSchema.methods.getUserReaction = function(userId) {
 
 postSchema.statics.getPostsWithUserInfo = async function(query, userId, options = {}) {
   const { page = 1, limit = 10, sort = { isPinned: -1, createdAt: -1 } } = options
-  
+
   const skip = (page - 1) * limit
-  
-  const posts = await this.find(query)
+
+  let postsQuery = this.find(query)
+
+  // If sorting by textScore, add projection
+  if (sort?.score?.$meta === 'textScore') {
+    postsQuery = postsQuery.select({ score: { $meta: 'textScore' } })
+  }
+
+  const posts = await postsQuery
     .sort(sort)
     .skip(skip)
     .limit(limit)

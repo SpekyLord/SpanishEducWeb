@@ -7,6 +7,7 @@ import { LoginPage } from './pages/Login'
 import { RegisterPage } from './pages/Register'
 import { HomePage } from './pages/Home'
 import { FeedPage } from './pages/Feed/FeedPage'
+import { PostPage } from './pages/Post/PostPage'
 import { initCSRF } from './services/api'
 import './App.css'
 
@@ -54,6 +55,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <FeedPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/post/:id"
+                element={
+                  <ProtectedRoute>
+                    <PostPage />
                   </ProtectedRoute>
                 }
               />

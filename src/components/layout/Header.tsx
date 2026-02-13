@@ -6,6 +6,7 @@ import { NotificationBell } from '../notifications';
 import { MobileDrawer } from './MobileDrawer';
 import { UserAvatar } from '../common/UserAvatar';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
+import { searchPosts } from '../../services/api';
 
 interface HeaderProps {
   variant?: 'auth' | 'feed';
@@ -17,7 +18,12 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   // Close profile dropdown on click outside or Escape
@@ -38,6 +44,51 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
       document.removeEventListener('keydown', handleEscape);
     };
   }, [profileDropdownOpen]);
+
+  // Debounced search effect
+  useEffect(() => {
+    if (searchQuery.trim().length < 2) {
+      setSearchResults([]);
+      setShowSearchResults(false);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const result = await searchPosts(searchQuery.trim(), 1, 5);
+        setSearchResults(result.data?.posts || []);
+        setShowSearchResults(true);
+      } catch (error) {
+        console.error('Search error:', error);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Click outside handler for search results
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowSearchResults(false);
+      }
+    };
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowSearchResults(false);
+    };
+    if (showSearchResults) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscape);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('keydown', handleEscape);
+      };
+    }
+  }, [showSearchResults]);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -134,24 +185,93 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
 
         {/* Search bar */}
         {variant === 'feed' && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            backgroundColor: 'rgba(15,52,96,0.8)',
-            borderRadius: '9999px',
-            padding: '8px 16px',
-            flex: 1,
-            maxWidth: isDesktop ? '560px' : undefined,
-            marginLeft: 'auto',
-            border: '1px solid rgba(255,255,255,0.06)',
-          }}>
-            <Search size={18} style={{ color: '#9ca3af', flexShrink: 0 }} />
-            <input
-              type="text"
-              placeholder="Search SpanishConnect"
-              style={{ backgroundColor: 'transparent', border: 'none', outline: 'none', fontSize: '0.875rem', color: '#f3f4f6', width: '100%' }}
-            />
+          <div ref={searchRef} style={{ position: 'relative', flex: 1, maxWidth: isDesktop ? '560px' : undefined, marginLeft: 'auto' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              backgroundColor: 'rgba(15,52,96,0.8)',
+              borderRadius: '9999px',
+              padding: '8px 16px',
+              border: '1px solid rgba(255,255,255,0.06)',
+            }}>
+              <Search size={18} style={{ color: '#9ca3af', flexShrink: 0 }} />
+              <input
+                type="text"
+                placeholder="Search posts..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => searchQuery.trim().length >= 2 && setShowSearchResults(true)}
+                style={{ backgroundColor: 'transparent', border: 'none', outline: 'none', fontSize: '0.875rem', color: '#f3f4f6', width: '100%' }}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => { setSearchQuery(''); setShowSearchResults(false); }}
+                  style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', padding: 0, fontSize: '1.25rem', lineHeight: 1 }}
+                >
+                  ×
+                </button>
+              )}
+            </div>
+
+            {/* Search Results Dropdown */}
+            {showSearchResults && (
+              <div
+                className="glass-card-elevated"
+                style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 8px)',
+                  left: 0,
+                  right: 0,
+                  maxHeight: '400px',
+                  overflowY: 'auto',
+                  zIndex: 50,
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+                }}
+              >
+                {isSearching ? (
+                  <div style={{ padding: '16px', textAlign: 'center', color: '#9ca3af' }}>
+                    Searching...
+                  </div>
+                ) : searchResults.length > 0 ? (
+                  searchResults.map((post) => (
+                    <button
+                      key={post._id}
+                      onClick={() => {
+                        navigate(`/post/${post._id}`);
+                        setShowSearchResults(false);
+                        setSearchQuery('');
+                      }}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        background: 'transparent',
+                        border: 'none',
+                        borderBottom: '1px solid rgba(255,255,255,0.06)',
+                        cursor: 'pointer',
+                        color: '#f3f4f6',
+                        transition: 'background 0.15s',
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <div style={{ fontSize: '0.75rem', color: '#c9a96e', marginBottom: '4px' }}>
+                        {post.author.displayName} @{post.author.username}
+                      </div>
+                      <div style={{ fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {post.content.substring(0, 100)}...
+                      </div>
+                    </button>
+                  ))
+                ) : (
+                  <div style={{ padding: '16px', textAlign: 'center', color: '#9ca3af' }}>
+                    No posts found for "{searchQuery}"
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 
