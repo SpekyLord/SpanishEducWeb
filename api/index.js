@@ -9,6 +9,10 @@ const __dirname = path.dirname(__filename)
 // Load environment variables from the project root
 dotenv.config({ path: path.join(__dirname, '..', '.env') })
 
+// Validate required secrets are configured
+import { validateJWTConfig } from './utils/jwt.js'
+validateJWTConfig()
+
 // Initialize Cloudinary after env vars are loaded
 initCloudinary()
 
