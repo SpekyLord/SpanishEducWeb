@@ -73,7 +73,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#16213e', borderRight: '1px solid rgba(255,255,255,0.08)' }}>
       {/* Search bar */}
-      <div style={{ padding: '1rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+      <div className="p-3 lg:p-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
         <div style={{ position: 'relative' }}>
           <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
           <input
@@ -111,7 +111,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                 onClick={() => onSelectConversation(conv._id, conv.otherUser)}
                 style={{
                   width: '100%',
-                  padding: '16px',
+                  padding: '12px',
                   display: 'flex',
                   alignItems: 'flex-start',
                   gap: '12px',

@@ -214,13 +214,13 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
       {/* Action Buttons */}
       <div role="group" aria-label="Post actions" style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
         {/* Reaction Button */}
-        <div style={{ position: 'relative', flex: 1 }}>
+        <div style={{ position: 'relative', flex: 1, minWidth: 0, overflow: 'hidden' }}>
           <button
             onClick={() => setShowReactionPicker(!showReactionPicker)}
             aria-label={currentPost.userReaction ? `Change reaction (currently ${REACTIONS.find(r => r.type === currentPost.userReaction)?.label})` : 'Add reaction'}
             aria-haspopup="true"
             aria-expanded={showReactionPicker}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', padding: '8px 16px', borderRadius: '8px', border: 'none', background: currentPost.userReaction ? '#0f3460' : 'transparent', color: currentPost.userReaction ? '#c9a96e' : '#d1d5db', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s' }}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', width: '100%', padding: '8px 12px', borderRadius: '8px', border: 'none', background: currentPost.userReaction ? '#0f3460' : 'transparent', color: currentPost.userReaction ? '#c9a96e' : '#d1d5db', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s', whiteSpace: 'nowrap', overflow: 'hidden' }}
             disabled={isReacting}
           >
             {currentPost.userReaction ? (
@@ -264,7 +264,7 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
           onClick={() => setShowComments(!showComments)}
           aria-label={showComments ? 'Hide comments' : `Show comments (${currentPost.commentsCount})`}
           aria-pressed={showComments}
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', flex: 1, padding: '8px 16px', borderRadius: '8px', border: 'none', background: showComments ? '#0f3460' : 'transparent', color: showComments ? '#c9a96e' : '#d1d5db', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s' }}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', flex: 1, minWidth: 0, overflow: 'hidden', whiteSpace: 'nowrap', padding: '8px 12px', borderRadius: '8px', border: 'none', background: showComments ? '#0f3460' : 'transparent', color: showComments ? '#c9a96e' : '#d1d5db', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s' }}
         >
           <MessageCircle size={18} aria-hidden="true" />
           <span>Comment</span>
@@ -276,7 +276,7 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate }) => {
             onClick={handleBookmark}
             aria-label={currentPost.isBookmarked ? 'Remove bookmark' : 'Save post'}
             aria-pressed={currentPost.isBookmarked}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', flex: 1, padding: '8px 16px', borderRadius: '8px', border: 'none', background: currentPost.isBookmarked ? '#0f3460' : 'transparent', color: currentPost.isBookmarked ? '#facc15' : '#d1d5db', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s' }}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', flex: 1, minWidth: 0, overflow: 'hidden', whiteSpace: 'nowrap', padding: '8px 12px', borderRadius: '8px', border: 'none', background: currentPost.isBookmarked ? '#0f3460' : 'transparent', color: currentPost.isBookmarked ? '#facc15' : '#d1d5db', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s' }}
             disabled={isBookmarking}
           >
             {currentPost.isBookmarked ? (

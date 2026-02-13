@@ -153,7 +153,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
   if (isLoading) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#1a1a2e' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', backgroundColor: '#1a1a2e' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
           <p style={{ color: '#9ca3af', margin: 0 }}>Loading messages...</p>
         </div>
@@ -163,7 +163,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
   if (!otherUser) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#1a1a2e' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', backgroundColor: '#1a1a2e' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
           <p style={{ color: '#9ca3af', margin: 0 }}>Loading...</p>
         </div>
@@ -172,9 +172,9 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#1a1a2e' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', backgroundColor: '#1a1a2e' }}>
       {/* Header */}
-      <div style={{ backgroundColor: 'rgba(22,33,62,0.95)', backdropFilter: 'blur(8px)', borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div className="p-3 lg:p-4" style={{ backgroundColor: 'rgba(22,33,62,0.95)', backdropFilter: 'blur(8px)', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <button
           onClick={onBack}
           style={{ padding: '4px', background: 'none', border: 'none', cursor: 'pointer', color: '#d1d5db', display: 'flex', alignItems: 'center' }}
@@ -191,7 +191,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       </div>
 
       {/* Messages */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
+      <div className="p-3 lg:p-4" style={{ flex: 1, overflowY: 'auto' }}>
         {error && (
           <div style={{ maxWidth: '28rem', margin: '0 auto 12px', padding: '12px', backgroundColor: 'rgba(127,29,29,0.3)', border: '1px solid rgba(185,28,28,0.6)', borderRadius: '8px' }}>
             <p style={{ fontSize: '0.875rem', color: '#fecaca', margin: 0 }}>{error}</p>
@@ -220,7 +220,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                   </div>
                 )}
 
-                <div style={{ maxWidth: '70%', marginLeft: isOwnMessage ? 'auto' : undefined }}>
+                <div style={{ maxWidth: '75%', marginLeft: isOwnMessage ? 'auto' : undefined }}>
                   {message.image && (
                     <img
                       src={message.image.url}
@@ -261,10 +261,10 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       </div>
 
       {/* Input */}
-      <div style={{ backgroundColor: '#16213e', borderTop: '1px solid rgba(255,255,255,0.08)', padding: '16px' }}>
+      <div className="p-3 lg:p-4" style={{ backgroundColor: '#16213e', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
         {imagePreview && (
           <div style={{ marginBottom: '8px', position: 'relative', display: 'inline-block' }}>
-            <img src={imagePreview} alt="Preview" style={{ height: '80px', borderRadius: '8px' }} />
+            <img src={imagePreview} alt="Preview" style={{ height: '80px', maxWidth: '100%', borderRadius: '8px' }} />
             <button
               onClick={handleRemoveImage}
               style={{ position: 'absolute', top: '-8px', right: '-8px', backgroundColor: '#dc2626', color: 'white', borderRadius: '50%', padding: '4px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -305,7 +305,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
             }}
             placeholder="Type a message..."
             className="input-glow"
-            style={{ flex: 1, backgroundColor: '#0f3460', borderRadius: '16px', padding: '8px 16px', fontSize: '0.875rem', color: '#f3f4f6', resize: 'none', maxHeight: '128px', border: '1px solid rgba(255,255,255,0.08)', outline: 'none', boxSizing: 'border-box' }}
+            style={{ flex: 1, backgroundColor: '#0f3460', borderRadius: '16px', padding: '8px 16px', fontSize: '1rem', color: '#f3f4f6', resize: 'none', maxHeight: '128px', border: '1px solid rgba(255,255,255,0.08)', outline: 'none', boxSizing: 'border-box' }}
             rows={1}
             maxLength={2000}
             disabled={isSending}

@@ -76,8 +76,8 @@ app.use(
         return callback(null, true)
       }
 
-      // In development, allow any localhost
-      if (process.env.NODE_ENV !== 'production' && origin.startsWith('http://localhost:')) {
+      // In development, allow any localhost and local IP addresses
+      if (process.env.NODE_ENV !== 'production' && (origin.startsWith('http://localhost:') || /^http:\/\/(192\.168|10\.|172\.)/.test(origin))) {
         return callback(null, true)
       }
 
@@ -191,11 +191,20 @@ app.use('/api/', (req, res, next) => {
 
 // Rate limiting configuration
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // 100 requests per windowMs per IP
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 600, // 600 requests per 10 min per IP
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
+})
+
+const writeLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 100, // 100 write requests per 10 min per IP
+  message: 'Too many write requests, please slow down.',
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => req.method === 'GET' || req.method === 'HEAD' || req.method === 'OPTIONS',
 })
 
 const authLimiter = rateLimit({
@@ -211,8 +220,9 @@ const passwordResetLimiter = rateLimit({
   message: 'Too many password reset requests, please try again later.',
 })
 
-// Apply general API rate limiter
+// Apply API rate limiters
 app.use('/api/', apiLimiter)
+app.use('/api/', writeLimiter)
 
 // Connect to database
 app.use(async (req, res, next) => {
