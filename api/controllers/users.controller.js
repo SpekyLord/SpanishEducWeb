@@ -1,5 +1,39 @@
 import User from '../models/User.js';
 import Post from '../models/Post.js';
+import Comment from '../models/Comment.js';
+import Message from '../models/Message.js';
+import Conversation from '../models/Conversation.js';
+import Notification from '../models/Notification.js';
+import { uploadImage, deleteFile, UPLOAD_LIMITS } from '../services/cloudinary.service.js';
+
+// Cascade denormalized user data updates across all collections
+async function cascadeUserUpdates(userId, updates) {
+  const ops = []
+
+  if (updates.avatarUrl !== undefined) {
+    ops.push(
+      Post.updateMany({ 'author._id': userId }, { $set: { 'author.avatarUrl': updates.avatarUrl } }),
+      Comment.updateMany({ 'author._id': userId }, { $set: { 'author.avatarUrl': updates.avatarUrl } }),
+      Message.updateMany({ 'sender._id': userId }, { $set: { 'sender.avatarUrl': updates.avatarUrl } }),
+      Conversation.updateMany({ 'lastMessage.sender._id': userId }, { $set: { 'lastMessage.sender.avatarUrl': updates.avatarUrl } }),
+      Notification.updateMany({ 'actor._id': userId }, { $set: { 'actor.avatar': updates.avatarUrl } })
+    )
+  }
+
+  if (updates.displayName !== undefined) {
+    ops.push(
+      Post.updateMany({ 'author._id': userId }, { $set: { 'author.displayName': updates.displayName } }),
+      Comment.updateMany({ 'author._id': userId }, { $set: { 'author.displayName': updates.displayName } }),
+      Message.updateMany({ 'sender._id': userId }, { $set: { 'sender.displayName': updates.displayName } }),
+      Conversation.updateMany({ 'lastMessage.sender._id': userId }, { $set: { 'lastMessage.sender.displayName': updates.displayName } }),
+      Notification.updateMany({ 'actor._id': userId }, { $set: { 'actor.displayName': updates.displayName } })
+    )
+  }
+
+  if (ops.length > 0) {
+    await Promise.allSettled(ops)
+  }
+}
 
 export async function searchUsers(req, res) {
   try {
@@ -139,6 +173,11 @@ export async function updateProfile(req, res) {
       })
     }
 
+    // Cascade displayName update to all denormalized collections
+    if (updates.displayName) {
+      cascadeUserUpdates(userId, { displayName: updates.displayName })
+    }
+
     res.json({
       success: true,
       data: { user }
@@ -153,11 +192,73 @@ export async function updateProfile(req, res) {
 }
 
 export async function uploadAvatar(req, res) {
-  res.status(501).json({ error: 'Not implemented yet' })
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No image file provided' })
+    }
+
+    // Role-based size limit
+    const maxSize = req.user.role === 'teacher' ? 5 * 1024 * 1024 : 2 * 1024 * 1024
+    if (req.file.size > maxSize) {
+      const limitMB = maxSize / (1024 * 1024)
+      return res.status(413).json({
+        success: false,
+        message: `File too large. Maximum size is ${limitMB}MB`
+      })
+    }
+
+    // Upload to Cloudinary
+    const dataUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`
+    const result = await uploadImage(dataUri, {
+      folder: UPLOAD_LIMITS.avatar.folder,
+      transformation: UPLOAD_LIMITS.avatar.transformation
+    })
+
+    // Delete old avatar if exists
+    const currentUser = await User.findById(req.user._id)
+    if (currentUser.avatar?.publicId) {
+      try { await deleteFile(currentUser.avatar.publicId) } catch (e) { /* ignore cleanup errors */ }
+    }
+
+    // Update user
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: { 'avatar.url': result.url, 'avatar.publicId': result.publicId } },
+      { new: true }
+    ).select('displayName username role avatar bio stats createdAt')
+
+    // Cascade avatar update to all denormalized collections
+    cascadeUserUpdates(req.user._id, { avatarUrl: result.url })
+
+    res.json({ success: true, data: { user } })
+  } catch (error) {
+    console.error('Upload avatar error:', error)
+    res.status(500).json({ success: false, message: 'Failed to upload avatar' })
+  }
 }
 
 export async function deleteAvatar(req, res) {
-  res.status(501).json({ error: 'Not implemented yet' })
+  try {
+    const currentUser = await User.findById(req.user._id)
+
+    if (currentUser.avatar?.publicId) {
+      try { await deleteFile(currentUser.avatar.publicId) } catch (e) { /* ignore cleanup errors */ }
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: { 'avatar.url': null, 'avatar.publicId': null } },
+      { new: true }
+    ).select('displayName username role avatar bio stats createdAt')
+
+    // Cascade avatar removal to all denormalized collections
+    cascadeUserUpdates(req.user._id, { avatarUrl: null })
+
+    res.json({ success: true, data: { user } })
+  } catch (error) {
+    console.error('Delete avatar error:', error)
+    res.status(500).json({ success: false, message: 'Failed to delete avatar' })
+  }
 }
 
 export async function changePassword(req, res) {

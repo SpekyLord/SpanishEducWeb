@@ -24,7 +24,8 @@ export const MessagesPage: React.FC = () => {
     const openConversation = async () => {
       try {
         const response = await getConversation(state.userId);
-        const conversation = response.data.conversation;
+        const conversation = response.data?.conversation;
+        if (!conversation?._id) return;
         setSelectedConversationId(conversation._id);
         setSelectedOtherUser(state.otherUser || { displayName: 'User' });
       } catch (err) {

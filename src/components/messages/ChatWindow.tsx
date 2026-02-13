@@ -161,6 +161,16 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
     );
   }
 
+  if (!otherUser) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#1a1a2e' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+          <p style={{ color: '#9ca3af', margin: 0 }}>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#1a1a2e' }}>
       {/* Header */}
@@ -203,7 +213,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                 {!isOwnMessage && (
                   <div style={{ marginRight: '8px', flexShrink: 0 }}>
                     {showAvatar ? (
-                      <UserAvatar name={message.sender.displayName} size="sm" />
+                      <UserAvatar name={message.sender.displayName} avatarUrl={message.sender.avatarUrl} size="sm" />
                     ) : (
                       <div style={{ width: 32, height: 32 }} />
                     )}

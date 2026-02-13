@@ -22,6 +22,7 @@ interface AuthContextType {
   register: (email: string, password: string, displayName: string, username?: string) => Promise<void>
   logout: () => Promise<void>
   refreshToken: () => Promise<boolean>
+  updateUser: (updates: Partial<User>) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -171,6 +172,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const updateUser = (updates: Partial<User>) => {
+    setUser(prev => prev ? { ...prev, ...updates } : prev)
+  }
+
   const logout = async () => {
     try {
       await api.post('/auth/logout')
@@ -194,6 +199,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         register,
         logout,
         refreshToken,
+        updateUser,
       }}
     >
       {children}

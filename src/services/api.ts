@@ -777,4 +777,26 @@ export const updateProfile = async (data: {
   return response.data;
 };
 
+// Upload avatar
+export const uploadAvatar = async (file: File): Promise<{
+  success: boolean;
+  data: { user: any };
+}> => {
+  const formData = new FormData();
+  formData.append('avatar', file);
+  const response = await api.post('/users/avatar', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
+};
+
+// Delete avatar
+export const deleteAvatar = async (): Promise<{
+  success: boolean;
+  data: { user: any };
+}> => {
+  const response = await api.delete('/users/avatar');
+  return response.data;
+};
+
 export default api;

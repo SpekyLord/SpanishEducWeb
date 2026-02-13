@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MessageCircle, Edit3, Check, X, Loader2, Calendar, MessageSquare, ThumbsUp, Download } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Edit3, Check, X, Loader2, Calendar, MessageSquare, ThumbsUp, Download, Camera, Trash2 } from 'lucide-react';
 import { Header } from '../../components/layout/Header';
 import { UserAvatar } from '../../components/common/UserAvatar';
 import { useAuth } from '../../contexts/AuthContext';
-import { getUserProfile, updateProfile, Post } from '../../services/api';
+import { getUserProfile, updateProfile, uploadAvatar, deleteAvatar, Post } from '../../services/api';
 
 interface ProfileUser {
   _id: string;
@@ -25,7 +25,7 @@ interface ProfileUser {
 export const ProfilePage: React.FC = () => {
   const { username } = useParams<{ username: string }>();
   const navigate = useNavigate();
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, updateUser } = useAuth();
 
   const [profileUser, setProfileUser] = useState<ProfileUser | null>(null);
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
@@ -37,6 +37,11 @@ export const ProfilePage: React.FC = () => {
   const [editDisplayName, setEditDisplayName] = useState('');
   const [editBio, setEditBio] = useState('');
   const [saving, setSaving] = useState(false);
+
+  // Avatar upload state
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
 
   const isOwnProfile = currentUser?.username === username;
 
@@ -95,11 +100,64 @@ export const ProfilePage: React.FC = () => {
         userId: profileUser._id,
         otherUser: {
           _id: profileUser._id,
+          username: profileUser.username,
           displayName: profileUser.displayName,
           avatarUrl: profileUser.avatar?.url,
         }
       }
     });
+  };
+
+  const handleAvatarClick = () => {
+    if (isOwnProfile && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleAvatarFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Reset input so same file can be re-selected
+    e.target.value = '';
+
+    // Client-side size check
+    const maxSize = currentUser?.role === 'teacher' ? 5 * 1024 * 1024 : 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+      const limitMB = maxSize / (1024 * 1024);
+      setAvatarError(`File too large. Maximum size is ${limitMB}MB`);
+      return;
+    }
+
+    try {
+      setAvatarUploading(true);
+      setAvatarError(null);
+      const response = await uploadAvatar(file);
+      const newAvatar = response.data.user.avatar;
+      setProfileUser(prev => prev ? { ...prev, avatar: newAvatar } : null);
+      updateUser({ avatar: newAvatar });
+    } catch (err: any) {
+      console.error('Avatar upload failed:', err);
+      setAvatarError(err.response?.data?.message || 'Failed to upload avatar');
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
+
+  const handleDeleteAvatar = async () => {
+    try {
+      setAvatarUploading(true);
+      setAvatarError(null);
+      await deleteAvatar();
+      const nullAvatar = { url: null, publicId: null };
+      setProfileUser(prev => prev ? { ...prev, avatar: nullAvatar } : null);
+      updateUser({ avatar: nullAvatar });
+    } catch (err: any) {
+      console.error('Avatar delete failed:', err);
+      setAvatarError(err.response?.data?.message || 'Failed to remove avatar');
+    } finally {
+      setAvatarUploading(false);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -175,12 +233,76 @@ export const ProfilePage: React.FC = () => {
             <div className="glass-card-elevated" style={{ padding: '2rem', marginBottom: '1.5rem' }}>
               {/* Avatar + Info */}
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
-                <UserAvatar
-                  name={profileUser.displayName}
-                  avatarUrl={profileUser.avatar?.url}
-                  size="xl"
-                  className="ring-2 ring-fb-border"
-                />
+                <div style={{ position: 'relative', flexShrink: 0 }}>
+                  <div
+                    onClick={handleAvatarClick}
+                    style={{
+                      position: 'relative',
+                      cursor: isOwnProfile ? 'pointer' : 'default',
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <UserAvatar
+                      name={profileUser.displayName}
+                      avatarUrl={profileUser.avatar?.url}
+                      size="xl"
+                      className="ring-2 ring-fb-border"
+                    />
+                    {isOwnProfile && (
+                      <div style={{
+                        position: 'absolute',
+                        inset: 0,
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        opacity: avatarUploading ? 1 : 0,
+                        transition: 'opacity 0.2s',
+                        borderRadius: '50%',
+                      }}
+                        onMouseEnter={e => { if (!avatarUploading) e.currentTarget.style.opacity = '1'; }}
+                        onMouseLeave={e => { if (!avatarUploading) e.currentTarget.style.opacity = '0'; }}
+                      >
+                        {avatarUploading ? (
+                          <Loader2 size={20} style={{ color: 'white', animation: 'spin 1s linear infinite' }} />
+                        ) : (
+                          <Camera size={20} style={{ color: 'white' }} />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {isOwnProfile && profileUser.avatar?.url && !avatarUploading && (
+                    <button
+                      onClick={handleDeleteAvatar}
+                      title="Remove photo"
+                      style={{
+                        position: 'absolute',
+                        bottom: '-2px',
+                        right: '-2px',
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '50%',
+                        backgroundColor: '#1e2a4a',
+                        border: '2px solid #16213e',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: 0,
+                      }}
+                    >
+                      <Trash2 size={12} style={{ color: '#f87171' }} />
+                    </button>
+                  )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                    onChange={handleAvatarFileChange}
+                    style={{ display: 'none' }}
+                  />
+                </div>
                 <div style={{ flex: 1 }}>
                   {isEditing ? (
                     <div>
@@ -229,6 +351,13 @@ export const ProfilePage: React.FC = () => {
                   </p>
                 </div>
               </div>
+
+              {/* Avatar error */}
+              {avatarError && (
+                <div style={{ marginTop: '12px', padding: '8px 12px', backgroundColor: 'rgba(127,29,29,0.3)', border: '1px solid rgba(185,28,28,0.6)', borderRadius: '8px' }}>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: '#fca5a5' }}>{avatarError}</p>
+                </div>
+              )}
 
               {/* Bio */}
               <div style={{ marginTop: '20px' }}>

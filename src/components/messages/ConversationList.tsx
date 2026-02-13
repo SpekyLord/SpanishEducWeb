@@ -163,7 +163,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                         whiteSpace: 'nowrap',
                         flex: 1,
                       }}>
-                        {conv.lastMessage.sender._id === user?._id && 'You: '}
+                        {conv.lastMessage.sender?._id === user?._id && 'You: '}
                         {conv.lastMessage.hasImage && '📷 '}
                         {conv.lastMessage.content}
                       </p>

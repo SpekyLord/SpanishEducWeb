@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { User as UserIcon, MessageCircle } from 'lucide-react';
 import { UserAvatar } from './UserAvatar';
@@ -71,6 +72,7 @@ export const UserPopover: React.FC<UserPopoverProps> = ({ user, anchorRect, onCl
         userId: user._id,
         otherUser: {
           _id: user._id,
+          username: user.username,
           displayName: user.displayName,
           avatarUrl: user.avatarUrl,
         }
@@ -78,14 +80,14 @@ export const UserPopover: React.FC<UserPopoverProps> = ({ user, anchorRect, onCl
     });
   };
 
-  return (
+  return createPortal(
     <div
       ref={popoverRef}
       style={{
         position: 'fixed',
         top: position.top,
         left: position.left,
-        zIndex: 50,
+        zIndex: 9999,
         width: '240px',
         backgroundColor: '#1e2a4a',
         border: '1px solid rgba(255,255,255,0.1)',
@@ -160,6 +162,7 @@ export const UserPopover: React.FC<UserPopoverProps> = ({ user, anchorRect, onCl
           </button>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

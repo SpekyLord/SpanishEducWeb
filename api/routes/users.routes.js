@@ -1,9 +1,28 @@
 import { Router } from 'express'
+import multer from 'multer'
 import * as usersController from '../controllers/users.controller.js'
 import { authenticate, optionalAuth } from '../middleware/auth.middleware.js'
 import { requireTeacher } from '../middleware/role.middleware.js'
 
 const router = Router()
+
+// Configure multer for avatar uploads
+const storage = multer.memoryStorage()
+const avatarUpload = multer({
+  storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB max (role-based check in controller)
+    files: 1
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true)
+    } else {
+      cb(new Error('Invalid file type. Only images allowed'))
+    }
+  }
+})
 
 // Search users (for @mention autocomplete)
 router.get('/search', optionalAuth, usersController.searchUsers)
@@ -15,7 +34,7 @@ router.get('/:username', optionalAuth, usersController.getUserProfile)
 router.put('/profile', authenticate, usersController.updateProfile)
 
 // Upload avatar
-router.post('/avatar', authenticate, usersController.uploadAvatar)
+router.post('/avatar', authenticate, avatarUpload.single('avatar'), usersController.uploadAvatar)
 
 // Delete avatar
 router.delete('/avatar', authenticate, usersController.deleteAvatar)

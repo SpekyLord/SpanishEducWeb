@@ -1,7 +1,7 @@
 import Conversation from '../models/Conversation.js'
 import Message from '../models/Message.js'
 import User from '../models/User.js'
-import { v2 as cloudinary } from 'cloudinary'
+import cloudinary from '../config/cloudinary.js'
 import { sanitizeString } from '../utils/validators.js'
 import { createDirectMessageNotification } from '../services/notification.service.js'
 

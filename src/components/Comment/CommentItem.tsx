@@ -140,27 +140,23 @@ export const CommentItem = React.memo<CommentItemProps>(({ comment, postId, dept
             const rect = e.currentTarget.getBoundingClientRect();
             setPopoverAnchor({ top: rect.top, left: rect.left, bottom: rect.bottom });
           }}
-          style={{ cursor: 'pointer', display: 'flex' }}
+          style={{ cursor: 'pointer', flexShrink: 0 }}
         >
           <UserAvatar name={comment.author.displayName} avatarUrl={comment.author.avatarUrl} size="sm" className="ring-1 ring-fb-border" />
         </div>
-        <div>
-          <div
-            onClick={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              setPopoverAnchor({ top: rect.top, left: rect.left, bottom: rect.bottom });
-            }}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', cursor: 'pointer' }}
-          >
-            <span style={{ fontWeight: 600, color: '#f0e6d3', fontSize: '0.875rem' }}>{comment.author.displayName}</span>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <span
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                setPopoverAnchor({ top: rect.top, left: rect.left, bottom: rect.bottom });
+              }}
+              style={{ fontWeight: 600, color: '#f0e6d3', fontSize: '0.875rem', cursor: 'pointer' }}
+            >{comment.author.displayName}</span>
             <span style={{ fontSize: '0.75rem', backgroundColor: '#0f3460', color: '#d1d5db', padding: '2px 6px', borderRadius: '4px' }}>
               {comment.author.role}
             </span>
             <span style={{ fontSize: '0.75rem', color: 'rgba(240,230,211,0.5)' }}>@{comment.author.username}</span>
-          </div>
-        </div>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
             <span style={{ fontSize: '0.75rem', color: 'rgba(240,230,211,0.5)' }}>· {formatDate(comment.createdAt)}</span>
             {comment.isPinned && (
               <span style={{ fontSize: '0.75rem', backgroundColor: 'rgba(201,169,110,0.2)', color: '#c9a96e', padding: '2px 8px', borderRadius: '4px', fontWeight: 600 }}>

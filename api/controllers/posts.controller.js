@@ -1,6 +1,6 @@
 import Post from '../models/Post.js';
 import User from '../models/User.js';
-import { v2 as cloudinary } from 'cloudinary';
+import cloudinary from '../config/cloudinary.js';
 import { sanitizeString } from '../utils/validators.js';
 
 // Helper: Create author object from user
