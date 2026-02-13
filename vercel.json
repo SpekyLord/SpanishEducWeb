@@ -6,7 +6,7 @@
   "functions": {
     "api/index.js": {
       "maxDuration": 10,
-      "includeFiles": ["api/**"]
+      "includeFiles": "api/**"
     }
   },
   "rewrites": [
