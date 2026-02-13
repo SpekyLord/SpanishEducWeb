@@ -161,3 +161,15 @@ body {
     );
   }
 }
+
+/* Hide button text labels on mobile screens */
+@media (max-width: 640px) {
+  .hide-on-mobile {
+    display: none;
+  }
+  
+  /* Adjust button styling for icon-only display on mobile */
+  [role="group"][aria-label="Post actions"] button {
+    padding: 10px 8px !important;
+  }
+}

@@ -7,6 +7,17 @@ const api = axios.create({
   withCredentials: true
 });
 
+// In-memory access token (never stored in localStorage)
+let _accessToken: string | null = null;
+
+export function setAccessToken(token: string | null) {
+  _accessToken = token;
+}
+
+export function getAccessToken(): string | null {
+  return _accessToken;
+}
+
 // CSRF token management
 let csrfToken: string | null = null;
 let csrfInitializing = false;
@@ -28,9 +39,8 @@ export async function initCSRF() {
 
 // Add auth token and CSRF token to requests
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  if (_accessToken) {
+    config.headers.Authorization = `Bearer ${_accessToken}`;
   }
 
   // Add CSRF token to state-changing requests
@@ -59,13 +69,13 @@ api.interceptors.response.use(
           { withCredentials: true }
         );
 
-        localStorage.setItem('accessToken', data.accessToken);
+        _accessToken = data.accessToken;
         originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
 
         return api(originalRequest);
       } catch (refreshError) {
         // Refresh failed, logout user
-        localStorage.removeItem('accessToken');
+        _accessToken = null;
         window.location.href = '/login';
         return Promise.reject(refreshError);
       }

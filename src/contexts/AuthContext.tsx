@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from '../services/api'
+import api, { setAccessToken } from '../services/api'
 
 interface User {
   _id: string
@@ -32,7 +32,7 @@ const API_URL = '/api'
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [accessToken, setAccessToken] = useState<string | null>(null)
+  const [accessTokenState, setAccessTokenState] = useState<string | null>(null)
   const navigate = useNavigate()
 
   // Guard against React 18 StrictMode double-invoking effects
@@ -44,16 +44,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (initializedRef.current) return
     initializedRef.current = true
 
-    const savedToken = localStorage.getItem('accessToken')
-    if (savedToken) {
-      setAccessToken(savedToken)
-    }
     initializeAuth()
   }, [])
 
   // Set up token refresh interval
   useEffect(() => {
-    if (accessToken) {
+    if (accessTokenState) {
       // Refresh token every 14 minutes (before 15 min expiry)
       const interval = setInterval(() => {
         refreshToken()
@@ -61,13 +57,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return () => clearInterval(interval)
     }
-  }, [accessToken])
+  }, [accessTokenState])
 
   const initializeAuth = async () => {
     try {
       const success = await refreshToken()
       if (!success) {
         setUser(null)
+        setAccessTokenState(null)
         setAccessToken(null)
       }
     } catch (error) {
@@ -89,8 +86,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       const data = await response.json()
+      setAccessTokenState(data.accessToken)
       setAccessToken(data.accessToken)
-      localStorage.setItem('accessToken', data.accessToken)
 
       // Get current user
       const userResponse = await fetch(`${API_URL}/auth/me`, {
@@ -135,7 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error(data.error || 'Registration failed')
       }
 
-      localStorage.setItem('accessToken', data.accessToken)
+      setAccessTokenState(data.accessToken)
       setAccessToken(data.accessToken)
       setUser(data.user)
       navigate('/')
@@ -162,7 +159,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error(data.error || 'Login failed')
       }
 
-      localStorage.setItem('accessToken', data.accessToken)
+      setAccessTokenState(data.accessToken)
       setAccessToken(data.accessToken)
       setUser(data.user)
       navigate('/')
@@ -183,8 +180,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('Logout error:', error)
     } finally {
       setUser(null)
+      setAccessTokenState(null)
       setAccessToken(null)
-      localStorage.removeItem('accessToken')
       navigate('/login')
     }
   }
@@ -213,9 +210,4 @@ export function useAuth() {
     throw new Error('useAuth must be used within an AuthProvider')
   }
   return context
-}
-
-// Export for API calls
-export function getAccessToken() {
-  return localStorage.getItem('accessToken')
 }

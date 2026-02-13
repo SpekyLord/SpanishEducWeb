@@ -88,7 +88,7 @@ export const ReactionsPanel: React.FC<ReactionsPanelProps> = ({ postId, onClose 
   const displayUsers = getDisplayUsers();
 
   const content = (
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 9998, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
       <div
         ref={panelRef}
         style={{

@@ -1,5 +1,13 @@
 import jwt from 'jsonwebtoken'
 
+// Fail fast if JWT secrets are not configured
+if (!process.env.JWT_ACCESS_SECRET) {
+  throw new Error('JWT_ACCESS_SECRET environment variable is required')
+}
+if (!process.env.JWT_REFRESH_SECRET) {
+  throw new Error('JWT_REFRESH_SECRET environment variable is required')
+}
+
 const ACCESS_TOKEN_EXPIRY = '15m'
 const REFRESH_TOKEN_EXPIRY = '7d'
 const REFRESH_TOKEN_EXPIRY_REMEMBER = '30d'

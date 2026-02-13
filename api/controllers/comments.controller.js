@@ -10,6 +10,7 @@ import {
 } from '../services/notification.service.js'
 
 const EDIT_WINDOW_MINUTES = 15
+const MAX_COMMENT_DEPTH = 10
 
 const createAuthorObject = (user) => ({
   _id: user._id,
@@ -239,6 +240,15 @@ export async function createComment(req, res) {
       }
 
       depth = parent.depth + 1
+
+      // Prevent excessive nesting
+      if (depth > MAX_COMMENT_DEPTH) {
+        return res.status(400).json({
+          success: false,
+          message: `Maximum comment nesting depth of ${MAX_COMMENT_DEPTH} exceeded`
+        })
+      }
+
       rootComment = parent.rootComment || parent._id
       path = parent.path || parent._id.toString()
     }
@@ -372,25 +382,35 @@ export async function deleteComment(req, res) {
 
 export async function likeComment(req, res) {
   try {
-    const comment = await Comment.findById(req.params.id)
-    if (!comment || comment.isDeleted) {
-      return res.status(404).json({ success: false, message: 'Comment not found' })
+    const userId = req.user._id
+    const commentId = req.params.id
+
+    // Atomic: only add like if not already present
+    const comment = await Comment.findOneAndUpdate(
+      { _id: commentId, isDeleted: false, likes: { $ne: userId } },
+      {
+        $addToSet: { likes: userId },
+        $inc: { likesCount: 1 }
+      },
+      { new: true }
+    )
+
+    if (!comment) {
+      // Either not found or already liked
+      const exists = await Comment.findOne({ _id: commentId, isDeleted: false })
+      if (!exists) {
+        return res.status(404).json({ success: false, message: 'Comment not found' })
+      }
+      return res.json({ success: true, data: { likesCount: exists.likesCount } })
     }
 
-    const userId = req.user._id
-    const alreadyLiked = comment.likes.some((id) => id.toString() === userId.toString())
-    if (!alreadyLiked) {
-      comment.likes.push(userId)
-      comment.likesCount += 1
-      await comment.save()
-      await User.findByIdAndUpdate(userId, { $inc: { 'stats.likesGiven': 1 } })
+    await User.findByIdAndUpdate(userId, { $inc: { 'stats.likesGiven': 1 } })
 
-      // Create notification for comment like
-      try {
-        await createCommentLikeNotification(comment, req.user)
-      } catch (notifError) {
-        console.error('Failed to create like notification:', notifError)
-      }
+    // Create notification for comment like
+    try {
+      await createCommentLikeNotification(comment, req.user)
+    } catch (notifError) {
+      console.error('Failed to create like notification:', notifError)
     }
 
     res.json({ success: true, data: { likesCount: comment.likesCount } })
@@ -402,20 +422,28 @@ export async function likeComment(req, res) {
 
 export async function unlikeComment(req, res) {
   try {
-    const comment = await Comment.findById(req.params.id)
-    if (!comment || comment.isDeleted) {
-      return res.status(404).json({ success: false, message: 'Comment not found' })
-    }
-
     const userId = req.user._id
-    const index = comment.likes.findIndex((id) => id.toString() === userId.toString())
-    if (index > -1) {
-      comment.likes.splice(index, 1)
-      comment.likesCount = Math.max(0, comment.likesCount - 1)
-      await comment.save()
+    const commentId = req.params.id
+
+    // Atomic: remove like only if present
+    const comment = await Comment.findOneAndUpdate(
+      { _id: commentId, isDeleted: false, likes: userId },
+      {
+        $pull: { likes: userId },
+        $inc: { likesCount: -1 }
+      },
+      { new: true }
+    )
+
+    if (!comment) {
+      const exists = await Comment.findOne({ _id: commentId, isDeleted: false })
+      if (!exists) {
+        return res.status(404).json({ success: false, message: 'Comment not found' })
+      }
+      return res.json({ success: true, data: { likesCount: exists.likesCount } })
     }
 
-    res.json({ success: true, data: { likesCount: comment.likesCount } })
+    res.json({ success: true, data: { likesCount: Math.max(0, comment.likesCount) } })
   } catch (error) {
     console.error('Unlike comment error:', error)
     res.status(500).json({ success: false, message: 'Server error unliking comment' })

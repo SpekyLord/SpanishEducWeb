@@ -3,6 +3,42 @@ import User from '../models/User.js';
 import cloudinary from '../config/cloudinary.js';
 import { sanitizeString } from '../utils/validators.js';
 
+// Magic byte signatures for allowed file types
+const MAGIC_BYTES = {
+  // Images
+  'image/jpeg': [Buffer.from([0xFF, 0xD8, 0xFF])],
+  'image/png': [Buffer.from([0x89, 0x50, 0x4E, 0x47])],
+  'image/gif': [Buffer.from('GIF87a'), Buffer.from('GIF89a')],
+  'image/webp': null, // checked via RIFF header below
+  // Videos
+  'video/mp4': null, // checked via ftyp box below
+  'video/quicktime': null, // also uses ftyp
+  'video/mpeg': [Buffer.from([0x00, 0x00, 0x01, 0xBA]), Buffer.from([0x00, 0x00, 0x01, 0xB3])],
+  'video/x-msvideo': [Buffer.from('RIFF')],
+}
+
+function validateMagicBytes(buffer, claimedMime) {
+  if (!buffer || buffer.length < 12) return false
+
+  // WEBP: RIFF....WEBP
+  if (claimedMime === 'image/webp') {
+    return buffer.slice(0, 4).toString() === 'RIFF' && buffer.slice(8, 12).toString() === 'WEBP'
+  }
+
+  // MP4/MOV: ftyp box at offset 4
+  if (claimedMime === 'video/mp4' || claimedMime === 'video/quicktime') {
+    return buffer.slice(4, 8).toString() === 'ftyp'
+  }
+
+  const signatures = MAGIC_BYTES[claimedMime]
+  if (!signatures) return false
+
+  return signatures.some(sig => {
+    if (buffer.length < sig.length) return false
+    return buffer.slice(0, sig.length).equals(sig)
+  })
+}
+
 // Helper: Create author object from user
 const createAuthorObject = (user) => ({
   _id: user._id,
@@ -14,13 +50,6 @@ const createAuthorObject = (user) => ({
 
 // Helper: Upload media to Cloudinary
 const uploadMedia = async (file, type) => {
-  // Configure cloudinary with environment variables
-  console.log('Cloudinary config:', {
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY ? '✓ Present' : '✗ Missing',
-    api_secret: process.env.CLOUDINARY_API_SECRET ? '✓ Present' : '✗ Missing'
-  });
-  
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -174,6 +203,13 @@ export async function createPost(req, res) {
           message: 'Each image must be less than 5MB'
         });
       }
+      // Verify magic bytes match claimed MIME type
+      if (!validateMagicBytes(image.buffer, image.mimetype)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid image file — content does not match file type'
+        });
+      }
     }
 
     // Validate video size
@@ -181,6 +217,14 @@ export async function createPost(req, res) {
       return res.status(400).json({
         success: false,
         message: 'Video must be less than 50MB'
+      });
+    }
+
+    // Verify video magic bytes
+    if (video && !validateMagicBytes(video.buffer, video.mimetype)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid video file — content does not match file type'
       });
     }
 
@@ -409,36 +453,48 @@ export async function addReaction(req, res) {
       });
     }
 
-    const post = await Post.findOne({
-      _id: req.params.id,
-      isDeleted: false
-    });
-
-    if (!post) {
-      return res.status(404).json({
-        success: false,
-        message: 'Post not found'
-      });
-    }
-
+    const postId = req.params.id;
     const userId = req.user._id;
 
-    // Remove any existing reaction from user
-    for (const reactionType of validTypes) {
-      const index = post.reactions[reactionType].findIndex(id => id.toString() === userId.toString());
-      if (index > -1) {
-        post.reactions[reactionType].splice(index, 1);
-        post.reactionsCount[reactionType]--;
-        post.reactionsCount.total--;
-      }
+    // First, atomically remove user from ALL reaction arrays
+    const pullUpdate = {};
+    const decUpdate = {};
+    for (const rt of validTypes) {
+      pullUpdate[`reactions.${rt}`] = userId;
     }
 
-    // Add new reaction
-    post.reactions[type].push(userId);
-    post.reactionsCount[type]++;
-    post.reactionsCount.total++;
+    // Find which reaction(s) the user currently has, then remove them
+    const currentPost = await Post.findOne({ _id: postId, isDeleted: false }).lean();
+    if (!currentPost) {
+      return res.status(404).json({ success: false, message: 'Post not found' });
+    }
 
-    await post.save();
+    let totalDec = 0;
+    for (const rt of validTypes) {
+      if (currentPost.reactions[rt]?.some(id => id.toString() === userId.toString())) {
+        decUpdate[`reactionsCount.${rt}`] = -1;
+        totalDec++;
+      }
+    }
+    if (totalDec > 0) decUpdate['reactionsCount.total'] = -totalDec;
+
+    // Atomic: remove old reactions + decrement counts
+    if (Object.keys(decUpdate).length > 0) {
+      await Post.updateOne(
+        { _id: postId, isDeleted: false },
+        { $pull: pullUpdate, $inc: decUpdate }
+      );
+    }
+
+    // Atomic: add new reaction + increment counts
+    const post = await Post.findOneAndUpdate(
+      { _id: postId, isDeleted: false },
+      {
+        $addToSet: { [`reactions.${type}`]: userId },
+        $inc: { [`reactionsCount.${type}`]: 1, 'reactionsCount.total': 1 }
+      },
+      { new: true }
+    );
 
     res.json({
       success: true,
@@ -499,39 +555,44 @@ export async function getReactions(req, res) {
 
 export async function removeReaction(req, res) {
   try {
-    const post = await Post.findOne({
-      _id: req.params.id,
-      isDeleted: false
-    });
-
-    if (!post) {
-      return res.status(404).json({
-        success: false,
-        message: 'Post not found'
-      });
-    }
-
+    const postId = req.params.id;
     const userId = req.user._id;
     const validTypes = ['like', 'love', 'celebrate', 'insightful', 'question'];
 
-    // Remove user's reaction
-    for (const reactionType of validTypes) {
-      const index = post.reactions[reactionType].findIndex(id => id.toString() === userId.toString());
-      if (index > -1) {
-        post.reactions[reactionType].splice(index, 1);
-        post.reactionsCount[reactionType]--;
-        post.reactionsCount.total--;
+    // Find which reaction type the user has
+    const currentPost = await Post.findOne({ _id: postId, isDeleted: false }).lean();
+    if (!currentPost) {
+      return res.status(404).json({ success: false, message: 'Post not found' });
+    }
+
+    let foundType = null;
+    for (const rt of validTypes) {
+      if (currentPost.reactions[rt]?.some(id => id.toString() === userId.toString())) {
+        foundType = rt;
         break;
       }
     }
 
-    await post.save();
+    if (foundType) {
+      // Atomic remove
+      const post = await Post.findOneAndUpdate(
+        { _id: postId, isDeleted: false },
+        {
+          $pull: { [`reactions.${foundType}`]: userId },
+          $inc: { [`reactionsCount.${foundType}`]: -1, 'reactionsCount.total': -1 }
+        },
+        { new: true }
+      );
+
+      return res.json({
+        success: true,
+        data: { reactionsCount: post.reactionsCount }
+      });
+    }
 
     res.json({
       success: true,
-      data: {
-        reactionsCount: post.reactionsCount
-      }
+      data: { reactionsCount: currentPost.reactionsCount }
     });
   } catch (error) {
     console.error('Remove reaction error:', error);
@@ -544,25 +605,25 @@ export async function removeReaction(req, res) {
 
 export async function bookmarkPost(req, res) {
   try {
-    const post = await Post.findOne({
-      _id: req.params.id,
-      isDeleted: false
-    });
+    const postId = req.params.id;
+    const userId = req.user._id;
+
+    // Atomic: add bookmark only if not already present
+    const post = await Post.findOneAndUpdate(
+      { _id: postId, isDeleted: false, bookmarkedBy: { $ne: userId } },
+      {
+        $addToSet: { bookmarkedBy: userId },
+        $inc: { bookmarksCount: 1 }
+      },
+      { new: true }
+    );
 
     if (!post) {
-      return res.status(404).json({
-        success: false,
-        message: 'Post not found'
-      });
-    }
-
-    const userId = req.user._id;
-    const isBookmarked = post.bookmarkedBy.some(id => id.toString() === userId.toString());
-
-    if (!isBookmarked) {
-      post.bookmarkedBy.push(userId);
-      post.bookmarksCount++;
-      await post.save();
+      // Either post not found or already bookmarked
+      const exists = await Post.findOne({ _id: postId, isDeleted: false });
+      if (!exists) {
+        return res.status(404).json({ success: false, message: 'Post not found' });
+      }
     }
 
     res.json({
@@ -580,25 +641,24 @@ export async function bookmarkPost(req, res) {
 
 export async function removeBookmark(req, res) {
   try {
-    const post = await Post.findOne({
-      _id: req.params.id,
-      isDeleted: false
-    });
+    const postId = req.params.id;
+    const userId = req.user._id;
+
+    // Atomic: remove bookmark
+    const post = await Post.findOneAndUpdate(
+      { _id: postId, isDeleted: false, bookmarkedBy: userId },
+      {
+        $pull: { bookmarkedBy: userId },
+        $inc: { bookmarksCount: -1 }
+      },
+      { new: true }
+    );
 
     if (!post) {
-      return res.status(404).json({
-        success: false,
-        message: 'Post not found'
-      });
-    }
-
-    const userId = req.user._id;
-    post.bookmarkedBy = post.bookmarkedBy.filter(id => id.toString() !== userId.toString());
-    
-    const newCount = post.bookmarkedBy.length;
-    if (newCount < post.bookmarksCount) {
-      post.bookmarksCount = newCount;
-      await post.save();
+      const exists = await Post.findOne({ _id: postId, isDeleted: false });
+      if (!exists) {
+        return res.status(404).json({ success: false, message: 'Post not found' });
+      }
     }
 
     res.json({

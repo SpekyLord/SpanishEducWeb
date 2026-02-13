@@ -25,9 +25,10 @@ const messageSchema = new mongoose.Schema(
 
     content: {
       type: String,
-      required: true,
+      required: false,
       maxlength: 2000,
-      trim: true
+      trim: true,
+      default: ''
     },
 
     // Single image attachment (max 1 per message)

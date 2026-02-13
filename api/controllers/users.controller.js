@@ -5,6 +5,7 @@ import Message from '../models/Message.js';
 import Conversation from '../models/Conversation.js';
 import Notification from '../models/Notification.js';
 import { uploadImage, deleteFile, UPLOAD_LIMITS } from '../services/cloudinary.service.js';
+import { sanitizeString } from '../utils/validators.js';
 
 // Cascade denormalized user data updates across all collections
 async function cascadeUserUpdates(userId, updates) {
@@ -133,7 +134,7 @@ export async function updateProfile(req, res) {
     const updates = {}
 
     if (displayName !== undefined) {
-      const trimmed = displayName.trim()
+      const trimmed = sanitizeString(displayName.trim())
       if (trimmed.length < 2 || trimmed.length > 50) {
         return res.status(400).json({
           success: false,
@@ -150,7 +151,7 @@ export async function updateProfile(req, res) {
           message: 'Bio must be 500 characters or less'
         })
       }
-      updates.bio = bio.trim()
+      updates.bio = sanitizeString(bio.trim())
     }
 
     if (Object.keys(updates).length === 0) {

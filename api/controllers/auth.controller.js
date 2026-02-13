@@ -2,7 +2,7 @@ import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
 import User from '../models/User.js'
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/jwt.js'
-import { validateEmail, validatePassword, validateUsername } from '../utils/validators.js'
+import { validateEmail, validatePassword, validateUsername, sanitizeString } from '../utils/validators.js'
 
 export async function register(req, res) {
   try {
@@ -49,7 +49,7 @@ export async function register(req, res) {
     const user = await User.create({
       email: email.toLowerCase(),
       password: hashedPassword,
-      displayName,
+      displayName: sanitizeString(displayName.trim()),
       username: finalUsername,
       role: 'student',
     })
@@ -189,13 +189,20 @@ export async function refreshToken(req, res) {
     }
 
     // Check if token exists in user's valid tokens
-    const tokenIndex = user.refreshTokens?.findIndex(t => {
-      try {
-        return bcrypt.compareSync(oldToken, t.token)
-      } catch (err) {
-        return false
+    let tokenIndex = -1
+    if (user.refreshTokens) {
+      for (let i = 0; i < user.refreshTokens.length; i++) {
+        try {
+          const matches = await bcrypt.compare(oldToken, user.refreshTokens[i].token)
+          if (matches) {
+            tokenIndex = i
+            break
+          }
+        } catch (err) {
+          // skip invalid hashes
+        }
       }
-    })
+    }
 
     if (tokenIndex === -1 || !user.refreshTokens[tokenIndex]) {
       return res.status(401).json({ error: 'Token revoked or invalid' })
@@ -244,13 +251,18 @@ export async function logout(req, res) {
 
     if (user && refreshToken) {
       // Remove this specific token from user's valid tokens
-      user.refreshTokens = user.refreshTokens?.filter(t => {
+      const filtered = []
+      for (const t of (user.refreshTokens || [])) {
         try {
-          return !bcrypt.compareSync(refreshToken, t.token)
+          const matches = await bcrypt.compare(refreshToken, t.token)
+          if (!matches) {
+            filtered.push(t)
+          }
         } catch (err) {
-          return true // Keep tokens that can't be compared
+          filtered.push(t) // Keep tokens that can't be compared
         }
-      }) || []
+      }
+      user.refreshTokens = filtered
       await user.save()
     }
 
@@ -340,12 +352,13 @@ export async function resetPassword(req, res) {
     // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 12)
     
-    // Update password and clear reset token
+    // Update password and clear reset token + invalidate ALL refresh tokens
     user.password = hashedPassword
     user.passwordResetToken = undefined
     user.passwordResetExpires = undefined
     user.loginAttempts = 0
     user.lockUntil = undefined
+    user.refreshTokens = [] // Force re-login on all devices
     await user.save()
 
     res.json({ message: 'Password reset successfully' })

@@ -27,9 +27,6 @@ const avatarUpload = multer({
 // Search users (for @mention autocomplete)
 router.get('/search', optionalAuth, usersController.searchUsers)
 
-// Get user profile (public for teacher, authenticated for students)
-router.get('/:username', optionalAuth, usersController.getUserProfile)
-
 // Update own profile
 router.put('/profile', authenticate, usersController.updateProfile)
 
@@ -53,5 +50,8 @@ router.get('/students', authenticate, requireTeacher, usersController.getAllStud
 
 // Teacher-only: Get analytics
 router.get('/analytics', authenticate, requireTeacher, usersController.getAnalytics)
+
+// Get user profile — MUST be last (catches :username param)
+router.get('/:username', optionalAuth, usersController.getUserProfile)
 
 export default router

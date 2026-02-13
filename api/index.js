@@ -32,6 +32,9 @@ import usersRoutes from './routes/users.routes.js'
 
 const app = express()
 
+// Trust proxy for correct IP behind Vercel/reverse proxy (needed for rate limiting)
+app.set('trust proxy', 1)
+
 // Security headers with Helmet
 app.use(helmet({
   contentSecurityPolicy: {
@@ -40,7 +43,7 @@ app.use(helmet({
       imgSrc: ["'self'", "data:", "res.cloudinary.com"],
       mediaSrc: ["'self'", "res.cloudinary.com"],
       scriptSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'"],
       connectSrc: ["'self'"]
     }
   },
@@ -95,20 +98,20 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 app.use(cookieParser())
 
 // CSRF Protection Configuration
-console.log('[CSRF] Initializing CSRF protection...')
-console.log('[CSRF] Environment:', process.env.NODE_ENV)
-console.log('[CSRF] CSRF_SECRET loaded:', process.env.CSRF_SECRET ? 'Yes (hidden)' : 'No')
+if (!process.env.CSRF_SECRET) {
+  console.error('FATAL: CSRF_SECRET environment variable is not set. Exiting.')
+  if (process.env.NODE_ENV === 'production') process.exit(1)
+}
 
 const {
   generateCsrfToken: generateToken,
   doubleCsrfProtection,
 } = doubleCsrf({
   getSecret: () => {
-    const secret = process.env.CSRF_SECRET || 'default-csrf-secret-change-in-production'
     if (!process.env.CSRF_SECRET) {
-      console.warn('[CSRF] WARNING: Using default CSRF secret! Set CSRF_SECRET in .env')
+      throw new Error('CSRF_SECRET environment variable is required')
     }
-    return secret
+    return process.env.CSRF_SECRET
   },
   getSessionIdentifier: (req) => {
     // Use user ID if authenticated, otherwise use a session identifier from cookies
@@ -125,30 +128,15 @@ const {
   ignoredMethods: ['GET', 'HEAD', 'OPTIONS']
 })
 
-console.log('[CSRF] CSRF protection initialized')
-console.log('[CSRF] generateToken type:', typeof generateToken)
-console.log('[CSRF] doubleCsrfProtection type:', typeof doubleCsrfProtection)
-
 // CSRF token endpoint
 app.get('/api/csrf-token', (req, res) => {
   try {
-    console.log('[CSRF] Token generation requested')
-    console.log('[CSRF] CSRF_SECRET exists:', !!process.env.CSRF_SECRET)
-    console.log('[CSRF] generateToken function type:', typeof generateToken)
-
     const token = generateToken(req, res)
-
-    console.log('[CSRF] Token generated successfully')
-    console.log('[CSRF] Token length:', token?.length || 0)
-    console.log('[CSRF] Cookie set:', res.getHeader('Set-Cookie') ? 'Yes' : 'No')
-
     res.json({ csrfToken: token })
   } catch (error) {
-    console.error('[CSRF] Token generation FAILED:', error.message)
-    console.error('[CSRF] Error stack:', error.stack)
+    console.error('CSRF token generation failed:', error.message)
     res.status(500).json({
-      error: 'Failed to generate CSRF token',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: 'Failed to generate CSRF token'
     })
   }
 })
@@ -156,35 +144,26 @@ app.get('/api/csrf-token', (req, res) => {
 // Apply CSRF protection to state-changing routes
 app.use('/api/', (req, res, next) => {
   const method = req.method
-  const path = req.path
-
-  // Debug: Log all requests
-  console.log(`[CSRF] ${method} ${path} - Checking CSRF protection...`)
+  const reqPath = req.path
 
   // Skip CSRF for GET, HEAD, OPTIONS (read-only operations)
   if (['GET', 'HEAD', 'OPTIONS'].includes(method)) {
-    console.log(`[CSRF] ${method} ${path} - Skipped (read-only method)`)
     return next()
   }
 
   // Skip CSRF for auth endpoints (they use cookies directly)
-  if (path.startsWith('/auth/login') ||
-      path.startsWith('/auth/register') ||
-      path.startsWith('/auth/refresh') ||
-      path.startsWith('/auth/logout')) {
-    console.log(`[CSRF] ${method} ${path} - Skipped (auth endpoint)`)
+  if (reqPath.startsWith('/auth/login') ||
+      reqPath.startsWith('/auth/register') ||
+      reqPath.startsWith('/auth/refresh') ||
+      reqPath.startsWith('/auth/logout')) {
     return next()
   }
 
   // Apply CSRF protection to all other state-changing routes
-  console.log(`[CSRF] ${method} ${path} - Applying CSRF validation...`)
-
   doubleCsrfProtection(req, res, (err) => {
     if (err) {
-      console.error(`[CSRF] ${method} ${path} - VALIDATION FAILED:`, err.message)
       return next(err)
     }
-    console.log(`[CSRF] ${method} ${path} - VALIDATION PASSED ✓`)
     next()
   })
 })
@@ -218,6 +197,14 @@ const passwordResetLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 3, // 3 reset attempts per hour
   message: 'Too many password reset requests, please try again later.',
+})
+
+const searchLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 30, // 30 search requests per minute per IP
+  message: 'Too many search requests, please slow down.',
+  standardHeaders: true,
+  legacyHeaders: false,
 })
 
 // Apply API rate limiters
@@ -274,6 +261,7 @@ app.use('/api/comments', commentsRoutes)
 app.use('/api/files', filesRoutes)
 app.use('/api/messages', messagesRoutes)
 app.use('/api/notifications', notificationsRoutes)
+app.get('/api/users/search', searchLimiter)
 app.use('/api/users', usersRoutes)
 
 // 404 handler for API routes

@@ -42,16 +42,16 @@ export async function sendMessage(req, res) {
     const { recipientId, content } = req.body
     const sender = req.user
 
-    // Validation
-    if (!content || content.trim().length === 0) {
+    // Validation - content required if no image
+    if ((!content || content.trim().length === 0) && !req.file) {
       return res.status(400).json({
         success: false,
-        message: 'Message content is required'
+        message: 'Message content or image is required'
       })
     }
 
     // Sanitize content to prevent XSS attacks
-    const sanitizedContent = sanitizeString(content.trim())
+    const sanitizedContent = content ? sanitizeString(content.trim()) : ''
 
     if (sanitizedContent.length > 2000) {
       return res.status(400).json({
@@ -130,7 +130,7 @@ export async function sendMessage(req, res) {
     recipientParticipant.unreadCount += 1
 
     conversation.lastMessage = {
-      content: sanitizedContent.substring(0, 100),
+      content: sanitizedContent || (image ? '📷 Image' : ''),
       sender: createSenderObject(sender),
       hasImage: !!image,
       createdAt: message.createdAt
@@ -281,6 +281,17 @@ export async function getConversation(req, res) {
     })
 
     if (!conversation) {
+      // Students can only start conversations with teachers
+      if (req.user.role === 'student') {
+        const targetUser = await User.findById(userId).select('role')
+        if (!targetUser) {
+          return res.status(404).json({ success: false, message: 'User not found' })
+        }
+        if (targetUser.role !== 'teacher') {
+          return res.status(403).json({ success: false, message: 'Students can only message teachers' })
+        }
+      }
+
       // Create new conversation
       conversation = await Conversation.create({
         participants: [

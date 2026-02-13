@@ -118,6 +118,6 @@ export async function createDirectMessageNotification(message, conversation, rec
       type: 'message',
       id: message._id,
     },
-    content: message.content.substring(0, 100),
+    content: message.content ? message.content.substring(0, 100) : (message.image ? '📷 Image' : ''),
   })
 }

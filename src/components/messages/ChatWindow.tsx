@@ -103,7 +103,9 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
     try {
       const formData = new FormData();
       formData.append('recipientId', otherUser._id);
-      formData.append('content', newMessage.trim() || ' '); // Space if only image
+      if (newMessage.trim()) {
+        formData.append('content', newMessage.trim());
+      }
       if (selectedImage) {
         formData.append('image', selectedImage);
       }

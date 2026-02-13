@@ -44,6 +44,18 @@ function getStorageType(mimeType) {
   return ALLOWED_MIME_TYPES.audio.includes(mimeType) ? 'cloudinary' : 'gridfs'
 }
 
+// Helper: Sanitize filename to prevent path traversal and header injection
+function sanitizeFilename(filename) {
+  if (!filename || typeof filename !== 'string') return 'unnamed'
+  // Remove path separators, null bytes, and control characters
+  return filename
+    .replace(/[/\\]/g, '_')       // path separators
+    .replace(/[\x00-\x1f]/g, '')  // control chars (prevents header injection)
+    .replace(/\.\./g, '_')         // path traversal
+    .replace(/^\./g, '_')          // hidden files
+    .substring(0, 255)             // reasonable length limit
+}
+
 // Helper: Update folder file count
 async function updateFolderFileCount(folderId, increment = 1) {
   if (folderId) {
@@ -72,10 +84,11 @@ export async function uploadFile(req, res) {
     }
 
     const storageType = getStorageType(req.file.mimetype)
-    const extension = req.file.originalname.split('.').pop().toLowerCase()
+    const safeOriginalName = sanitizeFilename(req.file.originalname)
+    const extension = safeOriginalName.split('.').pop().toLowerCase()
 
     let fileData = {
-      originalName: req.file.originalname,
+      originalName: safeOriginalName,
       mimeType: req.file.mimetype,
       size: req.file.size,
       extension,
@@ -167,9 +180,10 @@ export async function downloadFile(req, res) {
     if (file.storageType === 'gridfs') {
       const downloadStream = downloadFromGridFS(file.gridfsId)
 
+      const safeDownloadName = sanitizeFilename(file.originalName)
       res.set({
         'Content-Type': file.mimeType,
-        'Content-Disposition': `attachment; filename="${file.originalName}"`,
+        'Content-Disposition': `attachment; filename="${safeDownloadName}"`,
       })
 
       downloadStream.on('error', (error) => {
@@ -195,7 +209,8 @@ export async function downloadFile(req, res) {
 // Controller: Get Files (root level)
 export async function getFiles(req, res) {
   try {
-    const { page = 1, limit = 50 } = req.query
+    const { page = 1, limit: rawLimit = 50 } = req.query
+    const limit = Math.min(Math.max(Number(rawLimit) || 50, 1), 100)
     const skip = (page - 1) * limit
 
     // Get root folders
@@ -247,7 +262,8 @@ export async function getFiles(req, res) {
 export async function getFilesInFolder(req, res) {
   try {
     const { folderId: id } = req.params
-    const { page = 1, limit = 50 } = req.query
+    const { page = 1, limit: rawLimit = 50 } = req.query
+    const limit = Math.min(Math.max(Number(rawLimit) || 50, 1), 100)
     const skip = (page - 1) * limit
 
     // Get folder
@@ -337,6 +353,12 @@ export async function createFolder(req, res) {
       return res.status(400).json({ error: 'Folder name is required' })
     }
 
+    // Sanitize folder name to prevent path traversal
+    const safeName = sanitizeFilename(name.trim())
+    if (safeName.length === 0) {
+      return res.status(400).json({ error: 'Invalid folder name' })
+    }
+
     // Validate parent folder if provided
     if (parentFolderId && parentFolderId !== 'null') {
       const parentFolder = await Folder.findOne({ _id: parentFolderId, isDeleted: false })
@@ -350,7 +372,7 @@ export async function createFolder(req, res) {
 
     // Check for duplicate name in same parent
     const existingFolder = await Folder.findOne({
-      name: name.trim(),
+      name: safeName,
       parentFolder: parentFolderId && parentFolderId !== 'null' ? parentFolderId : null,
       isDeleted: false
     })
@@ -361,7 +383,7 @@ export async function createFolder(req, res) {
 
     // Create folder
     const folder = await Folder.create({
-      name: name.trim(),
+      name: safeName,
       parentFolder: parentFolderId && parentFolderId !== 'null' ? parentFolderId : null,
       createdBy: {
         _id: user._id,
@@ -407,7 +429,7 @@ export async function updateFile(req, res) {
     }
 
     if (originalName) {
-      file.originalName = originalName
+      file.originalName = sanitizeFilename(originalName)
     }
 
     await file.save()

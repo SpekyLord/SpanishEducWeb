@@ -128,6 +128,7 @@ userSchema.methods.toJSON = function () {
   delete user.emailVerificationExpires
   delete user.passwordResetToken
   delete user.passwordResetExpires
+  delete user.refreshTokens
   return user
 }
 
