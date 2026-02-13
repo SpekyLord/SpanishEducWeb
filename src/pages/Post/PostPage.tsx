@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Header } from '../../components';
 import { PostCard } from '../../components/Post/PostCard';
-import { getPost } from '../../services/api';
-import type { Post } from '../../types';
+import { getPost, type Post } from '../../services/api';
 
 export const PostPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
