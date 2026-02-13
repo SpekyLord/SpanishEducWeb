@@ -4,5 +4,4 @@ api/controllers/
 api/models/
 api/middleware/
 api/utils/
-api/config/
 api/seed.js
