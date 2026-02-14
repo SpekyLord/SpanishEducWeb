@@ -8,7 +8,7 @@ export function HomePage() {
       <header className="sticky top-0 z-20 bg-[#16213e] border-b border-[#0f3460]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center gap-4">
           <div className="w-10 h-10 bg-[#0f3460] rounded-full" />
-          <div className="text-gray-100 font-semibold">SpanishConnect</div>
+          <div className="text-gray-100 font-semibold">Piccio Bloguero</div>
           <nav className="hidden md:flex items-center gap-6 ml-6">
             <div className="h-3 w-12 bg-[#0f3460] rounded" />
             <div className="h-3 w-12 bg-[#0f3460] rounded" />

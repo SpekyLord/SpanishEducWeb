@@ -121,7 +121,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
               fontFamily: "'Playfair Display', serif",
             }}
           >
-            SpanishConnect
+            Piccio Bloguero
           </span>
           <button
             onClick={onClose}

@@ -54,7 +54,7 @@ export function LoginPage() {
                 SC
               </div>
               <div>
-                <div className="text-2xl font-bold font-heading text-gray-100">SpanishConnect</div>
+                <div className="text-2xl font-bold font-heading text-gray-100">Piccio Bloguero</div>
                 <div className="text-sm text-gray-400">Learn Spanish Together</div>
               </div>
             </div>

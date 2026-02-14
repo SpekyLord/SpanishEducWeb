@@ -123,16 +123,16 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
     >
       <div style={{ maxWidth: '72rem', margin: '0 auto', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '16px' }}>
         {/* Logo */}
-        <Link to={user ? '/feed' : '/'} style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', flexShrink: 0 }} aria-label="SpanishConnect home">
+        <Link to={user ? '/feed' : '/'} style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', flexShrink: 0 }} aria-label="Piccio Bloguero home">
           <div
             style={{ width: '40px', height: '40px', backgroundColor: '#e94560', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1.125rem', flexShrink: 0 }}
             aria-hidden="true"
           >
-            SC
+            PB
           </div>
           {isDesktop && (
             <span style={{ color: '#f3f4f6', fontWeight: 700, letterSpacing: '0.025em', fontSize: '1.125rem' }}>
-              SpanishConnect
+              Piccio Bloguero
             </span>
           )}
         </Link>
