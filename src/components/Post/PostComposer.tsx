@@ -141,8 +141,8 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
           <UserAvatar name={user.displayName} avatarUrl={user.avatar?.url} size="lg" />
           <div style={{ marginLeft: '12px' }}>
-            <h3 style={{ fontWeight: 600, color: '#f3f4f6', margin: 0 }}>{user.displayName}</h3>
-            <p style={{ fontSize: '0.875rem', color: '#9ca3af', margin: 0 }}>Create a new post</p>
+            <h3 style={{ fontWeight: 600, color: '#1a3a2a', margin: 0 }}>{user.displayName}</h3>
+            <p style={{ fontSize: '0.875rem', color: '#6b8a7a', margin: 0 }}>Create a new post</p>
           </div>
         </div>
 
@@ -152,17 +152,17 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
           onChange={(e) => setContent(e.target.value)}
           placeholder="Share a lesson, assignment, or announcement..."
           className="input-glow"
-          style={{ width: '100%', minHeight: '110px', padding: '1rem', borderRadius: '8px', backgroundColor: '#0f3460', color: '#f3f4f6', resize: 'none', border: '1px solid rgba(255,255,255,0.08)', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
+          style={{ width: '100%', minHeight: '110px', padding: '1rem', borderRadius: '8px', backgroundColor: '#f0f4f0', color: '#1a3a2a', resize: 'none', border: '1px solid #d4ddd8', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
           disabled={isSubmitting}
         />
 
-        <div style={{ fontSize: '0.875rem', color: '#9ca3af', marginTop: '1rem', marginBottom: '1.5rem' }}>
+        <div style={{ fontSize: '0.875rem', color: '#6b8a7a', marginTop: '1rem', marginBottom: '1.5rem' }}>
           {content.length} / 10000 characters
         </div>
 
         {/* Error Message */}
         {error && (
-          <div style={{ backgroundColor: 'rgba(127,29,29,0.2)', border: '1px solid rgba(185,28,28,0.5)', color: '#f87171', padding: '12px 16px', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.875rem' }}>
+          <div style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', padding: '12px 16px', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.875rem' }}>
             {error}
           </div>
         )}
@@ -211,10 +211,10 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
                 <X size={16} />
               </button>
             </div>
-            <div style={{ fontSize: '0.875rem', color: '#9ca3af', marginTop: '8px' }}>
+            <div style={{ fontSize: '0.875rem', color: '#6b8a7a', marginTop: '8px' }}>
               Original size: {(video!.size / (1024 * 1024)).toFixed(2)} MB
               {video!.size > 30 * 1024 * 1024 && (
-                <span style={{ color: '#c9a96e', marginLeft: '8px' }}>
+                <span style={{ color: '#b8860b', marginLeft: '8px' }}>
                   (Will be compressed to ~20-30MB)
                 </span>
               )}
@@ -223,18 +223,18 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
         )}
 
         {/* Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.08)', flexWrap: 'wrap', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '1rem', borderTop: '1px solid #e8ede8', flexWrap: 'wrap', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
             {/* Image Upload */}
             <button
               type="button"
               onClick={() => imageInputRef.current?.click()}
-              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '8px', backgroundColor: '#16213e', color: '#e5e7eb', border: 'none', cursor: 'pointer', transition: 'background 0.2s', ...disabledStyle }}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '8px', backgroundColor: '#f0f4f0', color: '#1a3a2a', border: '1px solid #d4ddd8', cursor: 'pointer', transition: 'background 0.2s', ...disabledStyle }}
               disabled={isSubmitting || images.length >= 5 || video !== null}
-              onMouseEnter={e => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = '#1a3a6e'; }}
-              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#16213e'; }}
+              onMouseEnter={e => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = '#e8ede8'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#f0f4f0'; }}
             >
-              <Image size={20} style={{ color: '#4ade80' }} />
+              <Image size={20} style={{ color: '#22c55e' }} />
               <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>Photo</span>
             </button>
             <input
@@ -250,12 +250,12 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
             <button
               type="button"
               onClick={() => videoInputRef.current?.click()}
-              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '8px', backgroundColor: '#16213e', color: '#e5e7eb', border: 'none', cursor: 'pointer', transition: 'background 0.2s', ...disabledStyle }}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '8px', backgroundColor: '#f0f4f0', color: '#1a3a2a', border: '1px solid #d4ddd8', cursor: 'pointer', transition: 'background 0.2s', ...disabledStyle }}
               disabled={isSubmitting || video !== null || images.length > 0}
-              onMouseEnter={e => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = '#1a3a6e'; }}
-              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#16213e'; }}
+              onMouseEnter={e => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = '#e8ede8'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#f0f4f0'; }}
             >
-              <Video size={20} style={{ color: '#f87171' }} />
+              <Video size={20} style={{ color: '#dc2626' }} />
               <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>Video</span>
             </button>
             <input
@@ -268,18 +268,18 @@ export const PostComposer: React.FC<PostComposerProps> = ({ onPostCreated }) => 
 
             {/* Pin Toggle */}
             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', transition: 'background 0.2s' }}
-              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#16213e'; }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#f0f4f0'; }}
               onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
             >
               <input
                 type="checkbox"
                 checked={isPinned}
                 onChange={(e) => setIsPinned(e.target.checked)}
-                style={{ width: '16px', height: '16px', accentColor: '#e94560', cursor: 'pointer' }}
+                style={{ width: '16px', height: '16px', accentColor: '#276749', cursor: 'pointer' }}
                 disabled={isSubmitting}
               />
-              <Pin size={16} style={{ color: '#facc15' }} />
-              <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#e5e7eb' }}>Pin Post</span>
+              <Pin size={16} style={{ color: '#b8860b' }} />
+              <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#1a3a2a' }}>Pin Post</span>
             </label>
           </div>
 

@@ -131,7 +131,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ currentFolderId, onUploa
 
   return (
     <div className="glass-card-elevated" style={{ padding: '1.5rem' }}>
-      <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: '#f3f4f6', marginBottom: '1rem', marginTop: 0 }}>Upload File</h3>
+      <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: '#1a3a2a', marginBottom: '1rem', marginTop: 0 }}>Upload File</h3>
 
       {/* File picker */}
       <div style={{ marginBottom: '1rem' }}>
@@ -153,21 +153,21 @@ export const FileUpload: React.FC<FileUploadProps> = ({ currentFolderId, onUploa
             justifyContent: 'center',
             width: '100%',
             height: '128px',
-            border: '2px dashed rgba(255,255,255,0.15)',
+            border: '2px dashed #d4ddd8',
             borderRadius: '8px',
             cursor: isUploading ? 'not-allowed' : 'pointer',
             transition: 'background 0.2s, border-color 0.2s',
-            backgroundColor: isUploading ? 'rgba(31,41,55,0.5)' : '#0f3460',
+            backgroundColor: isUploading ? '#e8ede8' : '#f0f4f0',
             boxSizing: 'border-box',
           }}
-          onMouseEnter={e => { if (!isUploading) { e.currentTarget.style.backgroundColor = '#1a3a6e'; e.currentTarget.style.borderColor = '#e94560'; } }}
-          onMouseLeave={e => { if (!isUploading) { e.currentTarget.style.backgroundColor = '#0f3460'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; } }}
+          onMouseEnter={e => { if (!isUploading) { e.currentTarget.style.backgroundColor = '#e8ede8'; e.currentTarget.style.borderColor = '#276749'; } }}
+          onMouseLeave={e => { if (!isUploading) { e.currentTarget.style.backgroundColor = '#f0f4f0'; e.currentTarget.style.borderColor = '#d4ddd8'; } }}
         >
-          <Upload size={32} style={{ color: '#9ca3af', marginBottom: '8px' }} />
-          <p style={{ fontSize: '0.875rem', color: '#9ca3af', margin: 0 }}>
+          <Upload size={32} style={{ color: '#6b8a7a', marginBottom: '8px' }} />
+          <p style={{ fontSize: '0.875rem', color: '#6b8a7a', margin: 0 }}>
             Click to select file
           </p>
-          <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '4px', margin: '4px 0 0' }}>
+          <p style={{ fontSize: '0.75rem', color: '#6b8a7a', marginTop: '4px', margin: '4px 0 0' }}>
             PDF, DOCX, PPTX, XLSX, MP3, WAV (max 10MB)
           </p>
         </label>
@@ -175,8 +175,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({ currentFolderId, onUploa
 
       {/* Error message */}
       {error && (
-        <div style={{ marginBottom: '1rem', padding: '12px', backgroundColor: 'rgba(127,29,29,0.3)', border: '1px solid rgba(185,28,28,0.6)', borderRadius: '8px' }}>
-          <p style={{ fontSize: '0.875rem', color: '#fecaca', margin: 0 }}>{error}</p>
+        <div style={{ marginBottom: '1rem', padding: '12px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px' }}>
+          <p style={{ fontSize: '0.875rem', color: '#dc2626', margin: 0 }}>{error}</p>
         </div>
       )}
 
@@ -190,21 +190,21 @@ export const FileUpload: React.FC<FileUploadProps> = ({ currentFolderId, onUploa
 
       {/* Selected file preview */}
       {selectedFile && (
-        <div style={{ marginBottom: '1rem', padding: '16px', backgroundColor: '#0f3460', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}>
+        <div style={{ marginBottom: '1rem', padding: '16px', backgroundColor: '#f0f4f0', border: '1px solid #d4ddd8', borderRadius: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '12px' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', flex: 1, minWidth: 0 }}>
               <File size={20} style={{ color: '#60a5fa', flexShrink: 0, marginTop: '2px' }} />
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontSize: '0.875rem', fontWeight: 500, color: '#f3f4f6', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selectedFile.name}</p>
-                <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '4px', margin: '4px 0 0' }}>{formatFileSize(selectedFile.size)}</p>
+                <p style={{ fontSize: '0.875rem', fontWeight: 500, color: '#1a3a2a', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selectedFile.name}</p>
+                <p style={{ fontSize: '0.75rem', color: '#6b8a7a', marginTop: '4px', margin: '4px 0 0' }}>{formatFileSize(selectedFile.size)}</p>
               </div>
             </div>
             {!isUploading && (
               <button
                 onClick={handleRemoveFile}
-                style={{ padding: '4px', color: '#9ca3af', background: 'none', border: 'none', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}
+                style={{ padding: '4px', color: '#6b8a7a', background: 'none', border: 'none', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}
                 onMouseEnter={e => { e.currentTarget.style.color = '#f87171'; }}
-                onMouseLeave={e => { e.currentTarget.style.color = '#9ca3af'; }}
+                onMouseLeave={e => { e.currentTarget.style.color = '#6b8a7a'; }}
               >
                 <X size={18} />
               </button>
@@ -214,12 +214,12 @@ export const FileUpload: React.FC<FileUploadProps> = ({ currentFolderId, onUploa
           {/* Progress bar */}
           {isUploading && (
             <div style={{ marginBottom: '12px' }}>
-              <div style={{ height: '8px', backgroundColor: '#374151', borderRadius: '9999px', overflow: 'hidden' }}>
+              <div style={{ height: '8px', backgroundColor: '#d4ddd8', borderRadius: '9999px', overflow: 'hidden' }}>
                 <div
-                  style={{ height: '100%', background: 'linear-gradient(to right, #e94560, #c9a96e)', transition: 'width 0.3s', borderRadius: '9999px', width: `${uploadProgress}%` }}
+                  style={{ height: '100%', background: 'linear-gradient(to right, #276749, #b8860b)', transition: 'width 0.3s', borderRadius: '9999px', width: `${uploadProgress}%` }}
                 />
               </div>
-              <p style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '4px', margin: '4px 0 0' }}>{uploadProgress}%</p>
+              <p style={{ fontSize: '0.75rem', color: '#6b8a7a', marginTop: '4px', margin: '4px 0 0' }}>{uploadProgress}%</p>
             </div>
           )}
 
@@ -236,14 +236,14 @@ export const FileUpload: React.FC<FileUploadProps> = ({ currentFolderId, onUploa
           )}
 
           {isUploading && (
-            <p style={{ fontSize: '0.875rem', color: '#9ca3af', textAlign: 'center', margin: 0 }}>Uploading...</p>
+            <p style={{ fontSize: '0.875rem', color: '#6b8a7a', textAlign: 'center', margin: 0 }}>Uploading...</p>
           )}
         </div>
       )}
 
       {/* Info text */}
       {!selectedFile && (
-        <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+        <div style={{ fontSize: '0.75rem', color: '#6b8a7a' }}>
           <p style={{ margin: '0 0 4px' }}>Supported file types:</p>
           <ul style={{ listStyleType: 'disc', paddingLeft: '24px', margin: '0 0 4px' }}>
             <li style={{ marginBottom: '2px' }}>Documents: PDF, DOC, DOCX</li>

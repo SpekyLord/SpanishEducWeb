@@ -88,35 +88,35 @@ export const ReactionsPanel: React.FC<ReactionsPanelProps> = ({ postId, onClose 
   const displayUsers = getDisplayUsers();
 
   const content = (
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.3)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
       <div
         ref={panelRef}
         style={{
           width: '100%',
           maxWidth: '440px',
           maxHeight: '70vh',
-          backgroundColor: '#1a2744',
+          backgroundColor: '#ffffff',
           borderRadius: '12px',
-          border: '1px solid rgba(255,255,255,0.1)',
-          boxShadow: '0 16px 48px rgba(0,0,0,0.6)',
+          border: '1px solid #d4ddd8',
+          boxShadow: '0 16px 48px rgba(0,0,0,0.15)',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
         }}
       >
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-          <span style={{ fontWeight: 600, color: '#f0e6d3', fontSize: '1rem' }}>Reactions</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #e8ede8' }}>
+          <span style={{ fontWeight: 600, color: '#1a3a2a', fontSize: '1rem' }}>Reactions</span>
           <button
             onClick={onClose}
-            style={{ background: 'none', border: 'none', color: 'rgba(240,230,211,0.5)', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '6px' }}
+            style={{ background: 'none', border: 'none', color: '#6b8a7a', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '6px' }}
           >
             <X size={20} />
           </button>
         </div>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: '4px', padding: '12px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)', overflowX: 'auto' }}>
+        <div style={{ display: 'flex', gap: '4px', padding: '12px 20px', borderBottom: '1px solid #e8ede8', overflowX: 'auto' }}>
           <button
             onClick={() => setActiveTab('all')}
             style={{
@@ -126,8 +126,8 @@ export const ReactionsPanel: React.FC<ReactionsPanelProps> = ({ postId, onClose 
               fontSize: '0.8125rem',
               fontWeight: 500,
               cursor: 'pointer',
-              backgroundColor: activeTab === 'all' ? '#0f3460' : 'transparent',
-              color: activeTab === 'all' ? '#c9a96e' : 'rgba(240,230,211,0.5)',
+              backgroundColor: activeTab === 'all' ? '#e0f0e5' : 'transparent',
+              color: activeTab === 'all' ? '#276749' : '#6b8a7a',
               whiteSpace: 'nowrap',
             }}
           >
@@ -147,8 +147,8 @@ export const ReactionsPanel: React.FC<ReactionsPanelProps> = ({ postId, onClose 
                   fontSize: '0.8125rem',
                   fontWeight: 500,
                   cursor: 'pointer',
-                  backgroundColor: activeTab === type ? '#0f3460' : 'transparent',
-                  color: activeTab === type ? '#c9a96e' : 'rgba(240,230,211,0.5)',
+                  backgroundColor: activeTab === type ? '#e0f0e5' : 'transparent',
+                  color: activeTab === type ? '#276749' : '#6b8a7a',
                   whiteSpace: 'nowrap',
                   display: 'flex',
                   alignItems: 'center',
@@ -165,10 +165,10 @@ export const ReactionsPanel: React.FC<ReactionsPanelProps> = ({ postId, onClose 
         <div style={{ flex: 1, overflowY: 'auto', padding: '8px 12px' }}>
           {loading ? (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '24px' }}>
-              <div style={{ width: 32, height: 32, border: '2px solid rgba(201,169,110,0.3)', borderTopColor: '#c9a96e', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+              <div style={{ width: 32, height: 32, border: '2px solid rgba(184,134,11,0.2)', borderTopColor: '#b8860b', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
             </div>
           ) : displayUsers.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '24px', color: 'rgba(240,230,211,0.4)', fontSize: '0.875rem' }}>
+            <div style={{ textAlign: 'center', padding: '24px', color: '#9cb0a3', fontSize: '0.875rem' }}>
               No reactions yet
             </div>
           ) : (
@@ -179,8 +179,8 @@ export const ReactionsPanel: React.FC<ReactionsPanelProps> = ({ postId, onClose 
               >
                 <UserAvatar name={user.displayName} avatarUrl={user.avatarUrl} size="sm" />
                 <div>
-                  <div style={{ fontWeight: 600, color: '#f0e6d3', fontSize: '0.875rem' }}>{user.displayName}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'rgba(240,230,211,0.4)' }}>@{user.username}</div>
+                  <div style={{ fontWeight: 600, color: '#1a3a2a', fontSize: '0.875rem' }}>{user.displayName}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#6b8a7a' }}>@{user.username}</div>
                 </div>
               </div>
             ))

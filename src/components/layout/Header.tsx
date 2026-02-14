@@ -101,9 +101,9 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
     textDecoration: 'none',
     fontSize: '0.875rem',
     fontWeight: 500,
-    color: isActive(path) ? '#c9a96e' : '#d1d5db',
-    backgroundColor: isActive(path) ? 'rgba(201,169,110,0.1)' : 'transparent',
-    borderBottom: isActive(path) ? '2px solid #c9a96e' : '2px solid transparent',
+    color: isActive(path) ? '#b8860b' : '#4a6a58',
+    backgroundColor: isActive(path) ? 'rgba(184,134,11,0.08)' : 'transparent',
+    borderBottom: isActive(path) ? '2px solid #b8860b' : '2px solid transparent',
     transition: 'background 0.2s, color 0.2s',
   });
 
@@ -115,23 +115,23 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
         top: 0,
         zIndex: 20,
         width: '100%',
-        backgroundColor: 'rgba(22,33,62,0.95)',
+        backgroundColor: 'rgba(255,255,255,0.95)',
         backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+        borderBottom: '1px solid #d4ddd8',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
       }}
     >
       <div style={{ maxWidth: '72rem', margin: '0 auto', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '16px' }}>
         {/* Logo */}
         <Link to={user ? '/feed' : '/'} style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', flexShrink: 0 }} aria-label="Piccio Bloguero home">
-          <div
-            style={{ width: '40px', height: '40px', backgroundColor: '#e94560', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1.125rem', flexShrink: 0 }}
+          <img
+            src="/Logo.svg"
+            alt="Piccio Bloguero"
+            style={{ width: '40px', height: '40px', flexShrink: 0 }}
             aria-hidden="true"
-          >
-            PB
-          </div>
+          />
           {isDesktop && (
-            <span style={{ color: '#f3f4f6', fontWeight: 700, letterSpacing: '0.025em', fontSize: '1.125rem' }}>
+            <span style={{ color: '#1a3a2a', fontWeight: 700, letterSpacing: '0.025em', fontSize: '1.125rem' }}>
               Piccio Bloguero
             </span>
           )}
@@ -144,8 +144,8 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
               to="/feed"
               aria-current={isActive('/feed') ? 'page' : undefined}
               style={navLinkStyle('/feed')}
-              onMouseEnter={e => { if (!isActive('/feed')) { e.currentTarget.style.backgroundColor = '#0f3460'; e.currentTarget.style.color = '#f3f4f6'; } }}
-              onMouseLeave={e => { if (!isActive('/feed')) { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#d1d5db'; } }}
+              onMouseEnter={e => { if (!isActive('/feed')) { e.currentTarget.style.backgroundColor = '#e8ede8'; e.currentTarget.style.color = '#1a3a2a'; } }}
+              onMouseLeave={e => { if (!isActive('/feed')) { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#4a6a58'; } }}
             >
               <Home size={20} aria-hidden="true" />
               <span>Home</span>
@@ -154,8 +154,8 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
               to="/groups"
               aria-current={isActive('/groups') ? 'page' : undefined}
               style={navLinkStyle('/groups')}
-              onMouseEnter={e => { if (!isActive('/groups')) { e.currentTarget.style.backgroundColor = '#0f3460'; e.currentTarget.style.color = '#f3f4f6'; } }}
-              onMouseLeave={e => { if (!isActive('/groups')) { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#d1d5db'; } }}
+              onMouseEnter={e => { if (!isActive('/groups')) { e.currentTarget.style.backgroundColor = '#e8ede8'; e.currentTarget.style.color = '#1a3a2a'; } }}
+              onMouseLeave={e => { if (!isActive('/groups')) { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#4a6a58'; } }}
             >
               <Users size={20} aria-hidden="true" />
               <span>Groups</span>
@@ -164,8 +164,8 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
               to="/messages"
               aria-current={isActive('/messages') ? 'page' : undefined}
               style={navLinkStyle('/messages')}
-              onMouseEnter={e => { if (!isActive('/messages')) { e.currentTarget.style.backgroundColor = '#0f3460'; e.currentTarget.style.color = '#f3f4f6'; } }}
-              onMouseLeave={e => { if (!isActive('/messages')) { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#d1d5db'; } }}
+              onMouseEnter={e => { if (!isActive('/messages')) { e.currentTarget.style.backgroundColor = '#e8ede8'; e.currentTarget.style.color = '#1a3a2a'; } }}
+              onMouseLeave={e => { if (!isActive('/messages')) { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#4a6a58'; } }}
             >
               <MessageCircle size={20} aria-hidden="true" />
               <span>Messages</span>
@@ -174,8 +174,8 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
               to="/files"
               aria-current={isActive('/files') ? 'page' : undefined}
               style={navLinkStyle('/files')}
-              onMouseEnter={e => { if (!isActive('/files')) { e.currentTarget.style.backgroundColor = '#0f3460'; e.currentTarget.style.color = '#f3f4f6'; } }}
-              onMouseLeave={e => { if (!isActive('/files')) { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#d1d5db'; } }}
+              onMouseEnter={e => { if (!isActive('/files')) { e.currentTarget.style.backgroundColor = '#e8ede8'; e.currentTarget.style.color = '#1a3a2a'; } }}
+              onMouseLeave={e => { if (!isActive('/files')) { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#4a6a58'; } }}
             >
               <FileText size={20} aria-hidden="true" />
               <span>Files</span>
@@ -190,24 +190,24 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              backgroundColor: 'rgba(15,52,96,0.8)',
+              backgroundColor: '#f0f4f0',
               borderRadius: '9999px',
               padding: '8px 16px',
-              border: '1px solid rgba(255,255,255,0.06)',
+              border: '1px solid #d4ddd8',
             }}>
-              <Search size={18} style={{ color: '#9ca3af', flexShrink: 0 }} />
+              <Search size={18} style={{ color: '#6b8a7a', flexShrink: 0 }} />
               <input
                 type="text"
                 placeholder="Search posts..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => searchQuery.trim().length >= 2 && setShowSearchResults(true)}
-                style={{ backgroundColor: 'transparent', border: 'none', outline: 'none', fontSize: '0.875rem', color: '#f3f4f6', width: '100%' }}
+                style={{ backgroundColor: 'transparent', border: 'none', outline: 'none', fontSize: '0.875rem', color: '#1a3a2a', width: '100%' }}
               />
               {searchQuery && (
                 <button
                   onClick={() => { setSearchQuery(''); setShowSearchResults(false); }}
-                  style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', padding: 0, fontSize: '1.25rem', lineHeight: 1 }}
+                  style={{ background: 'none', border: 'none', color: '#6b8a7a', cursor: 'pointer', padding: 0, fontSize: '1.25rem', lineHeight: 1 }}
                 >
                   ×
                 </button>
@@ -226,11 +226,11 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
                   maxHeight: '400px',
                   overflowY: 'auto',
                   zIndex: 50,
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
                 }}
               >
                 {isSearching ? (
-                  <div style={{ padding: '16px', textAlign: 'center', color: '#9ca3af' }}>
+                  <div style={{ padding: '16px', textAlign: 'center', color: '#6b8a7a' }}>
                     Searching...
                   </div>
                 ) : searchResults.length > 0 ? (
@@ -249,15 +249,15 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
                         textAlign: 'left',
                         background: 'transparent',
                         border: 'none',
-                        borderBottom: '1px solid rgba(255,255,255,0.06)',
+                        borderBottom: '1px solid #e8ede8',
                         cursor: 'pointer',
-                        color: '#f3f4f6',
+                        color: '#1a3a2a',
                         transition: 'background 0.15s',
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                      onMouseEnter={(e) => e.currentTarget.style.background = '#f0f4f0'}
                       onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                     >
-                      <div style={{ fontSize: '0.75rem', color: '#c9a96e', marginBottom: '4px' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#b8860b', marginBottom: '4px' }}>
                         {post.author.displayName} @{post.author.username}
                       </div>
                       <div style={{ fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -266,7 +266,7 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
                     </button>
                   ))
                 ) : (
-                  <div style={{ padding: '16px', textAlign: 'center', color: '#9ca3af' }}>
+                  <div style={{ padding: '16px', textAlign: 'center', color: '#6b8a7a' }}>
                     No posts found for "{searchQuery}"
                   </div>
                 )}
@@ -276,7 +276,7 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
         )}
 
         {/* Right side */}
-        {variant === 'feed' && user ? (
+        {variant === 'feed' && user && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             {/* Hamburger - mobile only */}
             {!isDesktop && (
@@ -285,7 +285,7 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
                 style={{ padding: '8px', borderRadius: '50%', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 aria-label="Open menu"
               >
-                <Menu size={20} style={{ color: '#d1d5db' }} aria-hidden="true" />
+                <Menu size={20} style={{ color: '#4a6a58' }} aria-hidden="true" />
               </button>
             )}
             <MobileDrawer isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
@@ -301,19 +301,19 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
                     gap: '8px',
                     padding: '6px 10px',
                     borderRadius: '8px',
-                    background: profileDropdownOpen ? 'rgba(15,52,96,0.6)' : 'transparent',
+                    background: profileDropdownOpen ? '#e8ede8' : 'transparent',
                     border: 'none',
                     cursor: 'pointer',
                     transition: 'background 0.2s',
                   }}
-                  onMouseEnter={e => { if (!profileDropdownOpen) e.currentTarget.style.backgroundColor = 'rgba(15,52,96,0.4)'; }}
+                  onMouseEnter={e => { if (!profileDropdownOpen) e.currentTarget.style.backgroundColor = '#f0f4f0'; }}
                   onMouseLeave={e => { if (!profileDropdownOpen) e.currentTarget.style.backgroundColor = 'transparent'; }}
                   aria-label="Profile menu"
                   aria-expanded={profileDropdownOpen}
                 >
                   <UserAvatar name={user.displayName} avatarUrl={user.avatar?.url} size="md" />
-                  <span style={{ fontSize: '0.875rem', color: '#d1d5db', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.displayName}</span>
-                  <ChevronDown size={16} style={{ color: '#9ca3af', transition: 'transform 0.2s', transform: profileDropdownOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
+                  <span style={{ fontSize: '0.875rem', color: '#4a6a58', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.displayName}</span>
+                  <ChevronDown size={16} style={{ color: '#6b8a7a', transition: 'transform 0.2s', transform: profileDropdownOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
                 </button>
 
                 {profileDropdownOpen && (
@@ -323,10 +323,10 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
                     right: 0,
                     marginTop: '8px',
                     width: '200px',
-                    backgroundColor: '#1e2a4a',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #d4ddd8',
                     borderRadius: '12px',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
                     overflow: 'hidden',
                     zIndex: 50,
                   }}>
@@ -345,19 +345,19 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
                           background: 'none',
                           border: 'none',
                           cursor: 'pointer',
-                          color: '#d1d5db',
+                          color: '#4a6a58',
                           fontSize: '0.85rem',
                           borderRadius: '8px',
                           transition: 'background 0.15s',
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(15,52,96,0.6)'; }}
+                        onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#f0f4f0'; }}
                         onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
                       >
                         <User size={18} />
                         <span>View Profile</span>
                       </button>
                     </div>
-                    <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.08)', margin: '0 4px' }} />
+                    <div style={{ height: '1px', backgroundColor: '#e8ede8', margin: '0 4px' }} />
                     <div style={{ padding: '4px' }}>
                       <button
                         onClick={() => {
@@ -373,12 +373,12 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
                           background: 'none',
                           border: 'none',
                           cursor: 'pointer',
-                          color: '#f87171',
+                          color: '#dc2626',
                           fontSize: '0.85rem',
                           borderRadius: '8px',
                           transition: 'background 0.15s',
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(248,113,113,0.1)'; }}
+                        onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.08)'; }}
                         onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
                       >
                         <LogOut size={18} />
@@ -390,8 +390,6 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
               </div>
             )}
           </div>
-        ) : (
-          <div style={{ width: '32px', height: '32px', backgroundColor: '#0f3460', borderRadius: '50%' }} aria-hidden="true" />
         )}
       </div>
     </header>

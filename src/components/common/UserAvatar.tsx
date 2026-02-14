@@ -37,10 +37,10 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
   return (
     <div
       style={{ width, height, minWidth: width, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-      className={`rounded-full bg-[#0f3460] ${className}`}
+      className={`rounded-full bg-[#276749] ${className}`}
       aria-label={name}
     >
-      <User size={icon} className="text-gray-400" />
+      <User size={icon} className="text-white" />
     </div>
   );
 };

@@ -89,24 +89,24 @@ export const UserPopover: React.FC<UserPopoverProps> = ({ user, anchorRect, onCl
         left: position.left,
         zIndex: 9999,
         width: '240px',
-        backgroundColor: '#1e2a4a',
-        border: '1px solid rgba(255,255,255,0.1)',
+        backgroundColor: '#ffffff',
+        border: '1px solid #d4ddd8',
         borderRadius: '12px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
         overflow: 'hidden',
       }}
     >
       {/* User info */}
-      <div style={{ padding: '16px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+      <div style={{ padding: '16px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid #d4ddd8' }}>
         <UserAvatar name={user.displayName} avatarUrl={user.avatarUrl} size="lg" />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ margin: 0, fontWeight: 600, color: '#f0e6d3', fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <p style={{ margin: 0, fontWeight: 600, color: '#1a3a2a', fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {user.displayName}
           </p>
-          <p style={{ margin: '2px 0 0', fontSize: '0.75rem', color: '#9ca3af' }}>
+          <p style={{ margin: '2px 0 0', fontSize: '0.75rem', color: '#6b8a7a' }}>
             @{user.username}
           </p>
-          <span style={{ display: 'inline-block', marginTop: '4px', fontSize: '0.7rem', backgroundColor: '#0f3460', color: '#d1d5db', padding: '1px 6px', borderRadius: '4px', textTransform: 'capitalize' }}>
+          <span style={{ display: 'inline-block', marginTop: '4px', fontSize: '0.7rem', backgroundColor: '#e0f0e5', color: '#276749', padding: '1px 6px', borderRadius: '4px', textTransform: 'capitalize' }}>
             {user.role}
           </span>
         </div>
@@ -125,12 +125,12 @@ export const UserPopover: React.FC<UserPopoverProps> = ({ user, anchorRect, onCl
             background: 'none',
             border: 'none',
             cursor: 'pointer',
-            color: '#d1d5db',
+            color: '#4a6a58',
             fontSize: '0.85rem',
             borderRadius: '8px',
             transition: 'background 0.15s',
           }}
-          onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(15,52,96,0.6)'; }}
+          onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#e8ede8'; }}
           onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
         >
           <UserIcon size={18} />
@@ -149,12 +149,12 @@ export const UserPopover: React.FC<UserPopoverProps> = ({ user, anchorRect, onCl
               background: 'none',
               border: 'none',
               cursor: 'pointer',
-              color: '#d1d5db',
+              color: '#4a6a58',
               fontSize: '0.85rem',
               borderRadius: '8px',
               transition: 'background 0.15s',
             }}
-            onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(15,52,96,0.6)'; }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#e8ede8'; }}
             onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
           >
             <MessageCircle size={18} />

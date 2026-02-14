@@ -125,18 +125,18 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate, showComment
               }}
               style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', cursor: 'pointer' }}
             >
-              <h3 style={{ fontWeight: 600, color: '#f3f4f6', margin: 0 }}>{currentPost.author.displayName}</h3>
-              <span style={{ fontSize: '0.75rem', backgroundColor: '#0f3460', color: '#d1d5db', padding: '2px 8px', borderRadius: '4px' }}>
+              <h3 style={{ fontWeight: 600, color: '#1a3a2a', margin: 0 }}>{currentPost.author.displayName}</h3>
+              <span style={{ fontSize: '0.75rem', backgroundColor: '#e0f0e5', color: '#276749', padding: '2px 8px', borderRadius: '4px' }}>
                 {currentPost.author.role}
               </span>
               {currentPost.isPinned && (
-                <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', backgroundColor: 'rgba(201,169,110,0.15)', color: '#c9a96e', padding: '2px 8px', borderRadius: '4px' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', backgroundColor: 'rgba(184,134,11,0.12)', color: '#b8860b', padding: '2px 8px', borderRadius: '4px' }}>
                   <Pin size={12} />
                   <span>Pinned</span>
                 </span>
               )}
             </div>
-            <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '8px' }}>@{currentPost.author.username} · {formatDate(currentPost.createdAt)}</p>
+            <p style={{ fontSize: '0.75rem', color: '#6b8a7a', marginTop: '8px' }}>@{currentPost.author.username} · {formatDate(currentPost.createdAt)}</p>
           </div>
         </div>
       </div>
@@ -157,7 +157,7 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate, showComment
 
       {/* Content */}
       <div className="mb-6">
-        <p className="text-gray-100 text-base whitespace-pre-wrap leading-relaxed">{currentPost.content}</p>
+        <p className="text-[#1a3a2a] text-base whitespace-pre-wrap leading-relaxed">{currentPost.content}</p>
       </div>
 
       {/* Media */}
@@ -195,16 +195,16 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate, showComment
           null
         );
         return (
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid #e8ede8' }}>
             <button
               onClick={() => setShowReactionsPanel(true)}
-              style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px', borderRadius: '16px', color: '#d1d5db', fontSize: '0.875rem', transition: 'background 0.2s' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px', borderRadius: '16px', color: '#4a6a58', fontSize: '0.875rem', transition: 'background 0.2s' }}
             >
               {topReaction && <span style={{ fontSize: '1.125rem' }}>{topReaction.emoji}</span>}
               <span>{currentPost.reactionsCount.total}</span>
             </button>
             <span style={{ flex: 1 }} />
-            <span style={{ fontSize: '0.875rem', color: '#9ca3af' }}>{currentPost.commentsCount} comments</span>
+            <span style={{ fontSize: '0.875rem', color: '#6b8a7a' }}>{currentPost.commentsCount} comments</span>
           </div>
         );
       })()}
@@ -216,7 +216,7 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate, showComment
       )}
 
       {/* Action Buttons */}
-      <div role="group" aria-label="Post actions" style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+      <div role="group" aria-label="Post actions" style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingTop: '12px', borderTop: '1px solid #e8ede8' }}>
         {/* Reaction Button */}
         <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
           <button
@@ -224,7 +224,7 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate, showComment
             aria-label={currentPost.userReaction ? `Change reaction (currently ${REACTIONS.find(r => r.type === currentPost.userReaction)?.label})` : 'Add reaction'}
             aria-haspopup="true"
             aria-expanded={showReactionPicker}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', width: '100%', padding: '8px 12px', borderRadius: '8px', border: 'none', background: currentPost.userReaction ? '#0f3460' : 'transparent', color: currentPost.userReaction ? '#c9a96e' : '#d1d5db', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', width: '100%', padding: '8px 12px', borderRadius: '8px', border: 'none', background: currentPost.userReaction ? '#e0f0e5' : 'transparent', color: currentPost.userReaction ? '#276749' : '#4a6a58', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
             disabled={isReacting}
           >
             {currentPost.userReaction ? (
@@ -246,7 +246,7 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate, showComment
 
           {/* Reaction Picker */}
           {showReactionPicker && (
-            <div role="menu" aria-label="Choose reaction" className="glass-card-elevated" style={{ position: 'absolute', bottom: '100%', left: 0, marginBottom: '8px', padding: '8px', display: 'flex', gap: '4px', zIndex: 10, boxShadow: '0 8px 16px rgba(0,0,0,0.5)' }}>
+            <div role="menu" aria-label="Choose reaction" className="glass-card-elevated" style={{ position: 'absolute', bottom: '100%', left: 0, marginBottom: '8px', padding: '8px', display: 'flex', gap: '4px', zIndex: 10, boxShadow: '0 8px 16px rgba(0,0,0,0.12)' }}>
               {REACTIONS.map(({ type, emoji, label }) => (
                 <button
                   key={type}
@@ -268,7 +268,7 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate, showComment
           onClick={() => setShowComments(!showComments)}
           aria-label={showComments ? 'Hide comments' : `Show comments (${currentPost.commentsCount})`}
           aria-pressed={showComments}
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', flex: 1, minWidth: 0, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', padding: '8px 12px', borderRadius: '8px', border: 'none', background: showComments ? '#0f3460' : 'transparent', color: showComments ? '#c9a96e' : '#d1d5db', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s' }}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', flex: 1, minWidth: 0, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', padding: '8px 12px', borderRadius: '8px', border: 'none', background: showComments ? '#e0f0e5' : 'transparent', color: showComments ? '#276749' : '#4a6a58', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s' }}
         >
           <MessageCircle size={18} aria-hidden="true" />
           <span className="hide-on-mobile">Comment</span>
@@ -280,7 +280,7 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate, showComment
             onClick={handleBookmark}
             aria-label={currentPost.isBookmarked ? 'Remove bookmark' : 'Save post'}
             aria-pressed={currentPost.isBookmarked}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', flex: 1, minWidth: 0, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', padding: '8px 12px', borderRadius: '8px', border: 'none', background: currentPost.isBookmarked ? '#0f3460' : 'transparent', color: currentPost.isBookmarked ? '#facc15' : '#d1d5db', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s' }}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', flex: 1, minWidth: 0, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', padding: '8px 12px', borderRadius: '8px', border: 'none', background: currentPost.isBookmarked ? 'rgba(184,134,11,0.12)' : 'transparent', color: currentPost.isBookmarked ? '#b8860b' : '#4a6a58', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s' }}
             disabled={isBookmarking}
           >
             {currentPost.isBookmarked ? (

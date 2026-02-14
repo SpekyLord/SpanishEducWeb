@@ -83,6 +83,7 @@ export const NotificationsPage: React.FC = () => {
           userId: notification.actor._id,
           otherUser: {
             _id: notification.actor._id,
+            username: notification.actor.username,
             displayName: notification.actor.displayName,
             avatarUrl: notification.actor.avatar,
           }
@@ -141,7 +142,7 @@ export const NotificationsPage: React.FC = () => {
               <button
                 onClick={handleClearAll}
                 disabled={clearingAll}
-                style={{ fontSize: '0.875rem', color: '#f87171', fontWeight: 500, background: 'none', border: 'none', cursor: clearingAll ? 'not-allowed' : 'pointer', opacity: clearingAll ? 0.5 : 1, transition: 'color 0.2s' }}
+                style={{ fontSize: '0.875rem', color: '#dc2626', fontWeight: 500, background: 'none', border: 'none', cursor: clearingAll ? 'not-allowed' : 'pointer', opacity: clearingAll ? 0.5 : 1, transition: 'color 0.2s' }}
               >
                 {clearingAll ? 'Clearing...' : 'Clear all'}
               </button>

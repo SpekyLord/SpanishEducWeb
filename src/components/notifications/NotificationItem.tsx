@@ -70,9 +70,9 @@ export const NotificationItem = React.memo<NotificationItemProps>(({ notificatio
         display: 'flex',
         gap: '14px',
         alignItems: 'flex-start',
-        background: !notification.isRead ? 'linear-gradient(135deg, rgba(233,69,96,0.08) 0%, rgba(233,69,96,0.04) 50%, rgba(233,69,96,0.08) 100%)' : 'transparent',
+        background: !notification.isRead ? 'linear-gradient(135deg, rgba(39,103,73,0.08) 0%, rgba(39,103,73,0.04) 50%, rgba(39,103,73,0.08) 100%)' : 'transparent',
         border: 'none',
-        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        borderBottom: '1px solid #e8ede8',
         cursor: 'pointer',
         transition: 'background 0.2s',
       }}
@@ -80,22 +80,22 @@ export const NotificationItem = React.memo<NotificationItemProps>(({ notificatio
       {/* Avatar with icon badge */}
       <div style={{ position: 'relative', flexShrink: 0 }}>
         <UserAvatar name={notification.actor.displayName || notification.actor.username} avatarUrl={notification.actor.avatar} size="lg" />
-        <div style={{ position: 'absolute', bottom: '-2px', right: '-2px', backgroundColor: '#16213e', borderRadius: '50%', padding: '3px', boxShadow: '0 1px 3px rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ position: 'absolute', bottom: '-2px', right: '-2px', backgroundColor: '#ffffff', borderRadius: '50%', padding: '3px', boxShadow: '0 1px 3px rgba(0,0,0,0.15)', border: '1px solid #d4ddd8' }}>
           {icon}
         </div>
       </div>
 
       {/* Content */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontSize: '0.875rem', color: '#f3f4f6', margin: '0 0 4px', lineHeight: 1.4 }}>
+        <p style={{ fontSize: '0.875rem', color: '#1a3a2a', margin: '0 0 4px', lineHeight: 1.4 }}>
           {message}
         </p>
         {notification.content && (
-          <p style={{ fontSize: '0.75rem', color: '#9ca3af', margin: '0 0 6px', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const }}>
+          <p style={{ fontSize: '0.75rem', color: '#6b8a7a', margin: '0 0 6px', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const }}>
             {contentPreview}
           </p>
         )}
-        <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>
+        <p style={{ fontSize: '0.75rem', color: '#6b8a7a', margin: 0 }}>
           {timeAgo}
         </p>
       </div>
@@ -103,7 +103,7 @@ export const NotificationItem = React.memo<NotificationItemProps>(({ notificatio
       {/* Unread indicator */}
       {!notification.isRead && (
         <div style={{ flexShrink: 0, paddingTop: '8px' }}>
-          <div style={{ width: '10px', height: '10px', backgroundColor: '#e94560', borderRadius: '50%', boxShadow: '0 0 8px rgba(233,69,96,0.4)' }} />
+          <div style={{ width: '10px', height: '10px', backgroundColor: '#276749', borderRadius: '50%', boxShadow: '0 0 8px rgba(39,103,73,0.4)' }} />
         </div>
       )}
     </button>

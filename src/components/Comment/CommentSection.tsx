@@ -125,10 +125,10 @@ const CommentSectionContent: React.FC<CommentSectionProps> = ({ postId }) => {
 
   return (
     <div className="mt-4 border-t border-fb-border pt-4">
-      <h4 className="text-sm font-semibold text-light/80 mb-2">Comments</h4>
+      <h4 className="text-sm font-semibold text-[#4a6a58] mb-2">Comments</h4>
 
       {error && (
-        <div className="bg-red-900/20 border border-red-700/50 text-red-300 px-3 py-2 rounded mb-2 text-sm">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded mb-2 text-sm">
           {error}
         </div>
       )}
@@ -145,7 +145,7 @@ const CommentSectionContent: React.FC<CommentSectionProps> = ({ postId }) => {
       )}
 
       {pinnedComment && (
-        <div className="mt-4 bg-gold/10 border border-gold/30 rounded-lg p-3">
+        <div className="mt-4 bg-[rgba(184,134,11,0.08)] border border-[#b8860b]/30 rounded-lg p-3">
           <CommentItem comment={pinnedComment} postId={postId} onRefresh={handleRefresh} />
         </div>
       )}
@@ -173,9 +173,9 @@ const CommentSectionContent: React.FC<CommentSectionProps> = ({ postId }) => {
             <button
               onClick={handleLoadMore}
               disabled={loading}
-              style={{ marginTop: '16px', fontSize: '0.875rem', color: '#c9a96e', background: 'none', border: 'none', cursor: 'pointer', padding: 0, transition: 'color 0.2s' }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#d4b87e'; }}
-              onMouseLeave={e => { e.currentTarget.style.color = '#c9a96e'; }}
+              style={{ marginTop: '16px', fontSize: '0.875rem', color: '#b8860b', background: 'none', border: 'none', cursor: 'pointer', padding: 0, transition: 'color 0.2s' }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#d4a017'; }}
+              onMouseLeave={e => { e.currentTarget.style.color = '#b8860b'; }}
             >
               {loading ? 'Loading...' : 'Load more comments'}
             </button>

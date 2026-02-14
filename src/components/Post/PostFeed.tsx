@@ -65,7 +65,7 @@ export const PostFeed: React.FC = () => {
   return (
     <div className="space-y-4">
       {error && (
-        <div className="bg-red-900/20 border border-red-700/40 text-red-300 px-5 py-4 rounded-lg text-sm">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-lg text-sm">
           {error}
         </div>
       )}
@@ -75,11 +75,11 @@ export const PostFeed: React.FC = () => {
       })}
       {loading && posts.length > 0 && (
         <div className="flex justify-center py-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#b8860b]"></div>
         </div>
       )}
       {!hasMore && posts.length > 0 && (
-        <div className="text-center py-4 text-gray-400 text-sm">
+        <div className="text-center py-4 text-[#6b8a7a] text-sm">
           You've reached the end
         </div>
       )}

@@ -14,7 +14,7 @@ export const FeedPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-fb-bg text-gray-100">
+    <div className="min-h-screen bg-fb-bg text-[#1a3a2a]">
       <Header variant="feed" />
 
       <main className="mx-auto px-4 sm:px-6 py-6" style={{ maxWidth: '42rem' }}>

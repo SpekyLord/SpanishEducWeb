@@ -42,20 +42,18 @@ export function LoginPage() {
             style={{
               borderRadius: '12px',
               padding: '40px',
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              backdropFilter: 'blur(12px)',
-              boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
             }}
           >
             {/* Logo and title */}
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-14 h-14 bg-accent rounded-full flex items-center justify-center text-white font-bold text-xl shadow-glow-accent-md">
-                SC
-              </div>
+              <img
+                src="/Logo.svg"
+                alt="Piccio Bloguero"
+                style={{ width: '56px', height: '56px' }}
+              />
               <div>
-                <div className="text-2xl font-bold font-heading text-gray-100">Piccio Bloguero</div>
-                <div className="text-sm text-gray-400">Learn Spanish Together</div>
+                <div className="text-2xl font-bold font-heading text-[#1a3a2a]">Piccio Bloguero</div>
+                <div className="text-sm text-[#6b8a7a]">Learn Spanish Together</div>
               </div>
             </div>
 
@@ -65,14 +63,14 @@ export function LoginPage() {
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <div className="rounded-lg bg-red-900/30 border border-red-700/60 p-4 shadow-fb">
-                  <p className="text-sm text-red-200 font-medium">{error}</p>
+                <div className="rounded-lg bg-red-50 border border-red-200 p-4 shadow-fb">
+                  <p className="text-sm text-red-700 font-medium">{error}</p>
                 </div>
               )}
 
               <div className="space-y-6">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-100 mb-3">
+                  <label htmlFor="email" className="block text-sm font-medium text-[#1a3a2a] mb-3">
                     Email address
                   </label>
                   <input
@@ -83,12 +81,12 @@ export function LoginPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#0d1b3e] text-gray-100 placeholder-gray-500 input-glow"
+                    className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#f0f4f0] text-[#1a3a2a] placeholder-[#9cb0a3] input-glow"
                     placeholder="Email address"
                   />
                 </div>
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-100 mb-3">
+                  <label htmlFor="password" className="block text-sm font-medium text-[#1a3a2a] mb-3">
                     Password
                   </label>
                   <input
@@ -99,7 +97,7 @@ export function LoginPage() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#0d1b3e] text-gray-100 placeholder-gray-500 input-glow"
+                    className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#f0f4f0] text-[#1a3a2a] placeholder-[#9cb0a3] input-glow"
                     placeholder="Password"
                   />
                 </div>
@@ -113,9 +111,9 @@ export function LoginPage() {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="h-4 w-4 rounded bg-[#0d1b3e] border-fb-border accent-accent"
+                    className="h-4 w-4 rounded bg-[#f0f4f0] border-fb-border accent-accent"
                   />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-100">
+                  <label htmlFor="remember-me" className="ml-2 block text-sm text-[#1a3a2a]">
                     Remember me
                   </label>
                 </div>
@@ -123,7 +121,7 @@ export function LoginPage() {
                 <div className="text-sm">
                   <Link
                     to="/forgot-password"
-                    className="font-medium text-gold hover:text-[#d4b87e]"
+                    className="font-medium text-gold hover:text-gold-light"
                   >
                     Forgot your password?
                   </Link>
@@ -141,9 +139,9 @@ export function LoginPage() {
               </div>
 
               <div className="text-center">
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-[#6b8a7a]">
                   Don't have an account?{' '}
-                  <Link to="/register" className="font-medium text-gold hover:text-[#d4b87e]">
+                  <Link to="/register" className="font-medium text-gold hover:text-gold-light">
                     Register
                   </Link>
                 </p>

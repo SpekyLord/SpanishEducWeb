@@ -180,7 +180,7 @@ export const ProfilePage: React.FC = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#1a1a2e', color: '#f3f4f6' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f5f7f5', color: '#1a3a2a' }}>
       <Header variant="feed" />
 
       <main style={{ maxWidth: '42rem', margin: '0 auto', padding: '1.5rem 1rem' }}>
@@ -196,7 +196,7 @@ export const ProfilePage: React.FC = () => {
             background: 'none',
             border: 'none',
             cursor: 'pointer',
-            color: '#9ca3af',
+            color: '#6b8a7a',
             fontSize: '0.875rem',
           }}
         >
@@ -206,19 +206,19 @@ export const ProfilePage: React.FC = () => {
 
         {loading ? (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem 0' }}>
-            <Loader2 size={32} style={{ color: '#c9a96e', animation: 'spin 1s linear infinite' }} />
+            <Loader2 size={32} style={{ color: '#b8860b', animation: 'spin 1s linear infinite' }} />
           </div>
         ) : error ? (
           <div className="glass-card-elevated" style={{ padding: '2rem', textAlign: 'center' }}>
-            <p style={{ color: '#f87171' }}>{error}</p>
+            <p style={{ color: '#dc2626' }}>{error}</p>
             <button
               onClick={loadProfile}
               style={{
                 marginTop: '12px',
                 padding: '8px 16px',
-                backgroundColor: '#0f3460',
-                color: '#d1d5db',
-                border: 'none',
+                backgroundColor: '#f0f4f0',
+                color: '#1a3a2a',
+                border: '1px solid #d4ddd8',
                 borderRadius: '8px',
                 cursor: 'pointer',
                 fontSize: '0.875rem',
@@ -283,8 +283,8 @@ export const ProfilePage: React.FC = () => {
                         width: '24px',
                         height: '24px',
                         borderRadius: '50%',
-                        backgroundColor: '#1e2a4a',
-                        border: '2px solid #16213e',
+                        backgroundColor: '#ffffff',
+                        border: '2px solid #d4ddd8',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
@@ -292,7 +292,7 @@ export const ProfilePage: React.FC = () => {
                         padding: 0,
                       }}
                     >
-                      <Trash2 size={12} style={{ color: '#f87171' }} />
+                      <Trash2 size={12} style={{ color: '#dc2626' }} />
                     </button>
                   )}
                   <input
@@ -314,10 +314,10 @@ export const ProfilePage: React.FC = () => {
                         style={{
                           width: '100%',
                           padding: '8px 12px',
-                          backgroundColor: 'rgba(15,52,96,0.5)',
-                          border: '1px solid rgba(255,255,255,0.15)',
+                          backgroundColor: '#f0f4f0',
+                          border: '1px solid #d4ddd8',
                           borderRadius: '8px',
-                          color: '#f3f4f6',
+                          color: '#1a3a2a',
                           fontSize: '1.125rem',
                           fontWeight: 600,
                           outline: 'none',
@@ -326,13 +326,13 @@ export const ProfilePage: React.FC = () => {
                     </div>
                   ) : (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                      <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#f0e6d3' }}>
+                      <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1a3a2a' }}>
                         {profileUser.displayName}
                       </h1>
                       <span style={{
                         fontSize: '0.75rem',
-                        backgroundColor: profileUser.role === 'teacher' ? 'rgba(201,169,110,0.15)' : '#0f3460',
-                        color: profileUser.role === 'teacher' ? '#c9a96e' : '#d1d5db',
+                        backgroundColor: profileUser.role === 'teacher' ? 'rgba(184,134,11,0.12)' : '#e0f0e5',
+                        color: profileUser.role === 'teacher' ? '#b8860b' : '#276749',
                         padding: '3px 10px',
                         borderRadius: '12px',
                         fontWeight: 500,
@@ -342,10 +342,10 @@ export const ProfilePage: React.FC = () => {
                       </span>
                     </div>
                   )}
-                  <p style={{ margin: '4px 0 0', fontSize: '0.875rem', color: '#9ca3af' }}>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.875rem', color: '#6b8a7a' }}>
                     @{profileUser.username}
                   </p>
-                  <p style={{ margin: '8px 0 0', fontSize: '0.8rem', color: '#6b7280', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <p style={{ margin: '8px 0 0', fontSize: '0.8rem', color: '#6b8a7a', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <Calendar size={14} />
                     Joined {formatDate(profileUser.createdAt)}
                   </p>
@@ -354,8 +354,8 @@ export const ProfilePage: React.FC = () => {
 
               {/* Avatar error */}
               {avatarError && (
-                <div style={{ marginTop: '12px', padding: '8px 12px', backgroundColor: 'rgba(127,29,29,0.3)', border: '1px solid rgba(185,28,28,0.6)', borderRadius: '8px' }}>
-                  <p style={{ margin: 0, fontSize: '0.8rem', color: '#fca5a5' }}>{avatarError}</p>
+                <div style={{ marginTop: '12px', padding: '8px 12px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px' }}>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: '#dc2626' }}>{avatarError}</p>
                 </div>
               )}
 
@@ -372,26 +372,26 @@ export const ProfilePage: React.FC = () => {
                       style={{
                         width: '100%',
                         padding: '10px 12px',
-                        backgroundColor: 'rgba(15,52,96,0.5)',
-                        border: '1px solid rgba(255,255,255,0.15)',
+                        backgroundColor: '#f0f4f0',
+                        border: '1px solid #d4ddd8',
                         borderRadius: '8px',
-                        color: '#f3f4f6',
+                        color: '#1a3a2a',
                         fontSize: '0.875rem',
                         outline: 'none',
                         resize: 'vertical',
                       }}
                     />
-                    <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#6b7280', textAlign: 'right' }}>
+                    <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#6b8a7a', textAlign: 'right' }}>
                       {editBio.length}/500
                     </p>
                   </div>
                 ) : (
                   profileUser.bio ? (
-                    <p style={{ margin: 0, color: '#d1d5db', fontSize: '0.9rem', lineHeight: 1.6 }}>
+                    <p style={{ margin: 0, color: '#4a6a58', fontSize: '0.9rem', lineHeight: 1.6 }}>
                       {profileUser.bio}
                     </p>
                   ) : isOwnProfile ? (
-                    <p style={{ margin: 0, color: '#6b7280', fontSize: '0.875rem', fontStyle: 'italic' }}>
+                    <p style={{ margin: 0, color: '#6b8a7a', fontSize: '0.875rem', fontStyle: 'italic' }}>
                       No bio yet. Click "Edit Profile" to add one.
                     </p>
                   ) : null
@@ -408,17 +408,17 @@ export const ProfilePage: React.FC = () => {
                       alignItems: 'center',
                       gap: '8px',
                       padding: '8px 16px',
-                      backgroundColor: '#0f3460',
-                      color: '#d1d5db',
-                      border: 'none',
+                      backgroundColor: '#f0f4f0',
+                      color: '#276749',
+                      border: '1px solid #d4ddd8',
                       borderRadius: '8px',
                       cursor: 'pointer',
                       fontSize: '0.85rem',
                       fontWeight: 500,
                       transition: 'background 0.2s',
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#1a3a6e'; }}
-                    onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#0f3460'; }}
+                    onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#e8ede8'; }}
+                    onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#f0f4f0'; }}
                   >
                     <Edit3 size={16} />
                     Edit Profile
@@ -434,8 +434,8 @@ export const ProfilePage: React.FC = () => {
                         alignItems: 'center',
                         gap: '8px',
                         padding: '8px 16px',
-                        backgroundColor: '#c9a96e',
-                        color: '#1a1a2e',
+                        backgroundColor: '#b8860b',
+                        color: '#ffffff',
                         border: 'none',
                         borderRadius: '8px',
                         cursor: saving ? 'not-allowed' : 'pointer',
@@ -455,8 +455,8 @@ export const ProfilePage: React.FC = () => {
                         gap: '8px',
                         padding: '8px 16px',
                         backgroundColor: 'transparent',
-                        color: '#9ca3af',
-                        border: '1px solid rgba(255,255,255,0.15)',
+                        color: '#6b8a7a',
+                        border: '1px solid #d4ddd8',
                         borderRadius: '8px',
                         cursor: 'pointer',
                         fontSize: '0.85rem',
@@ -475,17 +475,17 @@ export const ProfilePage: React.FC = () => {
                       alignItems: 'center',
                       gap: '8px',
                       padding: '8px 16px',
-                      backgroundColor: '#0f3460',
-                      color: '#d1d5db',
-                      border: 'none',
+                      backgroundColor: '#f0f4f0',
+                      color: '#276749',
+                      border: '1px solid #d4ddd8',
                       borderRadius: '8px',
                       cursor: 'pointer',
                       fontSize: '0.85rem',
                       fontWeight: 500,
                       transition: 'background 0.2s',
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#1a3a6e'; }}
-                    onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#0f3460'; }}
+                    onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#e8ede8'; }}
+                    onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#f0f4f0'; }}
                   >
                     <MessageCircle size={16} />
                     Send Message
@@ -496,30 +496,30 @@ export const ProfilePage: React.FC = () => {
 
             {/* Activity Stats */}
             <div className="glass-card-elevated" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
-              <h2 style={{ margin: '0 0 16px', fontSize: '1rem', fontWeight: 600, color: '#f0e6d3' }}>
+              <h2 style={{ margin: '0 0 16px', fontSize: '1rem', fontWeight: 600, color: '#1a3a2a' }}>
                 Activity
               </h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-                <div style={{ textAlign: 'center', padding: '12px', backgroundColor: 'rgba(15,52,96,0.4)', borderRadius: '10px' }}>
-                  <MessageSquare size={20} style={{ color: '#c9a96e', margin: '0 auto 8px', display: 'block' }} />
-                  <p style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: '#f0e6d3' }}>
+                <div style={{ textAlign: 'center', padding: '12px', backgroundColor: '#f0f4f0', borderRadius: '10px' }}>
+                  <MessageSquare size={20} style={{ color: '#b8860b', margin: '0 auto 8px', display: 'block' }} />
+                  <p style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: '#1a3a2a' }}>
                     {profileUser.stats.commentsCount}
                   </p>
-                  <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#9ca3af' }}>Comments</p>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#6b8a7a' }}>Comments</p>
                 </div>
-                <div style={{ textAlign: 'center', padding: '12px', backgroundColor: 'rgba(15,52,96,0.4)', borderRadius: '10px' }}>
-                  <ThumbsUp size={20} style={{ color: '#c9a96e', margin: '0 auto 8px', display: 'block' }} />
-                  <p style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: '#f0e6d3' }}>
+                <div style={{ textAlign: 'center', padding: '12px', backgroundColor: '#f0f4f0', borderRadius: '10px' }}>
+                  <ThumbsUp size={20} style={{ color: '#b8860b', margin: '0 auto 8px', display: 'block' }} />
+                  <p style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: '#1a3a2a' }}>
                     {profileUser.stats.likesGiven}
                   </p>
-                  <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#9ca3af' }}>Likes Given</p>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#6b8a7a' }}>Likes Given</p>
                 </div>
-                <div style={{ textAlign: 'center', padding: '12px', backgroundColor: 'rgba(15,52,96,0.4)', borderRadius: '10px' }}>
-                  <Download size={20} style={{ color: '#c9a96e', margin: '0 auto 8px', display: 'block' }} />
-                  <p style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: '#f0e6d3' }}>
+                <div style={{ textAlign: 'center', padding: '12px', backgroundColor: '#f0f4f0', borderRadius: '10px' }}>
+                  <Download size={20} style={{ color: '#b8860b', margin: '0 auto 8px', display: 'block' }} />
+                  <p style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: '#1a3a2a' }}>
                     {profileUser.stats.downloadsCount}
                   </p>
-                  <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#9ca3af' }}>Downloads</p>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#6b8a7a' }}>Downloads</p>
                 </div>
               </div>
             </div>
@@ -527,7 +527,7 @@ export const ProfilePage: React.FC = () => {
             {/* Recent Posts - Teacher only */}
             {profileUser.role === 'teacher' && recentPosts.length > 0 && (
               <div className="glass-card-elevated" style={{ padding: '1.5rem' }}>
-                <h2 style={{ margin: '0 0 16px', fontSize: '1rem', fontWeight: 600, color: '#f0e6d3' }}>
+                <h2 style={{ margin: '0 0 16px', fontSize: '1rem', fontWeight: 600, color: '#1a3a2a' }}>
                   Recent Posts
                 </h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -537,17 +537,17 @@ export const ProfilePage: React.FC = () => {
                       onClick={() => navigate(`/feed#post-${post._id}`)}
                       style={{
                         padding: '12px',
-                        backgroundColor: 'rgba(15,52,96,0.3)',
+                        backgroundColor: '#f0f4f0',
                         borderRadius: '10px',
                         cursor: 'pointer',
                         transition: 'background 0.15s',
                       }}
-                      onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(15,52,96,0.5)'; }}
-                      onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(15,52,96,0.3)'; }}
+                      onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#e8ede8'; }}
+                      onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#f0f4f0'; }}
                     >
                       <p style={{
                         margin: 0,
-                        color: '#d1d5db',
+                        color: '#1a3a2a',
                         fontSize: '0.875rem',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
@@ -557,7 +557,7 @@ export const ProfilePage: React.FC = () => {
                       }}>
                         {post.content}
                       </p>
-                      <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.75rem', color: '#6b7280' }}>
+                      <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.75rem', color: '#6b8a7a' }}>
                         <span>{formatPostDate(post.createdAt)}</span>
                         {post.media && post.media.length > 0 && (
                           <span>{post.media.length} attachment{post.media.length > 1 ? 's' : ''}</span>

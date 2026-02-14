@@ -118,12 +118,12 @@ export const CommentForm: React.FC<CommentFormProps> = ({
   return (
     <form onSubmit={handleSubmit} className={compact ? 'mt-2' : 'mt-4'}>
       {error && (
-        <div className="bg-red-900/20 border border-red-700/50 text-red-300 px-3 py-2 rounded mb-2 text-sm">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded mb-2 text-sm">
           {error}
         </div>
       )}
       <div style={{ display: 'flex', gap: '10px' }}>
-        <div style={{ width: 32, height: 32, minWidth: 32, borderRadius: '50%', backgroundColor: '#e94560', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.875rem', fontWeight: 600 }}>
+        <div style={{ width: 32, height: 32, minWidth: 32, borderRadius: '50%', backgroundColor: '#276749', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.875rem', fontWeight: 600 }}>
           {user.displayName.charAt(0).toUpperCase()}
         </div>
         <div style={{ flex: 1 }}>
@@ -133,7 +133,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
             onChange={handleContentChange}
             placeholder={placeholder}
             className="input-glow"
-            style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', resize: 'none', backgroundColor: '#16213e', color: '#f0e6d3', fontSize: '0.875rem', border: '1px solid rgba(255,255,255,0.08)', outline: 'none' }}
+            style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', resize: 'none', backgroundColor: '#f0f4f0', color: '#1a3a2a', fontSize: '0.875rem', border: '1px solid #d4ddd8', outline: 'none' }}
             rows={compact ? 2 : 3}
             disabled={isSubmitting}
             maxLength={2000}
@@ -147,13 +147,13 @@ export const CommentForm: React.FC<CommentFormProps> = ({
             />
           )}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '8px' }}>
-            <span style={{ fontSize: '0.75rem', color: 'rgba(240,230,211,0.5)' }}>{content.length}/2000</span>
+            <span style={{ fontSize: '0.75rem', color: '#6b8a7a' }}>{content.length}/2000</span>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               {onCancel && (
                 <button
                   type="button"
                   onClick={onCancel}
-                  style={{ padding: '4px 12px', fontSize: '0.875rem', color: 'rgba(240,230,211,0.6)', background: 'none', border: 'none', cursor: 'pointer' }}
+                  style={{ padding: '4px 12px', fontSize: '0.875rem', color: '#6b8a7a', background: 'none', border: 'none', cursor: 'pointer' }}
                 >
                   Cancel
                 </button>

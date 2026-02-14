@@ -6,8 +6,8 @@
   font-family: 'Source Sans 3', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.6;
   font-weight: 400;
-  color: #f0e6d3;
-  background-color: #1a1a2e;
+  color: #1a3a2a;
+  background-color: #f5f7f5;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -26,11 +26,11 @@ html, body {
 body {
   min-width: 320px;
   min-height: 100vh;
-  background-color: #1a1a2e;
-  background-image: radial-gradient(ellipse at 20% 50%, rgba(15, 52, 96, 0.4) 0%, transparent 50%),
-                    radial-gradient(ellipse at 80% 20%, rgba(233, 69, 96, 0.08) 0%, transparent 50%);
+  background-color: #f5f7f5;
+  background-image: radial-gradient(ellipse at 20% 50%, rgba(39, 103, 73, 0.04) 0%, transparent 50%),
+                    radial-gradient(ellipse at 80% 20%, rgba(184, 134, 11, 0.03) 0%, transparent 50%);
   background-attachment: fixed;
-  color: #f0e6d3;
+  color: #1a3a2a;
 }
 
 /* Hide scrollbar but keep scrolling */
@@ -44,35 +44,30 @@ body {
 
 @layer components {
   .glass-card {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: #ffffff;
+    border: 1px solid #d4ddd8;
     border-radius: 12px;
-    backdrop-filter: blur(10px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
   }
 
   .glass-card-elevated {
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.08) 0%,
-      rgba(255, 255, 255, 0.03) 100%
-    );
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    background: #ffffff;
+    border: 1px solid #d4ddd8;
     border-radius: 12px;
-    backdrop-filter: blur(12px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
   }
 
   .btn-gold {
-    background: linear-gradient(135deg, #c9a96e 0%, #b8944d 100%);
-    color: #1a1a2e;
+    background: linear-gradient(135deg, #b8860b 0%, #916d08 100%);
+    color: #ffffff;
     font-weight: 600;
     border-radius: 8px;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(201, 169, 110, 0.25);
+    box-shadow: 0 2px 8px rgba(184, 134, 11, 0.15);
   }
   .btn-gold:hover {
-    background: linear-gradient(135deg, #d4b87e 0%, #c9a96e 100%);
-    box-shadow: 0 4px 12px rgba(201, 169, 110, 0.35);
+    background: linear-gradient(135deg, #d4a017 0%, #b8860b 100%);
+    box-shadow: 0 4px 12px rgba(184, 134, 11, 0.25);
     transform: translateY(-1px);
   }
   .btn-gold:active {
@@ -80,16 +75,16 @@ body {
   }
 
   .btn-accent-gradient {
-    background: linear-gradient(135deg, #e94560 0%, #c7304d 100%);
+    background: linear-gradient(135deg, #276749 0%, #1e4d35 100%);
     color: white;
     font-weight: 600;
     border-radius: 8px;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(233, 69, 96, 0.25);
+    box-shadow: 0 2px 8px rgba(39, 103, 73, 0.15);
   }
   .btn-accent-gradient:hover {
-    background: linear-gradient(135deg, #f06680 0%, #e94560 100%);
-    box-shadow: 0 4px 12px rgba(233, 69, 96, 0.35);
+    background: linear-gradient(135deg, #2f855a 0%, #276749 100%);
+    box-shadow: 0 4px 12px rgba(39, 103, 73, 0.25);
     transform: translateY(-1px);
   }
   .btn-accent-gradient:active {
@@ -104,33 +99,33 @@ body {
 
   .input-glow {
     transition: all 0.2s ease;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid #d4ddd8;
     outline: none;
   }
   .input-glow:focus {
-    border-color: rgba(233, 69, 96, 0.5);
-    box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.1), 0 0 12px rgba(233, 69, 96, 0.08);
+    border-color: rgba(39, 103, 73, 0.5);
+    box-shadow: 0 0 0 3px rgba(39, 103, 73, 0.1), 0 0 12px rgba(39, 103, 73, 0.08);
     outline: none;
   }
 
   .input-glow-gold {
     transition: all 0.2s ease;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid #d4ddd8;
     outline: none;
   }
   .input-glow-gold:focus {
-    border-color: rgba(201, 169, 110, 0.5);
-    box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.1), 0 0 12px rgba(201, 169, 110, 0.08);
+    border-color: rgba(184, 134, 11, 0.5);
+    box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.1), 0 0 12px rgba(184, 134, 11, 0.08);
     outline: none;
   }
 
   .avatar-ring {
     padding: 2px;
-    background: linear-gradient(135deg, #e94560, #c9a96e);
+    background: linear-gradient(135deg, #276749, #b8860b);
     border-radius: 50%;
   }
   .avatar-ring > * {
-    border: 2px solid #16213e;
+    border: 2px solid #ffffff;
     border-radius: 50%;
   }
 
@@ -139,7 +134,7 @@ body {
   }
   .hover-lift:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.06);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
   }
 
   .heading-accent::after {
@@ -147,7 +142,7 @@ body {
     display: block;
     width: 40px;
     height: 2px;
-    background: linear-gradient(90deg, #c9a96e, transparent);
+    background: linear-gradient(90deg, #b8860b, transparent);
     margin-top: 8px;
     border-radius: 1px;
   }
@@ -155,9 +150,9 @@ body {
   .unread-shimmer {
     background: linear-gradient(
       135deg,
-      rgba(233, 69, 96, 0.08) 0%,
-      rgba(233, 69, 96, 0.04) 50%,
-      rgba(233, 69, 96, 0.08) 100%
+      rgba(39, 103, 73, 0.06) 0%,
+      rgba(39, 103, 73, 0.03) 50%,
+      rgba(39, 103, 73, 0.06) 100%
     );
   }
 }
@@ -167,9 +162,14 @@ body {
   .hide-on-mobile {
     display: none;
   }
-  
+
   /* Adjust button styling for icon-only display on mobile */
   [role="group"][aria-label="Post actions"] button {
     padding: 10px 8px !important;
   }
+}
+
+/* Placeholder color for light theme */
+::placeholder {
+  color: #9cb0a3;
 }

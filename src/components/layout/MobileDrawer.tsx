@@ -79,7 +79,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          backgroundColor: 'rgba(0, 0, 0, 0.3)',
           zIndex: 9998,
         }}
       />
@@ -95,8 +95,8 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
           left: 0,
           height: '100%',
           width: '300px',
-          backgroundColor: '#16213e',
-          boxShadow: '4px 0 24px rgba(0,0,0,0.5)',
+          backgroundColor: '#ffffff',
+          boxShadow: '4px 0 24px rgba(0,0,0,0.1)',
           zIndex: 9999,
           display: 'flex',
           flexDirection: 'column',
@@ -110,14 +110,14 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '16px',
-            borderBottom: '1px solid rgba(255,255,255,0.1)',
+            borderBottom: '1px solid #d4ddd8',
           }}
         >
           <span
             style={{
               fontSize: '18px',
               fontWeight: 600,
-              color: '#f0e6d3',
+              color: '#1a3a2a',
               fontFamily: "'Playfair Display', serif",
             }}
           >
@@ -132,7 +132,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
               background: 'transparent',
               border: 'none',
               cursor: 'pointer',
-              color: '#9ca3af',
+              color: '#6b8a7a',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -150,17 +150,17 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
             style={{
               display: 'block',
               padding: '16px',
-              borderBottom: '1px solid rgba(255,255,255,0.1)',
+              borderBottom: '1px solid #d4ddd8',
               textDecoration: 'none',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <UserAvatar name={user.displayName} avatarUrl={user.avatar?.url} size="md" />
               <div>
-                <p style={{ color: 'white', fontWeight: 500, margin: 0, fontSize: '15px' }}>
+                <p style={{ color: '#1a3a2a', fontWeight: 500, margin: 0, fontSize: '15px' }}>
                   {user.displayName}
                 </p>
-                <p style={{ color: '#9ca3af', fontSize: '13px', margin: 0, textTransform: 'capitalize' }}>
+                <p style={{ color: '#6b8a7a', fontSize: '13px', margin: 0, textTransform: 'capitalize' }}>
                   {user.role || 'Student'}
                 </p>
               </div>
@@ -183,9 +183,9 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
                 margin: '2px 8px',
                 borderRadius: '8px',
                 textDecoration: 'none',
-                color: isActive(to) ? '#c9a96e' : '#d1d5db',
-                backgroundColor: isActive(to) ? 'rgba(201,169,110,0.1)' : 'transparent',
-                borderLeft: isActive(to) ? '3px solid #c9a96e' : '3px solid transparent',
+                color: isActive(to) ? '#b8860b' : '#4a6a58',
+                backgroundColor: isActive(to) ? 'rgba(184,134,11,0.08)' : 'transparent',
+                borderLeft: isActive(to) ? '3px solid #b8860b' : '3px solid transparent',
                 fontWeight: 500,
                 fontSize: '15px',
                 transition: 'background-color 0.15s ease',
@@ -198,7 +198,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
         </nav>
 
         {/* Logout button */}
-        <div style={{ padding: '16px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+        <div style={{ padding: '16px', borderTop: '1px solid #d4ddd8' }}>
           <button
             onClick={handleLogout}
             style={{
@@ -211,7 +211,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
               background: 'transparent',
               border: 'none',
               cursor: 'pointer',
-              color: '#f87171',
+              color: '#dc2626',
               fontWeight: 500,
               fontSize: '15px',
               transition: 'background-color 0.15s ease',

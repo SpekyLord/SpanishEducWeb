@@ -32,7 +32,7 @@ export const PostPage: React.FC = () => {
   }, [id]);
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#1a1a2e', color: '#f3f4f6' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f5f7f5', color: '#1a3a2a' }}>
       <Header variant="feed" />
 
       <main style={{ maxWidth: '800px', margin: '0 auto', padding: '24px 16px' }}>
@@ -44,10 +44,10 @@ export const PostPage: React.FC = () => {
             gap: '8px',
             marginBottom: '16px',
             padding: '8px 16px',
-            background: 'rgba(15,52,96,0.8)',
-            border: '1px solid rgba(255,255,255,0.1)',
+            background: '#f0f4f0',
+            border: '1px solid #d4ddd8',
             borderRadius: '8px',
-            color: '#c9a96e',
+            color: '#b8860b',
             cursor: 'pointer',
             fontSize: '0.875rem',
           }}
@@ -56,22 +56,22 @@ export const PostPage: React.FC = () => {
         </button>
 
         {loading && (
-          <div style={{ textAlign: 'center', padding: '48px', color: '#9ca3af' }}>
+          <div style={{ textAlign: 'center', padding: '48px', color: '#6b8a7a' }}>
             Loading post...
           </div>
         )}
 
         {error && (
           <div className="glass-card" style={{ padding: '24px', textAlign: 'center' }}>
-            <p style={{ color: '#f87171', marginBottom: '16px' }}>{error}</p>
+            <p style={{ color: '#dc2626', marginBottom: '16px' }}>{error}</p>
             <button
               onClick={() => navigate('/feed')}
               style={{
                 padding: '8px 24px',
-                background: '#c9a96e',
+                background: '#b8860b',
                 border: 'none',
                 borderRadius: '8px',
-                color: '#1a1a2e',
+                color: '#ffffff',
                 fontWeight: 600,
                 cursor: 'pointer',
               }}

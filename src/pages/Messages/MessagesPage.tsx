@@ -61,7 +61,7 @@ export const MessagesPage: React.FC = () => {
   };
 
   return (
-    <div style={{ height: '100vh', backgroundColor: '#1a1a2e', color: '#f3f4f6', overflow: 'hidden' }}>
+    <div style={{ height: '100vh', backgroundColor: '#f5f7f5', color: '#1a3a2a', overflow: 'hidden' }}>
       <Header variant="feed" />
 
       <main style={{ padding: '1.25rem 0.5rem 0.75rem' }}>
@@ -89,10 +89,10 @@ export const MessagesPage: React.FC = () => {
                     refreshKey={refreshKey}
                   />
                 ) : (
-                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#1a1a2e' }}>
+                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f5f7f5' }}>
                     <div style={{ textAlign: 'center' }}>
-                      <MessageCircle size={64} style={{ margin: '0 auto 16px', opacity: 0.5, color: '#9ca3af', display: 'block' }} />
-                      <p style={{ color: '#9ca3af', fontSize: '1.125rem', margin: 0 }}>Select a conversation to start messaging</p>
+                      <MessageCircle size={64} style={{ margin: '0 auto 16px', opacity: 0.5, color: '#6b8a7a', display: 'block' }} />
+                      <p style={{ color: '#6b8a7a', fontSize: '1.125rem', margin: 0 }}>Select a conversation to start messaging</p>
                     </div>
                   </div>
                 )}

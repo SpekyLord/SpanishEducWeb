@@ -136,8 +136,8 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
 
   if (isLoading) {
     return (
-      <div style={{ backgroundColor: '#16213e', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', padding: '1.5rem' }}>
-        <div style={{ textAlign: 'center', color: '#9ca3af' }}>Loading files...</div>
+      <div style={{ backgroundColor: '#ffffff', border: '1px solid #d4ddd8', borderRadius: '8px', padding: '1.5rem' }}>
+        <div style={{ textAlign: 'center', color: '#6b8a7a' }}>Loading files...</div>
       </div>
     );
   }
@@ -145,9 +145,9 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
   return (
     <div className="glass-card-elevated">
       {/* Header with breadcrumbs */}
-      <div style={{ padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+      <div style={{ padding: '16px', borderBottom: '1px solid #d4ddd8' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-          <h2 style={{ fontSize: '1.125rem', fontWeight: 700, color: '#f3f4f6', margin: 0 }}>Files & Resources</h2>
+          <h2 style={{ fontSize: '1.125rem', fontWeight: 700, color: '#1a3a2a', margin: 0 }}>Files & Resources</h2>
           {isTeacher && !showNewFolderInput && (
             <button
               onClick={() => setShowNewFolderInput(true)}
@@ -161,23 +161,23 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
         </div>
 
         {/* Breadcrumbs */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', color: '#9ca3af', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', color: '#6b8a7a', flexWrap: 'wrap' }}>
           <button
             onClick={() => handleBreadcrumbClick(-1)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: !currentFolderId ? '#c9a96e' : '#9ca3af', fontWeight: !currentFolderId ? 500 : 400, padding: 0, transition: 'color 0.2s', fontSize: '0.875rem' }}
-            onMouseEnter={e => { e.currentTarget.style.color = '#c9a96e'; }}
-            onMouseLeave={e => { if (currentFolderId) e.currentTarget.style.color = '#9ca3af'; }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: !currentFolderId ? '#b8860b' : '#6b8a7a', fontWeight: !currentFolderId ? 500 : 400, padding: 0, transition: 'color 0.2s', fontSize: '0.875rem' }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#b8860b'; }}
+            onMouseLeave={e => { if (currentFolderId) e.currentTarget.style.color = '#6b8a7a'; }}
           >
             Root
           </button>
           {breadcrumbs.map((crumb, index) => (
             <React.Fragment key={crumb._id}>
-              <ChevronRight size={16} style={{ color: '#6b7280', flexShrink: 0 }} />
+              <ChevronRight size={16} style={{ color: '#6b8a7a', flexShrink: 0 }} />
               <button
                 onClick={() => handleBreadcrumbClick(index)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: index === breadcrumbs.length - 1 ? '#c9a96e' : '#9ca3af', fontWeight: index === breadcrumbs.length - 1 ? 500 : 400, padding: 0, transition: 'color 0.2s', fontSize: '0.875rem' }}
-                onMouseEnter={e => { e.currentTarget.style.color = '#c9a96e'; }}
-                onMouseLeave={e => { if (index !== breadcrumbs.length - 1) e.currentTarget.style.color = '#9ca3af'; }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: index === breadcrumbs.length - 1 ? '#b8860b' : '#6b8a7a', fontWeight: index === breadcrumbs.length - 1 ? 500 : 400, padding: 0, transition: 'color 0.2s', fontSize: '0.875rem' }}
+                onMouseEnter={e => { e.currentTarget.style.color = '#b8860b'; }}
+                onMouseLeave={e => { if (index !== breadcrumbs.length - 1) e.currentTarget.style.color = '#6b8a7a'; }}
               >
                 {crumb.name}
               </button>
@@ -188,14 +188,14 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
 
       {/* Error message */}
       {error && (
-        <div style={{ margin: '16px 16px 0', padding: '12px', backgroundColor: 'rgba(127,29,29,0.3)', border: '1px solid rgba(185,28,28,0.6)', borderRadius: '8px' }}>
-          <p style={{ fontSize: '0.875rem', color: '#fecaca', margin: 0 }}>{error}</p>
+        <div style={{ margin: '16px 16px 0', padding: '12px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px' }}>
+          <p style={{ fontSize: '0.875rem', color: '#dc2626', margin: 0 }}>{error}</p>
         </div>
       )}
 
       {/* New folder input */}
       {showNewFolderInput && (
-        <div style={{ padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.08)', backgroundColor: '#0d1b3e' }}>
+        <div style={{ padding: '16px', borderBottom: '1px solid #d4ddd8', backgroundColor: '#f0f4f0' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <FolderIcon size={20} style={{ color: '#eab308', flexShrink: 0 }} />
             <input
@@ -211,7 +211,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
               }}
               placeholder="Folder name..."
               autoFocus
-              style={{ flex: 1, backgroundColor: 'transparent', border: 'none', outline: 'none', color: '#f3f4f6', fontSize: '0.875rem' }}
+              style={{ flex: 1, backgroundColor: 'transparent', border: 'none', outline: 'none', color: '#1a3a2a', fontSize: '0.875rem' }}
               maxLength={100}
             />
             <button
@@ -242,7 +242,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
       {/* Contents */}
       <div style={{ padding: '16px' }}>
         {folders.length === 0 && files.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem 0', color: '#9ca3af' }}>
+          <div style={{ textAlign: 'center', padding: '3rem 0', color: '#6b8a7a' }}>
             <FolderIcon size={48} style={{ margin: '0 auto 12px', opacity: 0.5, display: 'block' }} />
             <p style={{ margin: 0 }}>No files or folders here</p>
             {isTeacher && (
@@ -256,7 +256,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
               <div
                 key={folder._id}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', borderRadius: '8px', transition: 'background 0.2s', marginBottom: '4px' }}
-                onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#0f3460'; }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#e8ede8'; }}
                 onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
               >
                 <button
@@ -265,8 +265,8 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
                 >
                   <FolderIcon size={20} style={{ color: '#eab308', flexShrink: 0 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ color: '#f3f4f6', fontWeight: 500, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{folder.name}</p>
-                    <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>
+                    <p style={{ color: '#1a3a2a', fontWeight: 500, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{folder.name}</p>
+                    <p style={{ fontSize: '0.75rem', color: '#6b8a7a', margin: 0 }}>
                       {folder.filesCount} {folder.filesCount === 1 ? 'file' : 'files'}
                     </p>
                   </div>
@@ -289,14 +289,14 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
               <div
                 key={file._id}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', borderRadius: '8px', transition: 'background 0.2s', marginBottom: '4px' }}
-                onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#0f3460'; }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#e8ede8'; }}
                 onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
                   {getFileIcon(file.extension)}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ color: '#f3f4f6', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{file.originalName}</p>
-                    <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>
+                    <p style={{ color: '#1a3a2a', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{file.originalName}</p>
+                    <p style={{ fontSize: '0.75rem', color: '#6b8a7a', margin: 0 }}>
                       {formatFileSize(file.size)} · {file.downloadsCount} downloads
                     </p>
                   </div>
@@ -304,8 +304,8 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
                   <button
                     onClick={() => handleDownload(file)}
-                    style={{ padding: '8px', color: '#c9a96e', background: 'none', border: 'none', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'background 0.2s, transform 0.15s' }}
-                    onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(201,169,110,0.1)'; e.currentTarget.style.transform = 'scale(1.1)'; }}
+                    style={{ padding: '8px', color: '#b8860b', background: 'none', border: 'none', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'background 0.2s, transform 0.15s' }}
+                    onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(184,134,11,0.1)'; e.currentTarget.style.transform = 'scale(1.1)'; }}
                     onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.transform = 'scale(1)'; }}
                   >
                     <Download size={16} />
@@ -331,13 +331,13 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
       {deleteConfirm && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: '16px' }}>
           <div className="glass-card-elevated" style={{ padding: '1.5rem', maxWidth: '28rem', width: '100%' }}>
-            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#f3f4f6', marginBottom: '8px', marginTop: 0 }}>
+            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#1a3a2a', marginBottom: '8px', marginTop: 0 }}>
               Delete {deleteConfirm.type === 'folder' ? 'Folder' : 'File'}?
             </h3>
-            <p style={{ color: '#9ca3af', marginBottom: '16px' }}>
+            <p style={{ color: '#6b8a7a', marginBottom: '16px' }}>
               Are you sure you want to delete "{deleteConfirm.name}"?
               {deleteConfirm.type === 'folder' && (
-                <span style={{ display: 'block', marginTop: '8px', fontSize: '0.875rem', color: '#f87171' }}>
+                <span style={{ display: 'block', marginTop: '8px', fontSize: '0.875rem', color: '#dc2626' }}>
                   This will also delete all files and subfolders inside it.
                 </span>
               )}
@@ -345,9 +345,9 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ currentFolderId, onF
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
               <button
                 onClick={() => setDeleteConfirm(null)}
-                style={{ padding: '8px 16px', backgroundColor: '#16213e', color: '#f3f4f6', borderRadius: '8px', border: 'none', cursor: 'pointer', transition: 'background 0.2s' }}
-                onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#374151'; }}
-                onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#16213e'; }}
+                style={{ padding: '8px 16px', backgroundColor: '#e8ede8', color: '#4a6a58', borderRadius: '8px', border: 'none', cursor: 'pointer', transition: 'background 0.2s' }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#d4ddd8'; }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#e8ede8'; }}
               >
                 Cancel
               </button>

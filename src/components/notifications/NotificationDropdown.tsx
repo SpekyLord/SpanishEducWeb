@@ -88,6 +88,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
           userId: notification.actor._id,
           otherUser: {
             _id: notification.actor._id,
+            username: notification.actor.username,
             displayName: notification.actor.displayName,
             avatarUrl: notification.actor.avatar,
           }
@@ -143,14 +144,14 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
       }}
     >
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-        <h3 id="notifications-title" style={{ fontSize: '1.125rem', fontWeight: 600, color: '#f3f4f6', margin: 0 }}>Notifications</h3>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #d4ddd8' }}>
+        <h3 id="notifications-title" style={{ fontSize: '1.125rem', fontWeight: 600, color: '#1a3a2a', margin: 0 }}>Notifications</h3>
         <div style={{ display: 'flex', gap: '8px' }}>
           {notifications.some(n => !n.isRead) && (
             <button
               onClick={handleMarkAllRead}
               disabled={markingAllRead}
-              style={{ fontSize: '0.875rem', color: '#c9a96e', fontWeight: 500, padding: '4px 12px', borderRadius: '6px', background: 'transparent', border: 'none', cursor: markingAllRead ? 'not-allowed' : 'pointer', opacity: markingAllRead ? 0.5 : 1 }}
+              style={{ fontSize: '0.875rem', color: '#b8860b', fontWeight: 500, padding: '4px 12px', borderRadius: '6px', background: 'transparent', border: 'none', cursor: markingAllRead ? 'not-allowed' : 'pointer', opacity: markingAllRead ? 0.5 : 1 }}
             >
               {markingAllRead ? 'Marking...' : 'Mark all read'}
             </button>
@@ -159,7 +160,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
             <button
               onClick={handleClearAll}
               disabled={clearingAll}
-              style={{ fontSize: '0.875rem', color: '#f87171', fontWeight: 500, padding: '4px 12px', borderRadius: '6px', background: 'transparent', border: 'none', cursor: clearingAll ? 'not-allowed' : 'pointer', opacity: clearingAll ? 0.5 : 1 }}
+              style={{ fontSize: '0.875rem', color: '#dc2626', fontWeight: 500, padding: '4px 12px', borderRadius: '6px', background: 'transparent', border: 'none', cursor: clearingAll ? 'not-allowed' : 'pointer', opacity: clearingAll ? 0.5 : 1 }}
             >
               {clearingAll ? 'Clearing...' : 'Clear all'}
             </button>
@@ -171,19 +172,19 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
       <div style={{ maxHeight: '560px', overflowY: 'auto' }}>
         {loading ? (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px' }}>
-            <Loader2 style={{ color: '#c9a96e', animation: 'spin 1s linear infinite' }} size={24} />
+            <Loader2 style={{ color: '#b8860b', animation: 'spin 1s linear infinite' }} size={24} />
           </div>
         ) : error ? (
           <div style={{ padding: '16px' }}>
-            <div style={{ backgroundColor: 'rgba(127,29,29,0.3)', border: '1px solid rgba(185,28,28,0.6)', color: '#fca5a5', padding: '12px', borderRadius: '8px', fontSize: '0.875rem' }}>
+            <div style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', padding: '12px', borderRadius: '8px', fontSize: '0.875rem' }}>
               {error}
             </div>
           </div>
         ) : notifications.length === 0 ? (
           <div style={{ padding: '40px 16px', textAlign: 'center' }}>
-            <Bell size={32} style={{ margin: '0 auto 12px', color: '#4b5563', display: 'block' }} />
-            <p style={{ color: '#9ca3af', fontWeight: 500, margin: '0 0 4px' }}>No notifications yet</p>
-            <p style={{ color: '#6b7280', fontSize: '0.75rem', margin: 0 }}>You'll be notified when something happens</p>
+            <Bell size={32} style={{ margin: '0 auto 12px', color: '#6b8a7a', display: 'block' }} />
+            <p style={{ color: '#6b8a7a', fontWeight: 500, margin: '0 0 4px' }}>No notifications yet</p>
+            <p style={{ color: '#6b8a7a', fontSize: '0.75rem', margin: 0 }}>You'll be notified when something happens</p>
           </div>
         ) : (
           <div>
@@ -200,13 +201,13 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
 
       {/* Footer */}
       {!loading && !error && notifications.length > 0 && (
-        <div style={{ padding: '12px 20px', borderTop: '1px solid rgba(255,255,255,0.08)', textAlign: 'center' }}>
+        <div style={{ padding: '12px 20px', borderTop: '1px solid #d4ddd8', textAlign: 'center' }}>
           <button
             onClick={() => {
               navigate('/notifications');
               onClose();
             }}
-            style={{ fontSize: '0.875rem', color: '#c9a96e', fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer' }}
+            style={{ fontSize: '0.875rem', color: '#b8860b', fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer' }}
           >
             See all notifications →
           </button>

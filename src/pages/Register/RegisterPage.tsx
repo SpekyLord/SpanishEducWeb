@@ -77,20 +77,18 @@ export function RegisterPage() {
             style={{
               borderRadius: '12px',
               padding: '40px',
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              backdropFilter: 'blur(12px)',
-              boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
             }}
           >
             {/* Logo and title */}
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-14 h-14 bg-accent rounded-full flex items-center justify-center text-white font-bold text-xl shadow-glow-accent-md">
-                SC
-              </div>
+              <img
+                src="/Logo.svg"
+                alt="Piccio Bloguero"
+                style={{ width: '56px', height: '56px' }}
+              />
               <div>
-                <div className="text-2xl font-bold font-heading text-gray-100">Piccio Bloguero</div>
-                <div className="text-sm text-gray-400">Create your account</div>
+                <div className="text-2xl font-bold font-heading text-[#1a3a2a]">Piccio Bloguero</div>
+                <div className="text-sm text-[#6b8a7a]">Create your account</div>
               </div>
             </div>
 
@@ -100,14 +98,14 @@ export function RegisterPage() {
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <div className="rounded-lg bg-red-900/30 border border-red-700/60 p-4 shadow-fb">
-                  <p className="text-sm text-red-200 font-medium">{error}</p>
+                <div className="rounded-lg bg-red-50 border border-red-200 p-4 shadow-fb">
+                  <p className="text-sm text-red-700 font-medium">{error}</p>
                 </div>
               )}
 
           <div className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-100 mb-3">
+              <label htmlFor="email" className="block text-sm font-medium text-[#1a3a2a] mb-3">
                 Email address *
               </label>
               <input
@@ -118,13 +116,13 @@ export function RegisterPage() {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#0d1b3e] text-gray-100 placeholder-gray-500 input-glow sm:text-sm"
+                className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#f0f4f0] text-[#1a3a2a] placeholder-[#9cb0a3] input-glow sm:text-sm"
                 placeholder="student@example.com"
               />
             </div>
 
             <div>
-              <label htmlFor="displayName" className="block text-sm font-medium text-gray-100 mb-3">
+              <label htmlFor="displayName" className="block text-sm font-medium text-[#1a3a2a] mb-3">
                 Display Name *
               </label>
               <input
@@ -134,14 +132,14 @@ export function RegisterPage() {
                 required
                 value={formData.displayName}
                 onChange={handleChange}
-                className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#0d1b3e] text-gray-100 placeholder-gray-500 input-glow sm:text-sm"
+                className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#f0f4f0] text-[#1a3a2a] placeholder-[#9cb0a3] input-glow sm:text-sm"
                 placeholder="John Doe"
                 maxLength={50}
               />
             </div>
 
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-100 mb-3">
+              <label htmlFor="username" className="block text-sm font-medium text-[#1a3a2a] mb-3">
                 Username (optional)
               </label>
               <input
@@ -150,7 +148,7 @@ export function RegisterPage() {
                 type="text"
                 value={formData.username}
                 onChange={handleChange}
-                className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#0d1b3e] text-gray-100 placeholder-gray-500 input-glow sm:text-sm"
+                className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#f0f4f0] text-[#1a3a2a] placeholder-[#9cb0a3] input-glow sm:text-sm"
                 placeholder="johndoe"
                 pattern="^[a-z0-9_]{3,30}$"
               />
@@ -160,7 +158,7 @@ export function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-100 mb-3">
+              <label htmlFor="password" className="block text-sm font-medium text-[#1a3a2a] mb-3">
                 Password *
               </label>
               <input
@@ -171,21 +169,21 @@ export function RegisterPage() {
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#0d1b3e] text-gray-100 placeholder-gray-500 input-glow sm:text-sm"
+                className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#f0f4f0] text-[#1a3a2a] placeholder-[#9cb0a3] input-glow sm:text-sm"
               />
               <div className="mt-3 space-y-2">
                 <p
-                  className={`text-xs ${passwordRequirements.minLength ? 'text-green-400' : 'text-gray-400'}`}
+                  className={`text-xs ${passwordRequirements.minLength ? 'text-green-600' : 'text-gray-500'}`}
                 >
                   {passwordRequirements.minLength ? '✓' : '○'} 8+ characters
                 </p>
                 <p
-                  className={`text-xs ${passwordRequirements.hasUppercase ? 'text-green-400' : 'text-gray-400'}`}
+                  className={`text-xs ${passwordRequirements.hasUppercase ? 'text-green-600' : 'text-gray-500'}`}
                 >
                   {passwordRequirements.hasUppercase ? '✓' : '○'} Uppercase letter
                 </p>
                 <p
-                  className={`text-xs ${passwordRequirements.hasNumber ? 'text-green-400' : 'text-gray-400'}`}
+                  className={`text-xs ${passwordRequirements.hasNumber ? 'text-green-600' : 'text-gray-500'}`}
                 >
                   {passwordRequirements.hasNumber ? '✓' : '○'} Number
                 </p>
@@ -193,7 +191,7 @@ export function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-100 mb-3">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#1a3a2a] mb-3">
                 Confirm Password *
               </label>
               <input
@@ -204,7 +202,7 @@ export function RegisterPage() {
                 required
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#0d1b3e] text-gray-100 placeholder-gray-500 input-glow sm:text-sm"
+                className="appearance-none block w-full px-4 py-3 rounded-lg bg-[#f0f4f0] text-[#1a3a2a] placeholder-[#9cb0a3] input-glow sm:text-sm"
               />
             </div>
               </div>
@@ -220,9 +218,9 @@ export function RegisterPage() {
               </div>
 
               <div className="text-center">
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-[#6b8a7a]">
                   Already have an account?{' '}
-                  <Link to="/login" className="font-medium text-gold hover:text-[#d4b87e]">
+                  <Link to="/login" className="font-medium text-gold hover:text-gold-light">
                     Sign in
                   </Link>
                 </p>

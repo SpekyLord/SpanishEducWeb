@@ -62,35 +62,35 @@ export const ConversationList: React.FC<ConversationListProps> = ({
 
   if (isLoading) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#16213e', borderRight: '1px solid rgba(255,255,255,0.08)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#ffffff', borderRight: '1px solid #d4ddd8' }}>
         <div style={{ padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-          <p style={{ color: '#9ca3af', margin: 0 }}>Loading conversations...</p>
+          <p style={{ color: '#6b8a7a', margin: 0 }}>Loading conversations...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#16213e', borderRight: '1px solid rgba(255,255,255,0.08)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#ffffff', borderRight: '1px solid #d4ddd8' }}>
       {/* Search bar */}
-      <div className="p-3 lg:p-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+      <div className="p-3 lg:p-4" style={{ borderBottom: '1px solid #e8ede8' }}>
         <div style={{ position: 'relative' }}>
-          <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+          <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#6b8a7a' }} />
           <input
             type="text"
             placeholder="Search conversations..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="input-glow"
-            style={{ width: '100%', backgroundColor: '#0f3460', borderRadius: '8px', paddingLeft: '40px', paddingRight: '16px', paddingTop: '8px', paddingBottom: '8px', fontSize: '0.875rem', color: '#f3f4f6', border: '1px solid rgba(255,255,255,0.08)', outline: 'none', boxSizing: 'border-box' }}
+            style={{ width: '100%', backgroundColor: '#f0f4f0', borderRadius: '8px', paddingLeft: '40px', paddingRight: '16px', paddingTop: '8px', paddingBottom: '8px', fontSize: '0.875rem', color: '#1a3a2a', border: '1px solid #d4ddd8', outline: 'none', boxSizing: 'border-box' }}
           />
         </div>
       </div>
 
       {/* Error message */}
       {error && (
-        <div style={{ margin: '16px 16px 0', padding: '12px', backgroundColor: 'rgba(127,29,29,0.3)', border: '1px solid rgba(185,28,28,0.6)', borderRadius: '8px' }}>
-          <p style={{ fontSize: '0.875rem', color: '#fecaca', margin: 0 }}>{error}</p>
+        <div style={{ margin: '16px 16px 0', padding: '12px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px' }}>
+          <p style={{ fontSize: '0.875rem', color: '#dc2626', margin: 0 }}>{error}</p>
         </div>
       )}
 
@@ -98,7 +98,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
       <div style={{ flex: 1, overflowY: 'auto' }}>
         {filteredConversations.length === 0 ? (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '0 16px', textAlign: 'center' }}>
-            <p style={{ color: '#9ca3af', margin: 0 }}>
+            <p style={{ color: '#6b8a7a', margin: 0 }}>
               {searchQuery ? 'No conversations found' : 'No conversations yet'}
             </p>
           </div>
@@ -115,16 +115,16 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                   display: 'flex',
                   alignItems: 'flex-start',
                   gap: '12px',
-                  backgroundColor: isSelected ? '#0f3460' : 'transparent',
-                  borderBottom: '1px solid rgba(255,255,255,0.04)',
-                  borderLeft: isSelected ? '3px solid #c9a96e' : '3px solid transparent',
+                  backgroundColor: isSelected ? '#e0f0e5' : 'transparent',
+                  borderBottom: '1px solid #e8ede8',
+                  borderLeft: isSelected ? '3px solid #b8860b' : '3px solid transparent',
                   borderTop: 'none',
                   borderRight: 'none',
                   cursor: 'pointer',
                   transition: 'background 0.2s',
                   textAlign: 'left',
                 }}
-                onMouseEnter={e => { if (!isSelected) e.currentTarget.style.backgroundColor = '#0f3460'; }}
+                onMouseEnter={e => { if (!isSelected) e.currentTarget.style.backgroundColor = '#e8ede8'; }}
                 onMouseLeave={e => { if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent'; }}
               >
                 {/* Avatar */}
@@ -135,7 +135,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
                     <h3 style={{
                       fontWeight: 600,
-                      color: conv.unreadCount > 0 ? '#f3f4f6' : '#d1d5db',
+                      color: conv.unreadCount > 0 ? '#1a3a2a' : '#4a6a58',
                       margin: 0,
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
@@ -145,7 +145,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                       {conv.otherUser.displayName}
                     </h3>
                     {conv.lastMessage && (
-                      <span style={{ fontSize: '0.75rem', color: '#6b7280', marginLeft: '8px', flexShrink: 0 }}>
+                      <span style={{ fontSize: '0.75rem', color: '#6b8a7a', marginLeft: '8px', flexShrink: 0 }}>
                         {formatMessageTime(conv.lastMessage.createdAt)}
                       </span>
                     )}
@@ -155,7 +155,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <p style={{
                         fontSize: '0.875rem',
-                        color: conv.unreadCount > 0 ? '#f3f4f6' : '#9ca3af',
+                        color: conv.unreadCount > 0 ? '#1a3a2a' : '#6b8a7a',
                         fontWeight: conv.unreadCount > 0 ? 500 : 400,
                         margin: 0,
                         overflow: 'hidden',
@@ -169,7 +169,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                       </p>
                       {conv.unreadCount > 0 && (
                         <span style={{
-                          backgroundColor: '#e94560',
+                          backgroundColor: '#276749',
                           color: 'white',
                           fontSize: '0.75rem',
                           borderRadius: '9999px',

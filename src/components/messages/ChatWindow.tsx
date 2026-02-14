@@ -155,9 +155,9 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
   if (isLoading) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', backgroundColor: '#1a1a2e' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', backgroundColor: '#f5f7f5' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-          <p style={{ color: '#9ca3af', margin: 0 }}>Loading messages...</p>
+          <p style={{ color: '#6b8a7a', margin: 0 }}>Loading messages...</p>
         </div>
       </div>
     );
@@ -165,44 +165,44 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
   if (!otherUser) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', backgroundColor: '#1a1a2e' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', backgroundColor: '#f5f7f5' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-          <p style={{ color: '#9ca3af', margin: 0 }}>Loading...</p>
+          <p style={{ color: '#6b8a7a', margin: 0 }}>Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', backgroundColor: '#1a1a2e' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', backgroundColor: '#f5f7f5' }}>
       {/* Header */}
-      <div className="p-3 lg:p-4" style={{ backgroundColor: 'rgba(22,33,62,0.95)', backdropFilter: 'blur(8px)', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div className="p-3 lg:p-4" style={{ backgroundColor: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)', borderBottom: '1px solid #d4ddd8', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <button
           onClick={onBack}
-          style={{ padding: '4px', background: 'none', border: 'none', cursor: 'pointer', color: '#d1d5db', display: 'flex', alignItems: 'center' }}
-          onMouseEnter={e => { e.currentTarget.style.color = '#f3f4f6'; }}
-          onMouseLeave={e => { e.currentTarget.style.color = '#d1d5db'; }}
+          style={{ padding: '4px', background: 'none', border: 'none', cursor: 'pointer', color: '#4a6a58', display: 'flex', alignItems: 'center' }}
+          onMouseEnter={e => { e.currentTarget.style.color = '#1a3a2a'; }}
+          onMouseLeave={e => { e.currentTarget.style.color = '#4a6a58'; }}
         >
           <ChevronLeft size={24} />
         </button>
         <UserAvatar name={otherUser.displayName} avatarUrl={otherUser.avatarUrl} size="md" />
         <div style={{ flex: 1 }}>
-          <h2 style={{ fontWeight: 600, color: '#f3f4f6', margin: 0, fontSize: '1rem' }}>{otherUser.displayName}</h2>
-          <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>@{otherUser.username}</p>
+          <h2 style={{ fontWeight: 600, color: '#1a3a2a', margin: 0, fontSize: '1rem' }}>{otherUser.displayName}</h2>
+          <p style={{ fontSize: '0.75rem', color: '#6b8a7a', margin: 0 }}>@{otherUser.username}</p>
         </div>
       </div>
 
       {/* Messages */}
       <div className="p-3 lg:p-4" style={{ flex: 1, overflowY: 'auto' }}>
         {error && (
-          <div style={{ maxWidth: '28rem', margin: '0 auto 12px', padding: '12px', backgroundColor: 'rgba(127,29,29,0.3)', border: '1px solid rgba(185,28,28,0.6)', borderRadius: '8px' }}>
-            <p style={{ fontSize: '0.875rem', color: '#fecaca', margin: 0 }}>{error}</p>
+          <div style={{ maxWidth: '28rem', margin: '0 auto 12px', padding: '12px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px' }}>
+            <p style={{ fontSize: '0.875rem', color: '#dc2626', margin: 0 }}>{error}</p>
           </div>
         )}
 
         {messages.length === 0 ? (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-            <p style={{ color: '#9ca3af', margin: 0 }}>No messages yet. Start the conversation!</p>
+            <p style={{ color: '#6b8a7a', margin: 0 }}>No messages yet. Start the conversation!</p>
           </div>
         ) : (
           messages.map((message, index) => {
@@ -239,8 +239,8 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                       borderRadius: '16px',
                       padding: '8px 16px',
                       ...(isOwnMessage
-                        ? { background: 'linear-gradient(to bottom right, #e94560, #c7304d)', color: 'white' }
-                        : { backgroundColor: 'rgba(22,33,62,0.8)', color: '#f3f4f6', border: '1px solid rgba(255,255,255,0.06)' }
+                        ? { background: 'linear-gradient(to bottom right, #276749, #1e4d35)', color: 'white' }
+                        : { backgroundColor: '#f0f4f0', color: '#1a3a2a', border: '1px solid #d4ddd8' }
                       ),
                     }}>
                       <p style={{ fontSize: '0.875rem', whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 0 }}>{message.content}</p>
@@ -248,9 +248,9 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                   )}
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px', padding: '0 8px' }}>
-                    <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{formatMessageTime(message.createdAt)}</span>
+                    <span style={{ fontSize: '0.75rem', color: '#6b8a7a' }}>{formatMessageTime(message.createdAt)}</span>
                     {isOwnMessage && message.isRead && (
-                      <span style={{ color: '#c9a96e', fontSize: '0.75rem', marginLeft: '4px' }}>✓✓</span>
+                      <span style={{ color: '#b8860b', fontSize: '0.75rem', marginLeft: '4px' }}>✓✓</span>
                     )}
                   </div>
                 </div>
@@ -263,7 +263,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       </div>
 
       {/* Input */}
-      <div className="p-3 lg:p-4" style={{ backgroundColor: '#16213e', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+      <div className="p-3 lg:p-4" style={{ backgroundColor: '#ffffff', borderTop: '1px solid #d4ddd8' }}>
         {imagePreview && (
           <div style={{ marginBottom: '8px', position: 'relative', display: 'inline-block' }}>
             <img src={imagePreview} alt="Preview" style={{ height: '80px', maxWidth: '100%', borderRadius: '8px' }} />
@@ -289,9 +289,9 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           />
           <label
             htmlFor="message-image"
-            style={{ padding: '8px', color: '#9ca3af', cursor: 'pointer', transition: 'color 0.2s', display: 'flex', alignItems: 'center' }}
-            onMouseEnter={e => { e.currentTarget.style.color = '#d1d5db'; }}
-            onMouseLeave={e => { e.currentTarget.style.color = '#9ca3af'; }}
+            style={{ padding: '8px', color: '#6b8a7a', cursor: 'pointer', transition: 'color 0.2s', display: 'flex', alignItems: 'center' }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#4a6a58'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = '#6b8a7a'; }}
           >
             <ImageIcon size={24} />
           </label>
@@ -307,7 +307,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
             }}
             placeholder="Type a message..."
             className="input-glow"
-            style={{ flex: 1, backgroundColor: '#0f3460', borderRadius: '16px', padding: '8px 16px', fontSize: '1rem', color: '#f3f4f6', resize: 'none', maxHeight: '128px', border: '1px solid rgba(255,255,255,0.08)', outline: 'none', boxSizing: 'border-box' }}
+            style={{ flex: 1, backgroundColor: '#f0f4f0', borderRadius: '16px', padding: '8px 16px', fontSize: '1rem', color: '#1a3a2a', resize: 'none', maxHeight: '128px', border: '1px solid #d4ddd8', outline: 'none', boxSizing: 'border-box' }}
             rows={1}
             maxLength={2000}
             disabled={isSending}
@@ -318,7 +318,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
             disabled={(!newMessage.trim() && !selectedImage) || isSending}
             style={{
               padding: '10px',
-              backgroundColor: '#e94560',
+              backgroundColor: '#276749',
               color: 'white',
               borderRadius: '50%',
               border: 'none',
@@ -330,15 +330,15 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
               transition: 'background 0.2s, transform 0.15s',
               flexShrink: 0,
             }}
-            onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#c7304d'; e.currentTarget.style.transform = 'scale(1.05)'; }}
-            onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#e94560'; e.currentTarget.style.transform = 'scale(1)'; }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#1e4d35'; e.currentTarget.style.transform = 'scale(1.05)'; }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#276749'; e.currentTarget.style.transform = 'scale(1)'; }}
           >
             <Send size={20} />
           </button>
         </div>
 
         {newMessage.length > 0 && (
-          <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '4px', textAlign: 'right', margin: '4px 0 0' }}>
+          <p style={{ fontSize: '0.75rem', color: '#6b8a7a', marginTop: '4px', textAlign: 'right', margin: '4px 0 0' }}>
             {newMessage.length}/2000
           </p>
         )}

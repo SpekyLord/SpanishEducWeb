@@ -20,14 +20,14 @@ export const FilesPage: React.FC = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#1a1a2e', color: '#f3f4f6' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f5f7f5', color: '#1a3a2a' }}>
       <Header variant="feed" />
 
       <main style={{ maxWidth: '80rem', margin: '0 auto', padding: '1.5rem 1rem' }}>
         {/* Page header */}
         <div style={{ marginBottom: '1.5rem' }}>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f3f4f6', margin: 0 }}>Files & Resources</h1>
-          <p style={{ color: '#9ca3af', marginTop: '4px' }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#1a3a2a', margin: 0 }}>Files & Resources</h1>
+          <p style={{ color: '#6b8a7a', marginTop: '4px' }}>
             Access course materials, documents, and audio files
           </p>
         </div>

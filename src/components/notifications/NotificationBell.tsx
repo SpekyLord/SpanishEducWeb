@@ -61,7 +61,7 @@ export const NotificationBell: React.FC = () => {
         style={{ position: 'relative', padding: '8px', borderRadius: '50%', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         aria-label={`Notifications ${unreadCount > 0 ? `(${unreadCount} unread)` : ''}`}
       >
-        <Bell size={20} style={{ color: '#d1d5db' }} />
+        <Bell size={20} style={{ color: '#4a6a58' }} />
         {unreadCount > 0 && (
           <span style={{ position: 'absolute', top: '-2px', right: '-2px', backgroundColor: '#dc2626', color: 'white', fontSize: '0.7rem', fontWeight: 700, borderRadius: '9999px', minWidth: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', boxShadow: '0 0 8px rgba(233,69,96,0.4)' }}>
             {unreadCount > 99 ? '99+' : unreadCount}
