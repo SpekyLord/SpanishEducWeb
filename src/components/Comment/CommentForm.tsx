@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createComment } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { UserAvatar } from '../common/UserAvatar';
 import { MentionAutocomplete } from './MentionAutocomplete';
 
 interface CommentFormProps {
@@ -123,9 +124,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
         </div>
       )}
       <div style={{ display: 'flex', gap: '10px' }}>
-        <div style={{ width: 32, height: 32, minWidth: 32, borderRadius: '50%', backgroundColor: '#276749', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.875rem', fontWeight: 600 }}>
-          {user.displayName.charAt(0).toUpperCase()}
-        </div>
+        <UserAvatar name={user.displayName} avatarUrl={user.avatar?.url} size="sm" />
         <div style={{ flex: 1 }}>
           <textarea
             ref={textareaRef}
