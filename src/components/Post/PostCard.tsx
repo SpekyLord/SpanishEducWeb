@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ThumbsUp, MessageCircle, Bookmark, BookmarkCheck, Pin } from 'lucide-react';
 import { Post, addReaction, removeReaction, bookmarkPost, removeBookmark } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
@@ -23,6 +24,7 @@ const REACTIONS = [
 
 export const PostCard = React.memo<PostCardProps>(({ post, onUpdate, showCommentsInitially = false }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [currentPost, setCurrentPost] = useState(post);
   const [showReactionPicker, setShowReactionPicker] = useState(false);
   const [isReacting, setIsReacting] = useState(false);
@@ -220,7 +222,7 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate, showComment
         {/* Reaction Button */}
         <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
           <button
-            onClick={() => setShowReactionPicker(!showReactionPicker)}
+            onClick={() => { if (!user) { navigate('/login'); return; } setShowReactionPicker(!showReactionPicker); }}
             aria-label={currentPost.userReaction ? `Change reaction (currently ${REACTIONS.find(r => r.type === currentPost.userReaction)?.label})` : 'Add reaction'}
             aria-haspopup="true"
             aria-expanded={showReactionPicker}
@@ -265,7 +267,7 @@ export const PostCard = React.memo<PostCardProps>(({ post, onUpdate, showComment
 
         {/* Comment Button */}
         <button
-          onClick={() => setShowComments(!showComments)}
+          onClick={() => { if (!user) { navigate('/login'); return; } setShowComments(!showComments); }}
           aria-label={showComments ? 'Hide comments' : `Show comments (${currentPost.commentsCount})`}
           aria-pressed={showComments}
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', flex: 1, minWidth: 0, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', padding: '8px 12px', borderRadius: '8px', border: 'none', background: showComments ? '#e0f0e5' : 'transparent', color: showComments ? '#276749' : '#4a6a58', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s' }}

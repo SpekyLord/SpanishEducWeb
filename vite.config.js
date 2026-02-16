@@ -13,8 +13,20 @@ export default defineConfig({
         port: 5173,
         proxy: {
             '/api': {
-                target: 'http://localhost:3001',
+                target: 'http://localhost:3001/api',
                 changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/api/, ''),
+            },
+        },
+    },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+                    'virtuoso': ['react-virtuoso'],
+                    'icons': ['lucide-react'],
+                },
             },
         },
     },

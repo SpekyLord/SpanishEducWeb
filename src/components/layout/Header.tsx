@@ -13,7 +13,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -275,7 +275,7 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
           </div>
         )}
 
-        {/* Right side */}
+        {/* Right side - authenticated user */}
         {variant === 'feed' && user && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             {/* Hamburger - mobile only */}
@@ -389,6 +389,43 @@ export const Header: React.FC<HeaderProps> = ({ variant = 'auth' }) => {
                 )}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Right side - guest user */}
+        {variant === 'feed' && !user && !isLoading && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0, marginLeft: 'auto' }}>
+            <Link
+              to="/login"
+              style={{
+                padding: '8px 16px',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                color: '#4a6a58',
+                textDecoration: 'none',
+                border: '1px solid #d4ddd8',
+                transition: 'background 0.2s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#f0f4f0'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+            >
+              Log in
+            </Link>
+            <Link
+              to="/register"
+              className="btn-accent-gradient"
+              style={{
+                padding: '8px 16px',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                color: '#ffffff',
+                textDecoration: 'none',
+              }}
+            >
+              Sign up
+            </Link>
           </div>
         )}
       </div>

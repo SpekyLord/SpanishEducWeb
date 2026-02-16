@@ -146,6 +146,17 @@ export function LoginPage() {
                   </Link>
                 </p>
               </div>
+
+              <div className="text-center" style={{ marginTop: '8px' }}>
+                <Link
+                  to="/feed"
+                  style={{ fontSize: '0.875rem', color: '#6b8a7a', textDecoration: 'none', transition: 'color 0.2s' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#1a3a2a'; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = '#6b8a7a'; }}
+                >
+                  ← Back to Feed
+                </Link>
+              </div>
             </form>
           </div>
         </div>

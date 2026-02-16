@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Virtuoso } from 'react-virtuoso';
 import { Comment, getComment, getComments } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 import { CommentForm } from './CommentForm';
 import { CommentItem } from './CommentItem';
 import { CommentThreadProvider, useCommentThread } from '../../contexts/CommentThreadContext';
@@ -11,6 +13,7 @@ interface CommentSectionProps {
 }
 
 const CommentSectionContent: React.FC<CommentSectionProps> = ({ postId }) => {
+  const { user } = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
   const [pinnedComment, setPinnedComment] = useState<Comment | null>(null);
   const [page, setPage] = useState(1);
@@ -133,7 +136,18 @@ const CommentSectionContent: React.FC<CommentSectionProps> = ({ postId }) => {
         </div>
       )}
 
-      <CommentForm postId={postId} onCreated={handleRefresh} />
+      {user ? (
+        <CommentForm postId={postId} onCreated={handleRefresh} />
+      ) : (
+        <div style={{ padding: '12px 16px', backgroundColor: '#f0f4f0', borderRadius: '8px', textAlign: 'center', marginBottom: '12px' }}>
+          <span style={{ fontSize: '0.875rem', color: '#4a6a58' }}>
+            <Link to="/login" style={{ color: '#b8860b', fontWeight: 500, textDecoration: 'none' }}>Sign in</Link>
+            {' '}or{' '}
+            <Link to="/register" style={{ color: '#b8860b', fontWeight: 500, textDecoration: 'none' }}>create an account</Link>
+            {' '}to join the conversation
+          </span>
+        </div>
+      )}
 
       {/* Initial Loading Skeletons */}
       {loading && comments.length === 0 && (

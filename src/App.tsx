@@ -41,31 +41,12 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
 
+              {/* Public routes - guests can browse */}
+              <Route path="/" element={<FeedPage />} />
+              <Route path="/feed" element={<FeedPage />} />
+              <Route path="/post/:id" element={<PostPage />} />
+
               {/* Protected routes */}
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <FeedPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/feed"
-                element={
-                  <ProtectedRoute>
-                    <FeedPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/post/:id"
-                element={
-                  <ProtectedRoute>
-                    <PostPage />
-                  </ProtectedRoute>
-                }
-              />
               <Route
                 path="/home"
                 element={
